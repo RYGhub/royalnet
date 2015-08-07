@@ -82,30 +82,56 @@ while(True):
 			if(msg['text'] == "/steam"):
 				sendMessage("⚠️ Non hai specificato uno steamid!", msg['chat']['id'])
 			else:
-				#Controlla se la selezione è un tag di telegram.
-				if(msg['text'][7:] == "@Steffo"):
-					selezione = 76561198034314260
-				elif(msg['text'][7:] == "@FrankFrankFrank"):
-					selezione = 76561198071099951
+				#Elenco degli steamid e degli username di telegram.
+				steamids = {
+					'@Steffo': 76561198034314260,
+					'@EvilBaluIsEvilT_T': 76561198071012695,
+					'@Fulz': 76561198035547490,
+					'@IlGattopardo': 76561198111021344,
+					'@FrankFrankFrank': 76561198071099951,
+					'@fedYal': 76561198109189938,
+					'@ActerRYG': 76561198146704979,
+					'@YouTouchMyTralala': 76561198121094516,
+					'@Heisenberg_TheMadDoctor': 76561198080377213,
+					'@SuperMattemb': 76561198115852550,
+					'@Peraemela99': 76561198161867082,
+					'@thevagginadestroyer': 76561198128738388,
+					'Fillo': 76561198103292029,
+					'@Cosimo03': 76561198062778224,
+					'Alby': 76561198071383448,
+					'@Voltaggio': 76561198147601821,
+					'Alle2002': 76561198052996311,
+					'Jummi': 76561198169975999,
+					'@Tauei': 76561198104305298,
+					'@Saitorlock': 76561198089120441,
+					'@iEmax': 76561198149695151,
+					'@Alleanderl': 76561198154175301,
+					'@Boni3099': 76561198131868211,
+				}
+				#Controlla se la selezione è un username di telegram.
+				if(steamids[msg['text'][7:]]):
+					selezione = steamids[msg['text'][7:]
+				else:
+					selezione = msg['text'][7:]
 				steam = getSteamStatus(selezione)
 				if(steam['response']['players']):
 					online = steam['response']['players'][0]['personastate']
 					name = steam['response']['players'][0]['personaname']
 					text = ""
 					if(online == 0):
-						text = "Offline"
+						text = "⚪️ Offline"
 					elif(online == 1):
-						text = "Online"
+						text = "🔵 Online"
 					elif(online == 2):
-						text = "Occupato"
+						text = "🔴 Occupato"
 					elif(online == 3):
-						text = "Assente"
+						text = "⚫️ Assente"
 					elif(online == 4):
-						text = "Inattivo"
+						text = "⚫️ Inattivo"
 					elif(online == 5):
-						text = "Disponibile per scambiare"
+						text = "🔵 Disponibile per scambiare"
 					elif(online == 6):
-						text = "Disponibile per giocare"
+						text = "🔵 Disponibile per giocare"
 					sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
 					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
