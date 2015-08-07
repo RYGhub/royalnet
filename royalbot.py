@@ -52,6 +52,6 @@ while(True):
 		#Leggi i dati del messaggio
 		msg = data['result'][0]['message']
 		if(msg['text'] == "/start"):
-			sendMessage("Non c'è bisogno di avviarmi, sono sempre avviato!", msg['chat']['id'])
+			sendMessage("Non c'è bisogno di avviarmi, sono sempre avviato!", msg['from']['id'])
 		if(msg['text'] == "/ahnonlosoio"):
 			sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'])
