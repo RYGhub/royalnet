@@ -73,7 +73,7 @@ while(True):
 		writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 		#Leggi i dati del messaggio
 		msg = data['result'][0]['message']
-		if(msg['text'] == "/ahnonlosoio"):
+		if(msg['text'].startswith("/ahnonlosoio")):
 			sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'])
 		if(msg['text'].startswith("/steam")):
 			if(msg['text'] == "/steam"):
