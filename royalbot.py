@@ -110,7 +110,7 @@ while(True):
 				}
 				#Controlla se la selezione è un username di telegram.
 				if(steamids[msg['text'][7:]]):
-					selezione = steamids[msg['text'][7:]
+					selezione = steamids[msg['text'][7:]]
 				else:
 					selezione = msg['text'][7:]
 				steam = getSteamStatus(selezione)
