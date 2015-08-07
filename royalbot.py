@@ -6,6 +6,9 @@ import time #Modulo per mettere in pausa il programma
 #Token del bot, non diffondere
 token = "120621161:AAHeVgQhlfGx36KT9NyGemauZBPEbe9Xfv0"
 
+#Token di Steam, per /steam
+steamtoken = "042E26965C7AA24487FEBA6205017315"
+
 #Ultimo messaggio mandato dal bot.
 lastmsg = ""
 
@@ -39,7 +42,7 @@ def sendMessage(content, to):
 	#Parametri del messaggio
 	parametri = {
 		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322
-		'text': content #Il messaggio da mandare
+		'text': content, #Il messaggio da mandare
 	}
 	#Antispam: manda il messaggio solo se l'ultimo messaggio è diverso da quello che deve mandare ora.
 	global lastmsg
@@ -50,6 +53,16 @@ def sendMessage(content, to):
 	else:
 		print("Tentativo di spam rilevato.")
 
+def getSteamStatus(steamid):
+	#Parametri della richiesta
+	parametri = {
+		'key': steamtoken,
+		'steamids': steamid,
+	}
+	#Manda la richiesta ai server di Telegram e convertila in un dizionario
+	r = requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/", params=parametri).json()
+	return r
+	
 #Il loop del bot
 while(True):
 	#Ricevi gli ultimi messaggi
@@ -60,7 +73,10 @@ while(True):
 		writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 		#Leggi i dati del messaggio
 		msg = data['result'][0]['message']
-		if(msg['text'] == "/start"):
-			sendMessage("Non c'è bisogno di avviarmi, sono sempre avviato!", msg['from']['id'])
 		if(msg['text'] == "/ahnonlosoio"):
 			sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'])
+		if(msg['text'] == str.startswith("/steam"):
+			if(msg['text'] == "/steam")
+				sendMessage("Specifica lo steamid della persona di cui vuoi specificare lo stato. Tag di telegram coming soon!", msg['chat']['id'])
+			else:
+				getSteamStatus(msg['text'][7:])
