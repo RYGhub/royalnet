@@ -60,7 +60,7 @@ def getSteamStatus(steamid):
 		'steamids': steamid,
 	}
 	#Manda la richiesta ai server di Telegram e convertila in un dizionario
-	r = requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/", params=parametri).json().decode('utf-8')
+	r = requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/", params=parametri).json()
 	return r
 	
 #Il loop del bot
@@ -98,6 +98,6 @@ while(True):
 						text = "Disponibile per scambiare"
 					elif(online == 6):
 						text = "Disponibile per giocare"
-					sendMessage(name + " è " + text + ".", msg['chat']['id'])
+					sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
 					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
