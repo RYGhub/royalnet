@@ -61,6 +61,7 @@ def getSteamStatus(steamid):
 	}
 	#Manda la richiesta ai server di Telegram e convertila in un dizionario
 	r = requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/", params=parametri).json()
+	print(r)
 	return r
 	
 #Il loop del bot
@@ -80,21 +81,22 @@ while(True):
 				sendMessage("Specifica lo steamid della persona di cui vuoi specificare lo stato. Tag di telegram coming soon!", msg['chat']['id'])
 			else:
 				steam = getSteamStatus(msg['text'][7:])
-				online = steam['response']['players'][0]['personastate']
-				name = steam['response']['players'][0]['personaname']
-				text = ""
-				if(online == 0):
-					text = "Offline"
-				elif(online == 1):
-					text = "Online"
-				elif(online == 2):
-					text = "Occupato"
-				elif(online == 3):
-					text = "Assente"
-				elif(online == 4):
-					text = "Inattivo"
-				elif(online == 5):
-					text = "Disponibile per scambiare"
-				elif(online == 6):
-					text = "Disponibile per giocare"
-				sendMessage(name + " e' " + text + ".", msg['chat']['id'])
+				if(steam['response']['players']):
+					online = steam['response']['players'][0]['personastate']
+					name = steam['response']['players'][0]['personaname']
+					text = ""
+					if(online == 0):
+						text = "Offline"
+					elif(online == 1):
+						text = "Online"
+					elif(online == 2):
+						text = "Occupato"
+					elif(online == 3):
+						text = "Assente"
+					elif(online == 4):
+						text = "Inattivo"
+					elif(online == 5):
+						text = "Disponibile per scambiare"
+					elif(online == 6):
+						text = "Disponibile per giocare"
+				sendMessage(name + " è " + text + ".", msg['chat']['id'])
