@@ -121,17 +121,17 @@ while(True):
 					if(online == 0):
 						text = unichr(9898) + " Offline"
 					elif(online == 1):
-						text = unichr(128309) + " Online"
+						text = unichr(55357) + unichr(56629) + " Online"
 					elif(online == 2):
-						text = unichr(128308) + "Occupato"
+						text = unichr(55357) + unichr(56628) + " Occupato"
 					elif(online == 3):
 						text = unichr(9899) + " Assente"
 					elif(online == 4):
 						text = unichr(9899) + " Inattivo"
 					elif(online == 5):
-						text = unichr(128309) + " Disponibile per scambiare"
+						text = unichr(55357) + unichr(56629) + " Disponibile per scambiare"
 					elif(online == 6):
-						text = unichr(128309) + " Disponibile per giocare"
+						text = unichr(55357) + unichr(56629) + " Disponibile per giocare"
 					sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
 					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
