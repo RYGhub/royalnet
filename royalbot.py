@@ -42,6 +42,7 @@ def sendMessage(content, to):
 		'text': content #Il messaggio da mandare
 	}
 	#Antispam: manda il messaggio solo se l'ultimo messaggio è diverso da quello che deve mandare ora.
+	global lastmsg
 	if(lastmsg != content):
 		#Manda il messaggio
 		r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
