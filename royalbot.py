@@ -1,4 +1,4 @@
-﻿# -*- coding: latin-1 -*-
+﻿# -*- coding: utf-8 -*-
 
 import requests #Modulo per fare richieste su HTTP
 import time #Modulo per mettere in pausa il programma
@@ -83,9 +83,9 @@ while(True):
 				sendMessage("⚠️ Non hai specificato uno steamid!", msg['chat']['id'])
 			else:
 				#Controlla se la selezione è un tag di telegram.
-				if(msg['text'][7:] = "@Steffo"):
+				if(msg['text'][7:] == "@Steffo"):
 					selezione = 76561198034314260
-				elif(msg['text'][7:] = "@FrankFrankFrank"):
+				elif(msg['text'][7:] == "@FrankFrankFrank"):
 					selezione = 76561198071099951
 				steam = getSteamStatus(selezione)
 				if(steam['response']['players']):
