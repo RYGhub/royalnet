@@ -99,3 +99,5 @@ while(True):
 					elif(online == 6):
 						text = "Disponibile per giocare"
 					sendMessage(name + " è " + text + ".", msg['chat']['id'])
+				else:
+					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
