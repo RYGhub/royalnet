@@ -75,8 +75,8 @@ while(True):
 		msg = data['result'][0]['message']
 		if(msg['text'] == "/ahnonlosoio"):
 			sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'])
-		if(msg['text'] == str.startswith("/steam"):
-			if(msg['text'] == "/steam")
+		if(msg['text'] == str.startswith("/steam")):
+			if(msg['text'] == "/steam"):
 				sendMessage("Specifica lo steamid della persona di cui vuoi specificare lo stato. Tag di telegram coming soon!", msg['chat']['id'])
 			else:
 				steam = getSteamStatus(msg['text'][7:])
