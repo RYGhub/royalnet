@@ -80,7 +80,7 @@ while(True):
 		if(msg['text'].startswith("/steam")):
 			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage("\u26A0 Non hai specificato uno steamid!", msg['chat']['id'])
+				sendMessage("&#x26A0 Non hai specificato uno steamid!", msg['chat']['id'])
 			else:
 				#Elenco degli steamid e degli username di telegram.
 				steamids = {
@@ -119,19 +119,19 @@ while(True):
 					name = steam['response']['players'][0]['personaname']
 					text = ""
 					if(online == 0):
-						text = "\u26AA Offline"
+						text = "&#x26AA Offline"
 					elif(online == 1):
-						text = "\U1F535 Online"
+						text = "&#x1F535 Online"
 					elif(online == 2):
-						text = "\U1F534 Occupato"
+						text = "&#x1F534 Occupato"
 					elif(online == 3):
-						text = "\u26AB Assente"
+						text = "&#x26AB Assente"
 					elif(online == 4):
-						text = "\u26AB Inattivo"
+						text = "&#x26AB Inattivo"
 					elif(online == 5):
-						text = "\U1F535 Disponibile per scambiare"
+						text = "&#x1F535 Disponibile per scambiare"
 					elif(online == 6):
-						text = "\U1F535 Disponibile per giocare"
+						text = "&#x1F535 Disponibile per giocare"
 					sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
 					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
