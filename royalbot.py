@@ -6,6 +6,9 @@ import time #Modulo per mettere in pausa il programma
 #Token del bot, non diffondere
 token = "120621161:AAHeVgQhlfGx36KT9NyGemauZBPEbe9Xfv0"
 
+#Ultimo messaggio mandato dal bot.
+lastmsg = ""
+
 #Leggi un file e rispondi con il contenuto
 def readFile(name):
 	file = open(name, 'r')
@@ -38,8 +41,13 @@ def sendMessage(content, to):
 		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322
 		'text': content #Il messaggio da mandare
 	}
-	#Manda il messaggio
-	r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
+	#Antispam: manda il messaggio solo se l'ultimo messaggio è diverso da quello che deve mandare ora.
+	if(lastmsg != content):
+		#Manda il messaggio
+		r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
+		lastmsg = content
+	else:
+		print("Tentativo di spam rilevato.")
 
 #Il loop del bot
 while(True):
