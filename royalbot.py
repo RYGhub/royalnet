@@ -99,4 +99,4 @@ while(True):
 						text = "Disponibile per scambiare"
 					elif(online == 6):
 						text = "Disponibile per giocare"
-				sendMessage(name + " è " + text + ".", msg['chat']['id'])
+					sendMessage(name + " è " + text + ".", msg['chat']['id'])
