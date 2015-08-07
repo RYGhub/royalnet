@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+﻿# -*- coding: latin-1 -*-
 
 import requests #Modulo per fare richieste su HTTP
 import time #Modulo per mettere in pausa il programma
@@ -73,13 +73,21 @@ while(True):
 		writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 		#Leggi i dati del messaggio
 		msg = data['result'][0]['message']
+		#Ah, non lo so io!
 		if(msg['text'].startswith("/ahnonlosoio")):
 			sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'])
+		#Controlla lo stato di una persona su Steam.
 		if(msg['text'].startswith("/steam")):
+			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage("Specifica lo steamid della persona di cui vuoi specificare lo stato. Tag di telegram coming soon!", msg['chat']['id'])
+				sendMessage("⚠️ Non hai specificato uno steamid!", msg['chat']['id'])
 			else:
-				steam = getSteamStatus(msg['text'][7:])
+				#Controlla se la selezione è un tag di telegram.
+				if(msg['text'][7:] = "@Steffo"):
+					selezione = 76561198034314260
+				elif(msg['text'][7:] = "@FrankFrankFrank"):
+					selezione = 76561198071099951
+				steam = getSteamStatus(selezione)
 				if(steam['response']['players']):
 					online = steam['response']['players'][0]['personastate']
 					name = steam['response']['players'][0]['personaname']
