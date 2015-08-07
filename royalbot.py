@@ -75,12 +75,12 @@ while(True):
 		msg = data['result'][0]['message']
 		#Ah, non lo so io!
 		if(msg['text'].startswith("/ahnonlosoio")):
-			sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'])
+			sendMessage("Ah non lo so nemmeno io ¯\_(?)_/¯", msg['chat']['id'])
 		#Controlla lo stato di una persona su Steam.
 		if(msg['text'].startswith("/steam")):
 			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage("⚠️ Non hai specificato uno steamid!", msg['chat']['id'])
+				sendMessage("\u26A0 Non hai specificato uno steamid!", msg['chat']['id'])
 			else:
 				#Elenco degli steamid e degli username di telegram.
 				steamids = {
@@ -119,19 +119,19 @@ while(True):
 					name = steam['response']['players'][0]['personaname']
 					text = ""
 					if(online == 0):
-						text = "⚪️ Offline"
+						text = "\u26AA Offline"
 					elif(online == 1):
-						text = "🔵 Online"
+						text = "\U1F535 Online"
 					elif(online == 2):
-						text = "🔴 Occupato"
+						text = "\U1F534 Occupato"
 					elif(online == 3):
-						text = "⚫️ Assente"
+						text = "\u26AB Assente"
 					elif(online == 4):
-						text = "⚫️ Inattivo"
+						text = "\u26AB Inattivo"
 					elif(online == 5):
-						text = "🔵 Disponibile per scambiare"
+						text = "\U1F535 Disponibile per scambiare"
 					elif(online == 6):
-						text = "🔵 Disponibile per giocare"
+						text = "\U1F535 Disponibile per giocare"
 					sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
 					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
