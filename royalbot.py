@@ -61,7 +61,6 @@ def getSteamStatus(steamid):
 	}
 	#Manda la richiesta ai server di Telegram e convertila in un dizionario
 	r = requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/", params=parametri).json()
-	print(r)
 	return r
 	
 #Il loop del bot
