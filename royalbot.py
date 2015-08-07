@@ -80,13 +80,13 @@ while(True):
 		if(msg['text'].startswith("/steam")):
 			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage("&#x26A0 Non hai specificato uno steamid!", msg['chat']['id'])
+				sendMessage("Non hai specificato uno steamid!", msg['chat']['id'])
 			else:
 				#Elenco degli steamid e degli username di telegram.
 				steamids = {
 					'@Steffo': 76561198034314260,
 					'@EvilBaluIsEvilT_T': 76561198071012695,
-					'@Fulz': 76561198035547490,
+					'@Fultz': 76561198035547490,
 					'@IlGattopardo': 76561198111021344,
 					'@FrankFrankFrank': 76561198071099951,
 					'@fedYal': 76561198109189938,
@@ -109,7 +109,7 @@ while(True):
 					'@Boni3099': 76561198131868211,
 				}
 				#Controlla se la selezione è un username di telegram.
-				if(steamids[msg['text'][7:]]):
+				if(msg['text'][7:] in steamids ):
 					selezione = steamids[msg['text'][7:]]
 				else:
 					selezione = msg['text'][7:]
@@ -119,19 +119,19 @@ while(True):
 					name = steam['response']['players'][0]['personaname']
 					text = ""
 					if(online == 0):
-						text = "&#x26AA Offline"
+						text = unichr(9898) + " Offline"
 					elif(online == 1):
-						text = "&#x1F535 Online"
+						text = unichr(128309) + " Online"
 					elif(online == 2):
-						text = "&#x1F534 Occupato"
+						text = unichr(128308) + "Occupato"
 					elif(online == 3):
-						text = "&#x26AB Assente"
+						text = unichr(9899) + " Assente"
 					elif(online == 4):
-						text = "&#x26AB Inattivo"
+						text = unichr(9899) + " Inattivo"
 					elif(online == 5):
-						text = "&#x1F535 Disponibile per scambiare"
+						text = unichr(128309) + " Disponibile per scambiare"
 					elif(online == 6):
-						text = "&#x1F535 Disponibile per giocare"
+						text = unichr(128309) + " Disponibile per giocare"
 					sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
 					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
