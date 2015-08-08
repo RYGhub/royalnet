@@ -38,7 +38,7 @@ def getUpdates():
 	return r
 	
 #Manda un messaggio
-def sendMessage(content, to):
+def sendMessage(content, to, da):
 	#Parametri del messaggio
 	parametri = {
 		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322
@@ -51,7 +51,10 @@ def sendMessage(content, to):
 		r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
 		lastmsg = content
 	else:
-		print("Tentativo di spam rilevato.")
+		#Manda il messaggio in chat privata
+		parametri['chat_id'] = da
+		#Manda il messaggio
+		r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
 
 def getSteamStatus(steamid):
 	#Parametri della richiesta
@@ -75,12 +78,12 @@ while(True):
 		msg = data['result'][0]['message']
 		#Ah, non lo so io!
 		if(msg['text'].startswith("/ahnonlosoio")):
-			sendMessage("Ah non lo so nemmeno io ¯\_(?)_/¯", msg['chat']['id'])
+			sendMessage("Ah non lo so nemmeno io ¯\_(?)_/¯", msg['chat']['id'], msg['from']['id'])
 		#Controlla lo stato di una persona su Steam.
 		if(msg['text'].startswith("/steam")):
 			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage("Non hai specificato uno steamid!", msg['chat']['id'])
+				sendMessage("Non hai specificato uno steamid!", msg['chat']['id'], msg['from']['id'])
 			else:
 				#Elenco degli steamid e degli username di telegram.
 				steamids = {
@@ -117,12 +120,14 @@ while(True):
 				if(steam['response']['players']):
 					online = steam['response']['players'][0]['personastate']
 					name = steam['response']['players'][0]['personaname']
+					#E' in gioco? Se non c'è nessuna informazione sul gioco, lascia perdere
 					try:
 						steam['response']['players'][0]['gameextrainfo']
 					except KeyError:
 						ingame = None
 					else:
 						ingame = steam['response']['players'][0]['gameextrainfo']
+					#Stati di Steam
 					text = ""
 					if(online == 0):
 						text = unichr(9898) + " Offline"
@@ -139,8 +144,8 @@ while(True):
 					elif(online == 6):
 						text = unichr(55357) + unichr(56629) + " Disponibile per giocare"
 					if ingame is not None:
-						sendMessage(name + " sta giocando a " + unichr(55357) + unichr(56628) + " " + ingame + ".", msg['chat']['id'])
+						sendMessage(name + " sta giocando a " + unichr(55357) + unichr(56628) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
 					else:
-						sendMessage(name + " e' " + text + ".", msg['chat']['id'])
+						sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 				else:
-					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
+					sendMessage("Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
