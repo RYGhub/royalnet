@@ -119,6 +119,8 @@ while(True):
 					name = steam['response']['players'][0]['personaname']
 					if(steam['response']['players'][0]['gameextrainfo']):
 						ingame = steam['response']['players'][0]['gameextrainfo']
+					else:
+						ingame = None
 					text = ""
 					if(online == 0):
 						text = unichr(9898) + " Offline"
