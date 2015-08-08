@@ -78,12 +78,12 @@ while(True):
 		msg = data['result'][0]['message']
 		#Ah, non lo so io!
 		if(msg['text'].startswith("/ahnonlosoio")):
-			sendMessage("Ah non lo so nemmeno io ¯\_(?)_/¯", msg['chat']['id'], msg['from']['id'])
+			sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'], msg['from']['id'])
 		#Controlla lo stato di una persona su Steam.
 		if(msg['text'].startswith("/steam")):
 			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage("Non hai specificato uno steamid!", msg['chat']['id'], msg['from']['id'])
+				sendMessage("Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
 			else:
 				#Elenco degli steamid e degli username di telegram.
 				steamids = {
