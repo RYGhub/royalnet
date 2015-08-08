@@ -117,6 +117,8 @@ while(True):
 				if(steam['response']['players']):
 					online = steam['response']['players'][0]['personastate']
 					name = steam['response']['players'][0]['personaname']
+					if(steam['response']['players'][0]['gameextrainfo']):
+						ingame = steam['response']['players'][0]['gameextrainfo']
 					text = ""
 					if(online == 0):
 						text = unichr(9898) + " Offline"
@@ -132,6 +134,9 @@ while(True):
 						text = unichr(55357) + unichr(56629) + " Disponibile per scambiare"
 					elif(online == 6):
 						text = unichr(55357) + unichr(56629) + " Disponibile per giocare"
-					sendMessage(name + " e' " + text + ".", msg['chat']['id'])
+					if ingame:
+						sendMessage(name + " sta giocando a " + ingame + ".", msg['chat']['id'])
+					else:
+						sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
 					sendMessage("Lo steamid non esiste!", msg['chat']['id'])
