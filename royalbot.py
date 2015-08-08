@@ -135,7 +135,7 @@ while(True):
 					elif(online == 6):
 						text = unichr(55357) + unichr(56629) + " Disponibile per giocare"
 					if ingame:
-						sendMessage(name + " sta giocando a " + unichr(55357) + unichr(56628) + ingame + ".", msg['chat']['id'])
+						sendMessage(name + " sta giocando a " + unichr(55357) + unichr(56628) + " " + ingame + ".", msg['chat']['id'])
 					else:
 						sendMessage(name + " e' " + text + ".", msg['chat']['id'])
 				else:
