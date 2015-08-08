@@ -118,7 +118,7 @@ while(True):
 					online = steam['response']['players'][0]['personastate']
 					name = steam['response']['players'][0]['personaname']
 					try:
-						steam['response']['players'][0]['gameextrainfo'])
+						steam['response']['players'][0]['gameextrainfo']
 					except KeyError:
 						ingame = None
 					else:
