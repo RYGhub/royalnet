@@ -3,12 +3,6 @@
 import requests #Modulo per fare richieste su HTTP
 import time #Modulo per mettere in pausa il programma
 
-#Token del bot, non diffondere
-token = "120621161:AAHeVgQhlfGx36KT9NyGemauZBPEbe9Xfv0"
-
-#Token di Steam, per /steam
-steamtoken = "042E26965C7AA24487FEBA6205017315"
-
 #Ultimo messaggio mandato dal bot.
 lastmsg = ""
 
@@ -152,3 +146,5 @@ while(True):
 						sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 				else:
 					sendMessage(unichr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
+		#Controlla lo stato di una persona su Osu, because why not
+		if
