@@ -110,7 +110,7 @@ while(True):
 		if(msg['text'].startswith("/steam")):
 			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage("Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
+				sendMessage(unichr(9888) + " Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
 			else:
 				#Elenco degli steamid e degli username di telegram.
 				global steamids
@@ -151,4 +151,4 @@ while(True):
 					else:
 						sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 				else:
-					sendMessage("Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
+					sendMessage(unichr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
