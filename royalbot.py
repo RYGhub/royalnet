@@ -88,8 +88,19 @@ def getSteamStatus(steamid):
 		'key': steamtoken,
 		'steamids': steamid,
 	}
-	#Manda la richiesta ai server di Telegram e convertila in un dizionario
+	#Manda la richiesta ai server di Steam e convertila in un dizionario
 	r = requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/", params=parametri).json()
+	return r
+	
+def getOsuStatus(osuid, mode):
+	#Parametri della richiesta
+	parametri = {
+		'k': osutoken,
+		'u': osuid,
+		'm': mode,
+	}
+	#Manda la richiesta ai server di Osu e convertila in un dizionario
+	r = requests.get("https://osu.ppy.sh/api/get_user", params=parametri).json()
 	return r
 
 #Caricamento delle API Keys
@@ -154,3 +165,24 @@ while(True):
 						sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 				else:
 					sendMessage(unichr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
+		#Trova i punteggi di una persona su osu!
+		if(msg['text'].startswith("/osu")):
+			if(msg['text'] == "/osu"):
+				sendMessage(unichr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
+			else:
+				#Persona selezionata
+				selezione = msg['text'][5:]
+				#Ricevi i dati di Osu
+				osu = getOsuStatus(selezione, 0)
+				taiko = getOsuStatus(selezione, 1)
+				ctb = getOsuStatus(selezione, 2)
+				osumania = getOsuStatus(selezione, 3)
+				#Trova l'username della persona.
+				name = osu[0]['username']
+				#Trova i pp in ogni modalità
+				osupp = math.floor(osu[0]['pp_raw'])
+				taikopp = math.floor(taiko[0]['pp_raw'])
+				ctbpp = math.floor(ctb[0]['pp_raw'])
+				osumaniapp = math.floor(osumania[0]['pp_raw'])
+				#Manda il messaggio
+				sendMessage(name + " ha:" + unichr(10) + osupp + "pp su Osu!" + unichr(10) + taikopp + "pp su Taiko" + unichr(10) + ctbpp + "pp su Catch the Beat" + unichr(10) + osumaniapp + "pp su Osu!mania")
