@@ -12,6 +12,33 @@ steamtoken = "042E26965C7AA24487FEBA6205017315"
 #Ultimo messaggio mandato dal bot.
 lastmsg = ""
 
+#Elenco degli steamid e degli username di telegram.
+steamids =  {
+	'@Steffo': 76561198034314260,
+	'@EvilBaluIsEvilT_T': 76561198071012695,
+	'@Fultz': 76561198035547490,
+	'@IlGattopardo': 76561198111021344,
+	'@FrankFrankFrank': 76561198071099951,
+	'@fedYal': 76561198109189938,
+	'@ActerRYG': 76561198146704979,
+	'@YouTouchMyTralala': 76561198121094516,
+	'@Heisenberg_TheMadDoctor': 76561198080377213,
+	'@SuperMattemb': 76561198115852550,
+	'@Peraemela99': 76561198161867082,
+	'@thevagginadestroyer': 76561198128738388,
+	'Fillo': 76561198103292029,
+	'@Cosimo03': 76561198062778224,
+	'Alby': 76561198071383448,
+	'@Voltaggio': 76561198147601821,
+	'Alle2002': 76561198052996311,
+	'Jummi': 76561198169975999,
+	'@Tauei': 76561198104305298,
+	'@Saitorlock': 76561198089120441,
+	'@iEmax': 76561198149695151,
+	'@Alleanderl': 76561198154175301,
+	'@Boni3099': 76561198131868211,
+}
+
 #Leggi un file e rispondi con il contenuto
 def readFile(name):
 	file = open(name, 'r')
@@ -86,31 +113,7 @@ while(True):
 				sendMessage("Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
 			else:
 				#Elenco degli steamid e degli username di telegram.
-				steamids = {
-					'@Steffo': 76561198034314260,
-					'@EvilBaluIsEvilT_T': 76561198071012695,
-					'@Fultz': 76561198035547490,
-					'@IlGattopardo': 76561198111021344,
-					'@FrankFrankFrank': 76561198071099951,
-					'@fedYal': 76561198109189938,
-					'@ActerRYG': 76561198146704979,
-					'@YouTouchMyTralala': 76561198121094516,
-					'@Heisenberg_TheMadDoctor': 76561198080377213,
-					'@SuperMattemb': 76561198115852550,
-					'@Peraemela99': 76561198161867082,
-					'@thevagginadestroyer': 76561198128738388,
-					'Fillo': 76561198103292029,
-					'@Cosimo03': 76561198062778224,
-					'Alby': 76561198071383448,
-					'@Voltaggio': 76561198147601821,
-					'Alle2002': 76561198052996311,
-					'Jummi': 76561198169975999,
-					'@Tauei': 76561198104305298,
-					'@Saitorlock': 76561198089120441,
-					'@iEmax': 76561198149695151,
-					'@Alleanderl': 76561198154175301,
-					'@Boni3099': 76561198131868211,
-				}
+				global steamids
 				#Controlla se la selezione è un username di telegram.
 				if(msg['text'][7:] in steamids ):
 					selezione = steamids[msg['text'][7:]]
