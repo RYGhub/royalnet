@@ -93,9 +93,9 @@ def getSteamStatus(steamid):
 	return r
 
 #Caricamento delle API Keys
-token = readFile(telegramapi.txt)
-steamtoken = readFile(steamapi.txt)
-osutoken = readFile(osuapi.txt)
+token = readFile('telegramapi.txt')
+steamtoken = readFile('steamapi.txt')
+osutoken = readFile('osuapi.txt')
 
 #Il loop del bot
 while(True):
@@ -116,8 +116,6 @@ while(True):
 			if(msg['text'] == "/steam"):
 				sendMessage(unichr(9888) + " Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
 			else:
-				#Elenco degli steamid e degli username di telegram.
-				global steamids
 				#Controlla se la selezione è un username di telegram.
 				if(msg['text'][7:] in steamids ):
 					selezione = steamids[msg['text'][7:]]
