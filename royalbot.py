@@ -6,6 +6,11 @@ import time #Modulo per mettere in pausa il programma
 #Ultimo messaggio mandato dal bot.
 lastmsg = ""
 
+#Inizializzazione keys
+token = ""
+steamtoken = ""
+osutoken = ""
+
 #Elenco degli steamid e degli username di telegram.
 steamids =  {
 	'@Steffo': 76561198034314260,
@@ -86,7 +91,12 @@ def getSteamStatus(steamid):
 	#Manda la richiesta ai server di Telegram e convertila in un dizionario
 	r = requests.get("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/", params=parametri).json()
 	return r
-	
+
+#Caricamento delle API Keys
+token = readFile(telegramapi.txt)
+steamtoken = readFile(steamapi.txt)
+osutoken = readFile(osuapi.txt)
+
 #Il loop del bot
 while(True):
 	#Ricevi gli ultimi messaggi
@@ -146,5 +156,3 @@ while(True):
 						sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 				else:
 					sendMessage(unichr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
-		#Controlla lo stato di una persona su Osu, because why not
-		if
