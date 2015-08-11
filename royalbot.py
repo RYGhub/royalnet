@@ -81,11 +81,7 @@ def sendMessage(content, to, da):
 		parametri['chat_id'] = da
 		#Manda il messaggio
 		r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
-
-#Royalbot sta scrivendo...
-def setTypeStatus():
-	
-
+		
 def getSteamStatus(steamid):
 	#Parametri della richiesta
 	parametri = {
