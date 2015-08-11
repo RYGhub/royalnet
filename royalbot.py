@@ -184,9 +184,9 @@ while(True):
 				#Trova l'username della persona.
 				name = osu[0]['username']
 				#Trova i pp in ogni modalità
-				osupp = math.floor(osu[0]['pp_raw'])
-				taikopp = math.floor(taiko[0]['pp_raw'])
-				ctbpp = math.floor(ctb[0]['pp_raw'])
-				osumaniapp = math.floor(osumania[0]['pp_raw'])
+				osupp = math.floor(float(osu[0]['pp_raw']))
+				taikopp = math.floor(float(taiko[0]['pp_raw']))
+				ctbpp = math.floor(float(ctb[0]['pp_raw']))
+				osumaniapp = math.floor(float(osumania[0]['pp_raw']))
 				#Manda il messaggio
 				sendMessage(name + " ha:" + unichr(10) + osupp + "pp su Osu!" + unichr(10) + taikopp + "pp su Taiko" + unichr(10) + ctbpp + "pp su Catch the Beat" + unichr(10) + osumaniapp + "pp su Osu!mania")
