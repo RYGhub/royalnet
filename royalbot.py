@@ -137,6 +137,8 @@ while(True):
 			if(msg['text'] == "/steam"):
 				sendMessage(unichr(9888) + " Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
 			else:
+				#Royalbot sta scrivendo...
+				setTyping('typing', msg['chat']['id'])
 				#Controlla se la selezione è un username di telegram.
 				if(msg['text'][7:] in steamids ):
 					selezione = steamids[msg['text'][7:]]
