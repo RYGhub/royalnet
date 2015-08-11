@@ -2,6 +2,7 @@
 
 import requests #Modulo per fare richieste su HTTP
 import time #Modulo per mettere in pausa il programma
+import math #Matematica. u_u
 
 #Ultimo messaggio mandato dal bot.
 lastmsg = ""
@@ -100,7 +101,10 @@ def getOsuStatus(osuid, mode):
 		'm': mode,
 	}
 	#Manda la richiesta ai server di Osu e convertila in un dizionario
+	print("Mando richiesta...")
 	r = requests.get("https://osu.ppy.sh/api/get_user", params=parametri).json()
+	print("Ricevuta!")
+	print(r)
 	return r
 
 #Caricamento delle API Keys
