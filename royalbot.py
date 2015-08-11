@@ -189,4 +189,4 @@ while(True):
 				ctbpp = math.floor(float(ctb[0]['pp_raw']))
 				osumaniapp = math.floor(float(osumania[0]['pp_raw']))
 				#Manda il messaggio
-				sendMessage(name + " ha:" + unichr(10) + str(osupp) + "pp su Osu!" + unichr(10) + str(taikopp) + "pp su Taiko" + unichr(10) + str(ctbpp) + "pp su Catch the Beat" + unichr(10) + str(osumaniapp) + "pp su Osu!mania")
+				sendMessage(name + " ha:" + unichr(10) + str(osupp) + "pp su Osu!" + unichr(10) + str(taikopp) + "pp su Taiko" + unichr(10) + str(ctbpp) + "pp su Catch the Beat" + unichr(10) + str(osumaniapp) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
