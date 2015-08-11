@@ -100,10 +100,7 @@ def getOsuStatus(osuid, mode):
 		'm': mode,
 	}
 	#Manda la richiesta ai server di Osu e convertila in un dizionario
-	print("Mando richiesta...")
 	r = requests.get("https://osu.ppy.sh/api/get_user", params=parametri).json()
-	print("Ricevuta!")
-	print(r)
 	return r
 
 #Caricamento delle API Keys
