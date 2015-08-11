@@ -182,14 +182,16 @@ while(True):
 			if(msg['text'] == "/osu"):
 				sendMessage(unichr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
 			else:
-				#Royalbot sta scrivendo...
-				setTyping('typing', msg['chat']['id'])
 				#Persona selezionata
 				selezione = msg['text'][5:]
-				#Ricevi i dati di Osu
+				#Ricevi i dati di Osu e visualizza lo stato nella chat.
+				setTyping('typing', msg['chat']['id'])
 				osu = getOsuStatus(selezione, 0)
+				setTyping('typing', msg['chat']['id'])
 				taiko = getOsuStatus(selezione, 1)
+				setTyping('typing', msg['chat']['id'])
 				ctb = getOsuStatus(selezione, 2)
+				setTyping('typing', msg['chat']['id'])
 				osumania = getOsuStatus(selezione, 3)
 				#Trova l'username della persona.
 				name = osu[0]['username']
