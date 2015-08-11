@@ -82,6 +82,16 @@ def sendMessage(content, to, da):
 		#Manda il messaggio
 		r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
 		
+#RoyalBot sta scrivendo...
+def setTyping(type, to):
+	#Parametri del messaggio
+	parametri = {
+		'chat_id': to,
+		'action': type,
+	}
+	#Manda la richiesta ai server di Telegram.
+	requests.get("https://api.telegram.org/bot" + token + "/sendChatAction", params=parametri)
+
 def getSteamStatus(steamid):
 	#Parametri della richiesta
 	parametri = {
@@ -170,6 +180,8 @@ while(True):
 			if(msg['text'] == "/osu"):
 				sendMessage(unichr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
 			else:
+				#Royalbot sta scrivendo...
+				setTyping('typing', msg['chat']['id'])
 				#Persona selezionata
 				selezione = msg['text'][5:]
 				#Ricevi i dati di Osu
