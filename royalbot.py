@@ -2,7 +2,6 @@
 
 import requests #Modulo per fare richieste su HTTP
 import time #Modulo per mettere in pausa il programma
-import math #Matematica. u_u
 
 #Ultimo messaggio mandato dal bot.
 lastmsg = ""
@@ -82,6 +81,10 @@ def sendMessage(content, to, da):
 		parametri['chat_id'] = da
 		#Manda il messaggio
 		r = requests.get("https://api.telegram.org/bot" + token + "/sendMessage", params=parametri)
+
+#Royalbot sta scrivendo...
+def setTypeStatus():
+	
 
 def getSteamStatus(steamid):
 	#Parametri della richiesta
@@ -184,9 +187,9 @@ while(True):
 				#Trova l'username della persona.
 				name = osu[0]['username']
 				#Trova i pp in ogni modalità
-				osupp = math.floor(float(osu[0]['pp_raw']))
-				taikopp = math.floor(float(taiko[0]['pp_raw']))
-				ctbpp = math.floor(float(ctb[0]['pp_raw']))
-				osumaniapp = math.floor(float(osumania[0]['pp_raw']))
+				osupp = float(osu[0]['pp_raw'])
+				taikopp = float(taiko[0]['pp_raw'])
+				ctbpp = float(ctb[0]['pp_raw'])
+				osumaniapp = float(osumania[0]['pp_raw'])
 				#Manda il messaggio
-				sendMessage(name + " ha:" + unichr(10) + str(osupp) + "pp su Osu!" + unichr(10) + str(taikopp) + "pp su Taiko" + unichr(10) + str(ctbpp) + "pp su Catch the Beat" + unichr(10) + str(osumaniapp) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
+				sendMessage(name + " ha:" + unichr(10) + str(round(osupp, 0)) + "pp su Osu!" + unichr(10) + str(round(taikopp)) + "pp su Taiko" + unichr(10) + str(round(ctbpp)) + "pp su Catch the Beat" + unichr(10) + str(round(osumaniapp)) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
