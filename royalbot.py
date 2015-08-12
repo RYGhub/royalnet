@@ -21,7 +21,8 @@ steamids =  {
 	'@fedYal': 76561198109189938,
 	'@ActerRYG': 76561198146704979,
 	'@YouTouchMyTralala': 76561198121094516,
-	'@Heisenberg_TheMadDoctor': 76561198080377213,
+	'@HeisenDex
+_TheMadDoctor': 76561198080377213,
 	'@SuperMattemb': 76561198115852550,
 	'@Peraemela99': 76561198161867082,
 	'@thevagginadestroyer': 76561198128738388,
