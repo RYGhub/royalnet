@@ -143,7 +143,7 @@ while(True):
 	#Ricevi gli ultimi messaggi
 	data = getUpdates()
 	#Se c'e' un nuovo messaggio
-	if(data['ok'] and data['result']):
+	if(data['ok'] and data['result'][0]):
 		#Aggiorna l'update ID sul file
 		writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 		#Leggi i dati del messaggio
