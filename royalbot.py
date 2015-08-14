@@ -166,7 +166,7 @@ while(True):
 					elif(online == 3):
 						text = unichr(9899) + " Assente"
 					elif(online == 4):
-						text = unichr(9899) + " Inattivo"
+						text = unichr(9899) + " Addormentato"
 					elif(online == 5):
 						text = unichr(55357) + unichr(56629) + " Disponibile per scambiare"
 					elif(online == 6):
