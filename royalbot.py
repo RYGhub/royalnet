@@ -13,29 +13,29 @@ osutoken = ""
 
 #Elenco degli steamid e degli username di telegram.
 steamids =  {
-	'@Steffo': 76561198034314260,
-	'@EvilBaluIsEvilT_T': 76561198071012695,
-	'@Fultz': 76561198035547490,
-	'@IlGattopardo': 76561198111021344,
-	'@FrankFrankFrank': 76561198071099951,
-	'@fedYal': 76561198109189938,
-	'@ActerRYG': 76561198146704979,
-	'@YouTouchMyTralala': 76561198121094516,
-	'@HeisenDex_TheMadDoctor': 76561198080377213,
-	'@SuperMattemb': 76561198115852550,
-	'@Peraemela99': 76561198161867082,
+	'@steffo': 76561198034314260,
+	'@evilbaluisevilt_t': 76561198071012695,
+	'@fultz': 76561198035547490,
+	'@ilgattopardo': 76561198111021344,
+	'@frankfrankfrank': 76561198071099951,
+	'@fedyal': 76561198109189938,
+	'@acterryg': 76561198146704979,
+	'@youtouchmytralala': 76561198121094516,
+	'@heisendex_themaddoctor': 76561198080377213,
+	'@supermattemb': 76561198115852550,
+	'@peraemela99': 76561198161867082,
 	'@thevagginadestroyer': 76561198128738388,
-	'Fillo': 76561198103292029,
-	'@Cosimo03': 76561198062778224,
-	'Alby': 76561198071383448,
-	'@Voltaggio': 76561198147601821,
-	'Alle2002': 76561198052996311,
-	'Jummi': 76561198169975999,
-	'@Tauei': 76561198104305298,
-	'@Saitorlock': 76561198089120441,
-	'@iEmax': 76561198149695151,
-	'@Alleanderl': 76561198154175301,
-	'@Boni3099': 76561198131868211,
+	'fillo': 76561198103292029,
+	'@cosimo03': 76561198062778224,
+	'alby': 76561198071383448,
+	'@voltaggio': 76561198147601821,
+	'alle2002': 76561198052996311,
+	'jummi': 76561198169975999,
+	'@tauei': 76561198104305298,
+	'@saitorlock': 76561198089120441,
+	'@iemax': 76561198149695151,
+	'@alleanderl': 76561198154175301,
+	'@boni3099': 76561198131868211,
 }
 
 #Leggi un file e rispondi con il contenuto
@@ -140,8 +140,8 @@ while(True):
 				#Royalbot sta scrivendo...
 				setTyping('typing', msg['chat']['id'])
 				#Controlla se la selezione è un username di telegram.
-				if(msg['text'][7:] in steamids ):
-					selezione = steamids[msg['text'][7:]]
+				if(msg['text'][7:].lower() in steamids):
+					selezione = steamids[msg['text'][7:].lower()]
 				else:
 					selezione = msg['text'][7:]
 				steam = getSteamStatus(selezione)
