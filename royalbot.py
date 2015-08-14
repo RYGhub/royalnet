@@ -38,6 +38,26 @@ steamids =  {
 	'@boni3099': 76561198131868211,
 }
 
+#Elenco degli steamid e degli username di telegram.
+osuids =  {
+	'@steffo': 'SteffoRYG',
+	'@evilbaluisevilt_t': 'NemesisRYG',
+	'@fultz': 'ftz99',
+	'@ilgattopardo': 'gattopardo',
+	'@frankfrankfrank': 'FrankezRYG',
+	'@fedyal': 'fedececco',
+	'@acterryg': 'Acter1',
+	'@youtouchmytralala': 'MaxSensei',
+	'@heisendex_themaddoctor': 'ImHeisenberg',
+	'@thevagginadestroyer': 'barboll',
+	'@cosimo03': 'Cosimo03',
+	'alby': 'Alby1',
+	'@voltaggio': 'voltaggio',
+	'@tauei': 'tauei',
+	'@saitorlock': 'saitorlock',
+	'@boni3099': 'boni3099',
+}
+
 #Leggi un file e rispondi con il contenuto
 def readFile(name):
 	file = open(name, 'r')
@@ -182,8 +202,11 @@ while(True):
 			if(msg['text'] == "/osu"):
 				sendMessage(unichr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
 			else:
-				#Persona selezionata
-				selezione = msg['text'][5:]
+				#Controlla se la selezione è un username di telegram.
+				if(msg['text'][5:].lower() in osuids):
+					selezione = osuids[msg['text'][5:].lower()]
+				else:
+					selezione = msg['text'][5:]
 				#Ricevi i dati di Osu e visualizza lo stato nella chat.
 				setTyping('typing', msg['chat']['id'])
 				osu = getOsuStatus(selezione, 0)
