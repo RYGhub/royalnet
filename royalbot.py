@@ -155,7 +155,7 @@ while(True):
 		if(msg['text'].startswith("/steam")):
 			#Se non viene specificato un
 			if(msg['text'] == "/steam"):
-				sendMessage(unichr(9888) + " Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
+				sendMessage(chr(9888) + " Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
 			else:
 				#Royalbot sta scrivendo...
 				setTyping('typing', msg['chat']['id'])
@@ -178,29 +178,29 @@ while(True):
 					#Stati di Steam
 					text = ""
 					if(online == 0):
-						text = unichr(9898) + " Offline"
+						text = chr(9898) + " Offline"
 					elif(online == 1):
-						text = unichr(55357) + unichr(56629) + " Online"
+						text = chr(55357) + chr(56629) + " Online"
 					elif(online == 2):
-						text = unichr(55357) + unichr(56628) + " Occupato"
+						text = chr(55357) + chr(56628) + " Occupato"
 					elif(online == 3):
-						text = unichr(9899) + " Assente"
+						text = chr(9899) + " Assente"
 					elif(online == 4):
-						text = unichr(9899) + " Addormentato"
+						text = chr(9899) + " Addormentato"
 					elif(online == 5):
-						text = unichr(55357) + unichr(56629) + " Disponibile per scambiare"
+						text = chr(55357) + chr(56629) + " Disponibile per scambiare"
 					elif(online == 6):
-						text = unichr(55357) + unichr(56629) + " Disponibile per giocare"
+						text = chr(55357) + chr(56629) + " Disponibile per giocare"
 					if ingame is not None:
-						sendMessage(name + " sta giocando a " + unichr(55357) + unichr(56628) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
+						sendMessage(name + " sta giocando a " + chr(55357) + chr(56628) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
 					else:
 						sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 				else:
-					sendMessage(unichr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
+					sendMessage(chr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
 		#Trova i punteggi di una persona su osu!
 		if(msg['text'].startswith("/osu")):
 			if(msg['text'] == "/osu"):
-				sendMessage(unichr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
+				sendMessage(chr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
 			else:
 				#Controlla se la selezione è un username di telegram.
 				if(msg['text'][5:].lower() in osuids):
@@ -224,4 +224,4 @@ while(True):
 				ctbpp = float(ctb[0]['pp_raw'])
 				osumaniapp = float(osumania[0]['pp_raw'])
 				#Manda il messaggio
-				sendMessage(name + " ha:" + unichr(10) + str(int(osupp)) + "pp su Osu!" + unichr(10) + str(int(taikopp)) + "pp su Taiko" + unichr(10) + str(int(ctbpp)) + "pp su Catch the Beat" + unichr(10) + str(int(osumaniapp)) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
+				sendMessage(name + " ha:" + chr(10) + str(int(osupp)) + "pp su Osu!" + chr(10) + str(int(taikopp)) + "pp su Taiko" + chr(10) + str(int(ctbpp)) + "pp su Catch the Beat" + chr(10) + str(int(osumaniapp)) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
