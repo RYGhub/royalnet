@@ -1,2 +1,4 @@
+@echo off
+:restart
 royalbot.py
-pause
+goto :restart
