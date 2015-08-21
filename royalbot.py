@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import requests #Modulo per fare richieste su HTTP
 import time #Modulo per mettere in pausa il programma
