@@ -144,7 +144,7 @@ while(True):
 	data = getUpdates()
 	#Se c'e' un nuovo messaggio
 	if(data['ok']):
-		if(data['result'][0] is not None):
+		if(data['result'] != []):
 			#Aggiorna l'update ID sul file
 			writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 			#Leggi i dati del messaggio
