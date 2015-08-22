@@ -21,7 +21,7 @@ steamids =  {
 	'@fedyal': 76561198109189938,
 	'@acterryg': 76561198146704979,
 	'@youtouchmytralala': 76561198121094516,
-	'@heisendex_themaddoctor': 76561198080377213,
+	'@heisendoc': 76561198080377213,
 	'@supermattemb': 76561198115852550,
 	'@peraemela99': 76561198161867082,
 	'@thevagginadestroyer': 76561198128738388,
