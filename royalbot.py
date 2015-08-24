@@ -56,6 +56,7 @@ osuids =  {
 	'@tauei': 'tauei',
 	'@saitorlock': 'saitorlock',
 	'@boni3099': 'boni3099',
+	'@mrdima98': 'MRdima98'
 }
 
 #Leggi un file e rispondi con il contenuto
