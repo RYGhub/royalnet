@@ -48,7 +48,7 @@ osuids =  {
 	'@fedyal': 'fedececco',
 	'@acterryg': 'Acter1',
 	'@youtouchmytralala': 'MaxSensei',
-	'@heisendex_themaddoctor': 'ImHeisenberg',
+	'@heisendoc': 'ImHeisenberg',
 	'@thevagginadestroyer': 'barboll',
 	'@cosimo03': 'Cosimo03',
 	'alby': 'Alby1',
