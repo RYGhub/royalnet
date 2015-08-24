@@ -153,6 +153,8 @@ while(True):
 			#Ah, non lo so io!
 			if(msg['text'].startswith("/ahnonlosoio")):
 				sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'], msg['from']['id'])
+			if(msg['text'].startswith("/ehoh")):
+				sendMessage("Eh oh cose che capitano ¯\_(ツ)_/¯", msg['chat']['id'], msg['from']['id'])
 			#Controlla lo stato di una persona su Steam.
 			if(msg['text'].startswith("/steam")):
 				#Se non viene specificato un
