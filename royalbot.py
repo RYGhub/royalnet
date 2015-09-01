@@ -190,19 +190,19 @@ while(True):
 							if(online == 0):
 								text = chr(9898) + " Offline"
 							elif(online == 1):
-								text = chr(111986) + " Online"
+								text = chr(128309) + " Online"
 							elif(online == 2):
-								text = chr(111985) + " Occupato"
+								text = chr(128308) + " Occupato"
 							elif(online == 3):
 								text = chr(9899) + " Assente"
 							elif(online == 4):
 								text = chr(9899) + " Addormentato"
 							elif(online == 5):
-								text = chr(111986) + " Disponibile per scambiare"
+								text = chr(128309) + " Disponibile per scambiare"
 							elif(online == 6):
-								text = chr(111986) + " Disponibile per giocare"
+								text = chr(128309) + " Disponibile per giocare"
 							if ingame is not None:
-								sendMessage(name + " sta giocando a " + chr(55357) + chr(56628) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
+								sendMessage(name + " sta giocando a " + chr(128308) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
 							else:
 								sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 						else:
