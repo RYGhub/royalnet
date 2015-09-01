@@ -91,6 +91,7 @@ def sendMessage(content, to, da):
 		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322
 		'text': content, #Il messaggio da mandare
 	}
+	print(content);
 	#Antispam: manda il messaggio solo se l'ultimo messaggio è diverso da quello che deve mandare ora.
 	global lastmsg
 	if(lastmsg != content):
