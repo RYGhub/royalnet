@@ -148,84 +148,90 @@ while(True):
 		if(data['result'] != []):
 			#Aggiorna l'update ID sul file
 			writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
-			#Leggi i dati del messaggio
-			msg = data['result'][0]['message']
-			#Ah, non lo so io!
-			if(msg['text'].startswith("/ahnonlosoio")):
-				sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'], msg['from']['id'])
-			if(msg['text'].startswith("/ehoh")):
-				sendMessage("Eh oh cose che capitano ¯\_(ツ)_/¯", msg['chat']['id'], msg['from']['id'])
-			#Controlla lo stato di una persona su Steam.
-			if(msg['text'].startswith("/steam")):
-				#Se non viene specificato un
-				if(msg['text'] == "/steam"):
-					sendMessage(chr(9888) + " Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
-				else:
-					#Royalbot sta scrivendo...
-					setTyping('typing', msg['chat']['id'])
-					#Controlla se la selezione è un username di telegram.
-					if(msg['text'][7:].lower() in steamids):
-						selezione = steamids[msg['text'][7:].lower()]
+			#...esiste il messaggio? telegram wtf
+			try:
+				data['result'][0]['message']['text']
+			except KeyError:
+				print(data['result'][0]['message'])
+			else:
+				#Leggi i dati del messaggio
+				msg = data['result'][0]['message']
+				#Ah, non lo so io!
+				if(msg['text'].startswith("/ahnonlosoio")):
+					sendMessage("Ah non lo so nemmeno io ¯\_(ツ)_/¯", msg['chat']['id'], msg['from']['id'])
+				if(msg['text'].startswith("/ehoh")):
+					sendMessage("Eh oh cose che capitano ¯\_(ツ)_/¯", msg['chat']['id'], msg['from']['id'])
+				#Controlla lo stato di una persona su Steam.
+				if(msg['text'].startswith("/steam")):
+					#Se non viene specificato un
+					if(msg['text'] == "/steam"):
+						sendMessage(chr(9888) + " Non hai specificato uno SteamID o un username!", msg['chat']['id'], msg['from']['id'])
 					else:
-						selezione = msg['text'][7:]
-					steam = getSteamStatus(selezione)
-					if(steam['response']['players']):
-						online = steam['response']['players'][0]['personastate']
-						name = steam['response']['players'][0]['personaname']
-						#E' in gioco? Se non c'è nessuna informazione sul gioco, lascia perdere
-						try:
-							steam['response']['players'][0]['gameextrainfo']
-						except KeyError:
-							ingame = None
+						#Royalbot sta scrivendo...
+						setTyping('typing', msg['chat']['id'])
+						#Controlla se la selezione è un username di telegram.
+						if(msg['text'][7:].lower() in steamids):
+							selezione = steamids[msg['text'][7:].lower()]
 						else:
-							ingame = steam['response']['players'][0]['gameextrainfo']
-						#Stati di Steam
-						text = ""
-						if(online == 0):
-							text = chr(9898) + " Offline"
-						elif(online == 1):
-							text = chr(55357) + chr(56629) + " Online"
-						elif(online == 2):
-							text = chr(55357) + chr(56628) + " Occupato"
-						elif(online == 3):
-							text = chr(9899) + " Assente"
-						elif(online == 4):
-							text = chr(9899) + " Addormentato"
-						elif(online == 5):
-							text = chr(55357) + chr(56629) + " Disponibile per scambiare"
-						elif(online == 6):
-							text = chr(55357) + chr(56629) + " Disponibile per giocare"
-						if ingame is not None:
-							sendMessage(name + " sta giocando a " + chr(55357) + chr(56628) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
+							selezione = msg['text'][7:]
+						steam = getSteamStatus(selezione)
+						if(steam['response']['players']):
+							online = steam['response']['players'][0]['personastate']
+							name = steam['response']['players'][0]['personaname']
+							#E' in gioco? Se non c'è nessuna informazione sul gioco, lascia perdere
+							try:
+								steam['response']['players'][0]['gameextrainfo']
+							except KeyError:
+								ingame = None
+							else:
+								ingame = steam['response']['players'][0]['gameextrainfo']
+							#Stati di Steam
+							text = ""
+							if(online == 0):
+								text = chr(9898) + " Offline"
+							elif(online == 1):
+								text = chr(111986) + " Online"
+							elif(online == 2):
+								text = chr(111985) + " Occupato"
+							elif(online == 3):
+								text = chr(9899) + " Assente"
+							elif(online == 4):
+								text = chr(9899) + " Addormentato"
+							elif(online == 5):
+								text = chr(111986) + " Disponibile per scambiare"
+							elif(online == 6):
+								text = chr(111986) + " Disponibile per giocare"
+							if ingame is not None:
+								sendMessage(name + " sta giocando a " + chr(55357) + chr(56628) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
+							else:
+								sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 						else:
-							sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
+							sendMessage(chr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
+				#Trova i punteggi di una persona su osu!
+				if(msg['text'].startswith("/osu")):
+					if(msg['text'] == "/osu"):
+						sendMessage(chr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
 					else:
-						sendMessage(chr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
-			#Trova i punteggi di una persona su osu!
-			if(msg['text'].startswith("/osu")):
-				if(msg['text'] == "/osu"):
-					sendMessage(chr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
-				else:
-					#Controlla se la selezione è un username di telegram.
-					if(msg['text'][5:].lower() in osuids):
-						selezione = osuids[msg['text'][5:].lower()]
-					else:
-						selezione = msg['text'][5:]
-					#Ricevi i dati di Osu e visualizza lo stato nella chat.
-					setTyping('typing', msg['chat']['id'])
-					osu = getOsuStatus(selezione, 0)
-					setTyping('typing', msg['chat']['id'])
-					taiko = getOsuStatus(selezione, 1)
-					setTyping('typing', msg['chat']['id'])
-					ctb = getOsuStatus(selezione, 2)
-					setTyping('typing', msg['chat']['id'])
-					osumania = getOsuStatus(selezione, 3)
-					#Trova l'username della persona.
-					name = osu[0]['username']
-					#Trova i pp in ogni modalità
-					osupp = float(osu[0]['pp_raw'])
-					taikopp = float(taiko[0]['pp_raw'])
-					ctbpp = float(ctb[0]['pp_raw'])
-					osumaniapp = float(osumania[0]['pp_raw'])
-					#Manda il messaggio
-					sendMessage(name + " ha:" + chr(10) + str(int(osupp)) + "pp su Osu!" + chr(10) + str(int(taikopp)) + "pp su Taiko" + chr(10) + str(int(ctbpp)) + "pp su Catch the Beat" + chr(10) + str(int(osumaniapp)) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
+						#Controlla se la selezione è un username di telegram.
+						if(msg['text'][5:].lower() in osuids):
+							selezione = osuids[msg['text'][5:].lower()]
+						else:
+							selezione = msg['text'][5:]
+						#Ricevi i dati di Osu e visualizza lo stato nella chat.
+						setTyping('typing', msg['chat']['id'])
+						osu = getOsuStatus(selezione, 0)
+						setTyping('typing', msg['chat']['id'])
+						taiko = getOsuStatus(selezione, 1)
+						setTyping('typing', msg['chat']['id'])
+						ctb = getOsuStatus(selezione, 2)
+						setTyping('typing', msg['chat']['id'])
+						osumania = getOsuStatus(selezione, 3)
+						#Trova l'username della persona.
+						name = osu[0]['username']
+						#Trova i pp in ogni modalità
+						osupp = float(osu[0]['pp_raw'])
+						taikopp = float(taiko[0]['pp_raw'])
+						ctbpp = float(ctb[0]['pp_raw'])
+						osumaniapp = float(osumania[0]['pp_raw'])
+						#Manda il messaggio
+						sendMessage(name + " ha:" + chr(10) + str(int(osupp)) + "pp su Osu!" + chr(10) + str(int(taikopp)) + "pp su Taiko" + chr(10) + str(int(ctbpp)) + "pp su Catch the Beat" + chr(10) + str(int(osumaniapp)) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
