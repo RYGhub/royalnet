@@ -92,6 +92,7 @@ def sendMessage(content, to, da):
 	parametri = {
 		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322
 		'text': content, #Il messaggio da mandare
+		'parse_mode': 'Markdown' #Formattare il messaggio?
 	}
 	#Antispam: manda il messaggio solo se l'ultimo messaggio è diverso da quello che deve mandare ora.
 	global lastmsg
@@ -186,23 +187,23 @@ while(True):
 							#Stati di Steam
 							text = ""
 							if(online == 0):
-								text = chr(9898) + " Offline"
+								text = chr(9898) + " _Offline_"
 							elif(online == 1):
-								text = chr(128309) + " Online"
+								text = chr(128309) + " _Online_"
 							elif(online == 2):
-								text = chr(128308) + " Occupato"
+								text = chr(128308) + " _Occupato_"
 							elif(online == 3):
-								text = chr(9899) + " Assente"
+								text = chr(9899) + " _Assente_"
 							elif(online == 4):
-								text = chr(9899) + " Addormentato"
+								text = chr(9899) + " _Addormentato_"
 							elif(online == 5):
-								text = chr(128309) + " Disponibile per scambiare"
+								text = chr(128309) + " _Disponibile per scambiare_"
 							elif(online == 6):
-								text = chr(128309) + " Disponibile per giocare"
+								text = chr(128309) + " _Disponibile per giocare_"
 							if ingame is not None:
-								sendMessage(name + " sta giocando a " + chr(128308) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
+								sendMessage("*" + name + "* sta giocando a " + chr(128308) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
 							else:
-								sendMessage(name + " e' " + text + ".", msg['chat']['id'], msg['from']['id'])
+								sendMessage("*" + name + "* e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 						else:
 							sendMessage(chr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
 				#Trova i punteggi di una persona su osu!
@@ -244,4 +245,4 @@ while(True):
 						else:
 							osumaniapp = 0
 						#Manda il messaggio
-						sendMessage(name + " ha:" + chr(10) + str(int(osupp)) + "pp su Osu!" + chr(10) + str(int(taikopp)) + "pp su Taiko" + chr(10) + str(int(ctbpp)) + "pp su Catch the Beat" + chr(10) + str(int(osumaniapp)) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
+						sendMessage("*" + name + "* ha:" + chr(10) + "_" + str(int(osupp)) + "pp_ su Osu!" + chr(10) + "_" + str(int(taikopp)) + "pp_ su Taiko" + chr(10) + "_" + str(int(ctbpp)) + "pp_ su Catch the Beat" + chr(10) + "_" + str(int(osumaniapp)) + "pp_ su Osu!mania", msg['chat']['id'], msg['from']['id'])
