@@ -245,4 +245,4 @@ while(True):
 						else:
 							osumaniapp = 0
 						#Manda il messaggio
-						sendMessage("_" + name + "_ ha:" + chr(10) + "*" + str(int(osupp)) + "pp* su Osu!" + chr(10) + "*" + str(int(taikopp)) + "pp* su Taiko" + chr(10) + "*" + str(int(ctbpp)) + "pp* su Catch the Beat" + chr(10) + "*" + str(int(osumaniapp)) + "pp* su Osu!mania", msg['chat']['id'], msg['from']['id'])
+						sendMessage("[" + name + "](https://osu.ppy.sh/u/" + selezione + ") ha:" + chr(10) + "*" + str(int(osupp)) + "pp* su Osu!" + chr(10) + "*" + str(int(taikopp)) + "pp* su Taiko" + chr(10) + "*" + str(int(ctbpp)) + "pp* su Catch the Beat" + chr(10) + "*" + str(int(osumaniapp)) + "pp* su Osu!mania", msg['chat']['id'], msg['from']['id'])
