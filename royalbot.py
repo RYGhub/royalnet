@@ -201,9 +201,9 @@ while(True):
 							elif(online == 6):
 								text = chr(128309) + " *Disponibile per giocare*"
 							if ingame is not None:
-								sendMessage("_" + name + "_ sta giocando a " + chr(128308) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
+								sendMessage("[" + name + "](http://steamcommunity.com/profiles/" + selezione + ") sta giocando a " + chr(128308) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
 							else:
-								sendMessage("_" + name + "_ e' " + text + ".", msg['chat']['id'], msg['from']['id'])
+								sendMessage("[" + name + "](http://steamcommunity.com/profiles/" + selezione + ") e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 						else:
 							sendMessage(chr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
 				#Trova i punteggi di una persona su osu!
