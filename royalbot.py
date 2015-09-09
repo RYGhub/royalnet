@@ -227,9 +227,21 @@ while(True):
 						#Trova l'username della persona.
 						name = osu[0]['username']
 						#Trova i pp in ogni modalità
-						osupp = float(osu[0]['pp_raw'])
-						taikopp = float(taiko[0]['pp_raw'])
-						ctbpp = float(ctb[0]['pp_raw'])
-						osumaniapp = float(osumania[0]['pp_raw'])
+						if(osu[0]['pp_raw'] is not None):
+							osupp = float(osu[0]['pp_raw'])
+						else: 
+							osupp = 0
+						if(taiko[0]['pp_raw'] is not None):
+							taikopp = float(taiko[0]['pp_raw'])
+						else:
+							taikopp = 0
+						if(ctb[0]['pp_raw'] is not None):
+							ctbpp = float(ctb[0]['pp_raw'])
+						else: 
+							ctbpp = 0
+						if(osumania[0]['pp_raw'] is not None):
+							osumaniapp = float(osumania[0]['pp_raw'])
+						else:
+							osumaniapp = 0
 						#Manda il messaggio
 						sendMessage(name + " ha:" + chr(10) + str(int(osupp)) + "pp su Osu!" + chr(10) + str(int(taikopp)) + "pp su Taiko" + chr(10) + str(int(ctbpp)) + "pp su Catch the Beat" + chr(10) + str(int(osumaniapp)) + "pp su Osu!mania", msg['chat']['id'], msg['from']['id'])
