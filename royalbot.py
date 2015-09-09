@@ -151,11 +151,7 @@ while(True):
 			#Aggiorna l'update ID sul file
 			writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 			#...esiste il messaggio? telegram wtf
-			try:
-				data['result'][0]['message']['text']
-			except KeyError:
-				print(data['result'][0]['message'])
-			else:
+			if(data['result'][0]['message'] is not None):
 				#Leggi i dati del messaggio
 				msg = data['result'][0]['message']
 				#Ah, non lo so io!
