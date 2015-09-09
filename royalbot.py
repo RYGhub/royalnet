@@ -36,6 +36,8 @@ steamids =  {
 	'@iemax': 76561198149695151,
 	'@alleanderl': 76561198154175301,
 	'@boni3099': 76561198131868211,
+	'@adry99': 76561198230034568,
+	'@mrdima98': 76561198140863530,
 }
 
 #Elenco degli steamid e degli username di telegram.
@@ -56,7 +58,7 @@ osuids =  {
 	'@tauei': 'tauei',
 	'@saitorlock': 'saitorlock',
 	'@boni3099': 'boni3099',
-	'@mrdima98': 'MRdima98'
+	'@mrdima98': 'MRdima98',
 }
 
 #Leggi un file e rispondi con il contenuto
