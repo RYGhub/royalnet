@@ -187,23 +187,23 @@ while(True):
 							#Stati di Steam
 							text = ""
 							if(online == 0):
-								text = chr(9898) + " _Offline_"
+								text = chr(9898) + " *Offline*"
 							elif(online == 1):
-								text = chr(128309) + " _Online_"
+								text = chr(128309) + " *Online*"
 							elif(online == 2):
-								text = chr(128308) + " _Occupato_"
+								text = chr(128308) + " *Occupato*"
 							elif(online == 3):
-								text = chr(9899) + " _Assente_"
+								text = chr(9899) + " *Assente*"
 							elif(online == 4):
-								text = chr(9899) + " _Addormentato_"
+								text = chr(9899) + " *Addormentato*"
 							elif(online == 5):
-								text = chr(128309) + " _Disponibile per scambiare_"
+								text = chr(128309) + " *Disponibile per scambiare*"
 							elif(online == 6):
-								text = chr(128309) + " _Disponibile per giocare_"
+								text = chr(128309) + " *Disponibile per giocare*"
 							if ingame is not None:
-								sendMessage("*" + name + "* sta giocando a " + chr(128308) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
+								sendMessage("_" + name + "_ sta giocando a " + chr(128308) + " " + ingame + ".", msg['chat']['id'], msg['from']['id'])
 							else:
-								sendMessage("*" + name + "* e' " + text + ".", msg['chat']['id'], msg['from']['id'])
+								sendMessage("_" + name + "_ e' " + text + ".", msg['chat']['id'], msg['from']['id'])
 						else:
 							sendMessage(chr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
 				#Trova i punteggi di una persona su osu!
@@ -245,4 +245,4 @@ while(True):
 						else:
 							osumaniapp = 0
 						#Manda il messaggio
-						sendMessage("*" + name + "* ha:" + chr(10) + "_" + str(int(osupp)) + "pp_ su Osu!" + chr(10) + "_" + str(int(taikopp)) + "pp_ su Taiko" + chr(10) + "_" + str(int(ctbpp)) + "pp_ su Catch the Beat" + chr(10) + "_" + str(int(osumaniapp)) + "pp_ su Osu!mania", msg['chat']['id'], msg['from']['id'])
+						sendMessage("_" + name + "_ ha:" + chr(10) + "*" + str(int(osupp)) + "pp* su Osu!" + chr(10) + "*" + str(int(taikopp)) + "pp* su Taiko" + chr(10) + "*" + str(int(ctbpp)) + "pp* su Catch the Beat" + chr(10) + "*" + str(int(osumaniapp)) + "pp* su Osu!mania", msg['chat']['id'], msg['from']['id'])
