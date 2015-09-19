@@ -58,7 +58,7 @@ def getUpdates():
 			#Aggiorna l'update ID sul file
 			writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 			#...esiste il messaggio? telegram wtf
-			if(data['result'][0]['message'] is not None):
+			if(data['result'][0]['message']['text'] is not None):
 				return data['result'][0]['message']
 			else:
 				raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
