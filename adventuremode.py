@@ -15,7 +15,7 @@ no_keyboard = {
 json.dumps(no_keyboard)
 
 #Gruppo di destinazione
-target_group = -2141322
+target_group = -13164589
 
 #Manda un messaggio.
 def sendMessage(content, tastiera=no_keyboard, to=target_group):
@@ -93,7 +93,7 @@ def treScelte(puno, pdue, ptre):
 ## Qui inizia la storia... ##
 #############################
 #Copyright @MaxSensei 2015
-racconto("Benvenuto a Royal Bot Adventures! VERSIONE ALPHA QUINDI PIENA DI BUG")
+racconto("Benvenuto a Royal Bot Adventures!\nVERSIONE ALPHA QUINDI PIENA DI BUG\nStoria scritta da @MaxSensei")
 racconto("Vi svegliate in un luogo del tutto buio, sentite un flebile respiro da qualche parte nel buio. Tastate la vostra fedelissima spada. Cercate di ricordare qualcosa ma con scarso successo (originale eh?). ")
 while(True):
 	s = treScelte("Brandite la spada verso i respiri nel buio", "Chiedete chi è ad alta voce", "State zitti e immobili")
@@ -117,3 +117,12 @@ while(True):
 		break
 racconto("Ad una accurata ispezione trovate un barattolo contenente qualcosa che sembra liquido.")
 while(True):
+	s = treScelte("Bevete il liquido", "Vi spalmate addosso il liquido", "Introducete nella cavità anale")
+	if(s == 1):
+		racconto("Ha un sapore orribile!\nVi sentite male...")
+	elif(s == 2):
+		racconto("Congratulazioni, ora siete coperti di feci di origini sconosciute!")
+	elif(s == 3):
+		racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo;\n vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
+		break
+racconto("The End?")
