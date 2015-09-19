@@ -21,7 +21,7 @@ target_group = -13164589
 def sendMessage(content, tastiera=no_keyboard, to=target_group):
 	#Parametri del messaggio
 	parametri = {
-		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322
+		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322 Royal Bot Testing Group: -13164589
 		'text': content, #Il messaggio da mandare
 		'reply_markup': tastiera
 	}
