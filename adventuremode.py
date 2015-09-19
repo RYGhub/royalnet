@@ -89,11 +89,31 @@ def treScelte(puno, pdue, ptre):
 		elif(msg['text'] == ptre):
 			return 3
 	
-r = treScelte("Banana", "Fragola", "Frankez")
-if(r == 1):
-	racconto("Ottima scelta, una banana fresca, proprio come Frank!")
-elif(r == 2):
-	racconto("Bah, secondo me era molto meglio una banana...")
-elif(r == 3):
-	racconto("Frankez è una banana, quindi perchè non hai scelto direttamente quella?")
-racconto("Fine dello script")
+#############################
+## Qui inizia la storia... ##
+#############################
+#Copyright @MaxSensei 2015
+racconto("Benvenuto a Royal Bot Adventures! VERSIONE ALPHA QUINDI PIENA DI BUG")
+racconto("Vi svegliate in un luogo del tutto buio, sentite un flebile respiro da qualche parte nel buio. Tastate la vostra fedelissima spada. Cercate di ricordare qualcosa ma con scarso successo (originale eh?). ")
+while(True):
+	s = treScelte("Brandite la spada verso i respiri nel buio", "Chiedete chi è ad alta voce", "State zitti e immobili")
+	if(s == 1):
+		racconto("Ahia! Tu e la tua compagnia vi colpite a vicenda con le spade.")
+	elif(s == 2):
+		racconto("Riconoscete i vostri amici e vi ritenete fortunati di non aver ferito nessuno.")
+		break
+	elif(s == 3):
+		racconto("Che codardi, tanto non succede nulla...")
+		break
+racconto("Siete in un luogo del tutto buio, ma vedete della luce molto lontano.")
+while(True):
+	s = treScelte("Esaminate il luogo circostante", "Muovetevi nella direzione della luce", "Ispezionatevi")
+	if(s == 1):
+		racconto("Sembrate constatare che il pavimento sia fatto di dura roccia e le parenti intorno non si sentono, tastate per terra quello che sembra una candela (conveniente eh?)")
+	elif(s == 2):
+		racconto("Brancolate nel buio nella direzione della luce, inciampate in qualcosa e vi spaccate il naso per terra.")
+	elif(s == 3):
+		racconto("Vi ritrovate in dei vestiti pesanti e grossi, pieni di tasche.")
+		break
+racconto("Ad una accurata ispezione trovate un barattolo contenente qualcosa che sembra liquido.")
+while(True):
