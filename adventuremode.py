@@ -67,6 +67,9 @@ def getUpdates():
 ## Qui inizia la roba che serve a te, max! ##
 #############################################
 
+#Vita iniziale!
+hp = 100
+
 #Scrivi la storia!
 def racconto(testo):
 	print(testo)
@@ -79,7 +82,7 @@ def treScelte(puno, pdue, ptre):
 		'one_time_keyboard': True,
 	}
 	print("Cosa vuoi fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre)
-	sendMessage("Cosa vuoi fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
+	sendMessage(chr(10067) + "Cosa vuoi fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
 	#Aspetta una risposta...
 	waiting = True
 	while(waiting):
@@ -90,12 +93,16 @@ def treScelte(puno, pdue, ptre):
 			return 2
 		elif(msg['text'] == ptre):
 			return 3
-	
+			
+#Modifica la vita. Mettere valori negativi per ridurla, positivi per aumentarla.
+def vita(var):
+	hp = hp + var
+
 #############################
 ## Qui inizia la storia... ##
 #############################
 #Copyright @MaxSensei 2015
-racconto("Benvenuto a Royal Bot Adventures!\nVERSIONE ALPHA QUINDI PIENA DI BUG\nStoria scritta da @MaxSensei")
+sendMessage("Benvenuto a Royal Bot Adventures!\nVERSIONE ALPHA QUINDI PIENA DI BUG\nStoria scritta da @MaxSensei")
 racconto("Vi svegliate in un luogo del tutto buio, sentite un flebile respiro da qualche parte nel buio. Tastate la vostra fedelissima spada. Cercate di ricordare qualcosa ma con scarso successo (originale eh?). ")
 while(True):
 	s = treScelte("Brandite la spada verso i respiri nel buio", "Chiedete chi è ad alta voce", "State zitti e immobili")
