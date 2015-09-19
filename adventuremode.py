@@ -111,7 +111,7 @@ racconto("Siete in un luogo del tutto buio, ma vedete della luce molto lontano."
 while(True):
 	s = treScelte("Esaminate il luogo circostante", "Muovetevi nella direzione della luce", "Ispezionatevi")
 	if(s == 1):
-		racconto("Sembrate constatare che il pavimento sia fatto di dura roccia e le parenti intorno non si sentono, tastate per terra quello che sembra una candela (conveniente eh?)")
+		racconto("Sembrate constatare che il pavimento sia fatto di dura roccia e le parenti intorno non si sentono, tastate per terra quello che sembra una candela spenta (utile eh?).\nDecidete di lasciarla per terra visto che non avete tasche e le mani vi servono ad orientarvi.")
 	elif(s == 2):
 		racconto("Brancolate nel buio nella direzione della luce, inciampate in qualcosa e vi spaccate il naso per terra.")
 	elif(s == 3):
