@@ -60,6 +60,8 @@ def getUpdates():
 			#...esiste il messaggio? telegram wtf
 			if(data['result'][0]['message'] is not None):
 				return data['result'][0]['message']
+			else:
+				raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
 
 #############################################
 ## Qui inizia la roba che serve a te, max! ##
