@@ -126,7 +126,7 @@ while(True):
 		break
 racconto("Siete in un luogo del tutto buio, ma vedete della luce molto lontano.")
 while(True):
-	s = treScelte("Esaminate il luogo circostante", "Muovetevi nella direzione della luce", "Ispezionatevi")
+	s = treScelte("Esaminate il luogo circostante", "Muovetevi nella direzione della luce", "Controllate i vostri vestiti")
 	if(s == 1):
 		racconto("Sembrate constatare che il pavimento sia fatto di dura roccia e le parenti intorno non si sentono, tastate per terra quello che sembra una candela spenta (utile eh?).\nDecidete di lasciarla per terra visto che non avete tasche e le mani vi servono ad orientarvi.")
 	elif(s == 2):
