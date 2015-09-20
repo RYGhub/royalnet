@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 import requests
 import json
+import sys
 
 #Inizializza la API Key di Telegram
 token = ""
@@ -58,8 +59,11 @@ def getUpdates():
 			#Aggiorna l'update ID sul file
 			writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 			#...esiste il messaggio? telegram wtf
-			if(data['result'][0]['message']['text'] is not None):
-				return data['result'][0]['message']
+			if(data['result'][0]['message'] is not None):
+				if(data['result'][0]['message']['text'] is not None):
+					return data['result'][0]['message']
+				else:
+					raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
 			else:
 				raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
 
@@ -78,7 +82,7 @@ def racconto(testo):
 #Apri una tastiera con due scelte
 def treScelte(puno, pdue, ptre):
 	tastiera = {
-		'keyboard':	[[puno, pdue, ptre]],
+		'keyboard':	[[puno, pdue, ptre], [chr(10084) + ' ' + str(hp)]],
 		'one_time_keyboard': True,
 	}
 	print("Cosa vuoi fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre)
@@ -96,7 +100,12 @@ def treScelte(puno, pdue, ptre):
 			
 #Modifica la vita. Mettere valori negativi per ridurla, positivi per aumentarla.
 def vita(var):
+	global hp
 	hp = hp + var
+	sendMessage(chr(10084) + ' ' + str(var))
+	if(hp <= 0):
+		sendMessage("Hai finito la vita! Game over!")
+		sys.exit()
 
 #############################
 ## Qui inizia la storia... ##
@@ -108,6 +117,7 @@ while(True):
 	s = treScelte("Brandite la spada verso i respiri nel buio", "Chiedete chi è ad alta voce", "State zitti e immobili")
 	if(s == 1):
 		racconto("Ahia! Tu e la tua compagnia vi colpite a vicenda con le spade.")
+		vita(-15)
 	elif(s == 2):
 		racconto("Riconoscete i vostri amici e vi ritenete fortunati di non aver ferito nessuno.")
 		break
@@ -121,6 +131,7 @@ while(True):
 		racconto("Sembrate constatare che il pavimento sia fatto di dura roccia e le parenti intorno non si sentono, tastate per terra quello che sembra una candela spenta (utile eh?).\nDecidete di lasciarla per terra visto che non avete tasche e le mani vi servono ad orientarvi.")
 	elif(s == 2):
 		racconto("Brancolate nel buio nella direzione della luce, inciampate in qualcosa e vi spaccate il naso per terra.")
+		vita(-10)
 	elif(s == 3):
 		racconto("Vi ritrovate in dei vestiti pesanti e grossi, pieni di tasche.")
 		break
@@ -129,8 +140,10 @@ while(True):
 	s = treScelte("Bevete il liquido", "Vi spalmate addosso il liquido", "Introducete nella cavità anale")
 	if(s == 1):
 		racconto("Ha un sapore orribile!\nVi sentite male...")
+		vita(-10)
 	elif(s == 2):
 		racconto("Congratulazioni, ora siete coperti di feci di origini sconosciute!")
+		vita(-2)
 	elif(s == 3):
 		racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo;\n vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
 		break
