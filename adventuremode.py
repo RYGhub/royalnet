@@ -59,8 +59,8 @@ def getUpdates():
 			#Aggiorna l'update ID sul file
 			writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
 			#...esiste il messaggio? telegram wtf
-			if(data['result'][0]['message'] is not None):
-				if(data['result'][0]['message']['text'] is not None):
+			if(data['result'][0]['message'] != None):
+				if(data['result'][0]['message']['text'] != None):
 					return data['result'][0]['message']
 				else:
 					raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
@@ -82,7 +82,7 @@ def racconto(testo):
 #Apri una tastiera con due scelte
 def treScelte(puno, pdue, ptre):
 	tastiera = {
-		'keyboard':	[[puno, pdue, ptre], [chr(10084) + ' ' + str(hp)]],
+		'keyboard':	[[puno, pdue, ptre]],
 		'one_time_keyboard': True,
 	}
 	print("Cosa vuoi fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre)
@@ -102,7 +102,7 @@ def treScelte(puno, pdue, ptre):
 def vita(var):
 	global hp
 	hp = hp + var
-	sendMessage(chr(10084) + ' ' + str(var))
+	sendMessage(chr(10084) + ' ' + str(var) + "\n" + "Ora avete " + str(hp) + " punti vita.")
 	if(hp <= 0):
 		sendMessage("Hai finito la vita! Game over!")
 		sys.exit()
