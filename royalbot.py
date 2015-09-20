@@ -14,7 +14,7 @@ osutoken = ""
 #Elenco degli steamid e degli username di telegram.
 steamids =  {
 	'@steffo': 76561198034314260,
-	'@evilbaluisevilt_t': 76561198071012695,
+	'@evilbalu': 76561198071012695,
 	'@fultz': 76561198035547490,
 	'@ilgattopardo': 76561198111021344,
 	'@frankfrankfrank': 76561198071099951,
@@ -32,7 +32,6 @@ steamids =  {
 	'alle2002': 76561198052996311,
 	'jummi': 76561198169975999,
 	'@tauei': 76561198104305298,
-	'@saitorlock': 76561198089120441,
 	'@iemax': 76561198149695151,
 	'@alleanderl': 76561198154175301,
 	'@boni3099': 76561198131868211,
@@ -43,7 +42,7 @@ steamids =  {
 #Elenco degli steamid e degli username di telegram.
 osuids =  {
 	'@steffo': 'SteffoRYG',
-	'@evilbaluisevilt_t': 'NemesisRYG',
+	'@evilbalu': 'NemesisRYG',
 	'@fultz': 'ftz99',
 	'@ilgattopardo': 'gattopardo',
 	'@frankfrankfrank': 'FrankezRYG',
@@ -56,9 +55,33 @@ osuids =  {
 	'@albertino04': 'Alby1',
 	'@voltaggio': 'voltaggio',
 	'@tauei': 'tauei',
-	'@saitorlock': 'saitorlock',
 	'@boni3099': 'boni3099',
 	'@mrdima98': 'MRdima98',
+}
+
+#Elenco della gente ringraziabile
+tylist =  {
+	'@steffo': 'Steffo',
+	'@evilbalu': 'Nemesis',
+	'@fultz': 'Fulz',
+	'@ilgattopardo': 'Gattopardo',
+	'@frankfrankfrank': 'Frankez',
+	'@fedyal': 'Fedyal',
+	'@acterryg': 'Acter',
+	'@maxsensei': 'Sensei',
+	'@heisendoc': 'Heisenberg',
+	'@supermattemb': 'Supermatte',
+	'@peraemela99': 'Igor',
+	'@thevagginadestroyer': 'Barbol',
+	'@cosimo03': 'Cosimo',
+	'@albertino04': 'Alby',
+	'@voltaggio': 'Voltaggio',
+	'@tauei': 'Tauei',
+	'@iemax': 'Emax',
+	'@alleanderl': 'Alleander',
+	'@boni3099': 'Bobby',
+	'@adry99': 'Adry',
+	'@mrdima98': 'Dima',
 }
 
 #Leggi un file e rispondi con il contenuto
@@ -207,7 +230,7 @@ while(True):
 						else:
 							sendMessage(chr(9888) + " Lo SteamID o l'username non esiste!", msg['chat']['id'], msg['from']['id'])
 				#Trova i punteggi di una persona su osu!
-				if(msg['text'].startswith("/osu")):
+				elif(msg['text'].startswith("/osu")):
 					if(msg['text'] == "/osu"):
 						sendMessage(chr(9888) + " Non hai specificato un PlayerID o un username di osu! o Telegram!", msg['chat']['id'], msg['from']['id'])
 					else:
@@ -246,3 +269,17 @@ while(True):
 							osumaniapp = 0
 						#Manda il messaggio
 						sendMessage("[" + name + "](https://osu.ppy.sh/u/" + selezione + ") ha:" + chr(10) + "*" + str(int(osupp)) + "pp* su Osu!" + chr(10) + "*" + str(int(taikopp)) + "pp* su Taiko" + chr(10) + "*" + str(int(ctbpp)) + "pp* su Catch the Beat" + chr(10) + "*" + str(int(osumaniapp)) + "pp* su Osu!mania", msg['chat']['id'], msg['from']['id'])
+				#Ringrazia una persona!
+				elif(msg['text'].startswith("/ty")):
+					if(msg['text'] == "/ty"):
+						sendMessage(chr(9888) + " Non hai specificato un username di Telegram!", msg['chat']['id'], msg['from']['id'])
+					else:
+						#Controlla se la selezione è un username di telegram.
+						if(msg['text'][4:].lower() in tylist):
+							selezione = osuids[msg['text'][5:].lower()]
+							setTyping('typing', msg['chat']['id'])
+							ty = readFile("ty/" + selezione + ".tyr")
+							writeFile("ty/" + selezione + ".tyr", ty + 1)
+							sendMessage(chr(9989) + " Hai proposto un TY per " + selezione + "!", msg['chat']['id'], msg['from']['id'])
+						else:
+							sendMessage(chr(9888) + " Username inesistente!", msg['chat']['id'], msg['from']['id'])
