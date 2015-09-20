@@ -85,8 +85,8 @@ def treScelte(puno, pdue, ptre):
 		'keyboard':	[[puno, pdue, ptre]],
 		'one_time_keyboard': True,
 	}
-	print("Cosa vuoi fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre)
-	sendMessage(chr(10067) + "Cosa vuoi fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
+	print("Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre)
+	sendMessage(chr(10067) + "Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
 	#Aspetta una risposta...
 	waiting = True
 	while(waiting):
@@ -104,6 +104,7 @@ def vita(var):
 	hp = hp + var
 	sendMessage(chr(10084) + ' ' + str(var) + "\n" + "Ora avete " + str(hp) + " punti vita.")
 	if(hp <= 0):
+		print("Game over...")
 		sendMessage("Hai finito la vita! Game over!")
 		sys.exit()
 
