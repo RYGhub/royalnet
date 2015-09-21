@@ -273,7 +273,7 @@ while(True):
 				elif(msg['text'].startswith("/ty")):
 					if(msg['text'] == "/ty"):
 						ty = readFile("ty/" + selezione + ".tyr")
-						sendMessage(chr(9888) + " Queste persone ti hanno mandato TY da approvare: " + , msg['chat']['id'], msg['from']['id'])
+						sendMessage(chr(9888) + " Queste persone ti hanno mandato TY da approvare: " + ty, msg['chat']['id'], msg['from']['id'])
 					else:
 						#Controlla se la selezione è un username di telegram.
 						if(msg['text'][4:].lower() in tylist):
