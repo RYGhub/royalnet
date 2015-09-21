@@ -272,8 +272,6 @@ while(True):
 				#Ringrazia una persona!
 				elif(msg['text'].startswith("/ty")):
 					if(msg['text'] == "/ty"):
-						selezione = tylist[msg['text'][4:].lower()]
-						setTyping('typing', msg['chat']['id'])
 						ty = readFile("ty/" + selezione + ".tyr")
 						sendMessage(chr(9888) + " Queste persone ti hanno mandato TY da approvare: " + ty, msg['chat']['id'], msg['from']['id'])
 					else:
