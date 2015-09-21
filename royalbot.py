@@ -278,8 +278,8 @@ while(True):
 						if(msg['text'][4:].lower() in tylist):
 							selezione = tylist[msg['text'][4:].lower()]
 							setTyping('typing', msg['chat']['id'])
-							ty = int(readFile("ty/" + selezione + ".tyr"))
-							writeFile("ty/" + selezione + ".tyr", str(ty + 1))
+							ty = readFile("ty/" + selezione + ".tyr"
+							writeFile("ty/" + selezione + ".tyr", ty + ", @" + msg['from']['username']
 							sendMessage(chr(9989) + " Hai proposto un TY per " + selezione + "!", msg['chat']['id'], msg['from']['id'])
 						else:
 							sendMessage(chr(9888) + " Username inesistente!", msg['chat']['id'], msg['from']['id'])
