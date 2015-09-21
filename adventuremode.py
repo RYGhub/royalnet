@@ -74,6 +74,9 @@ def getUpdates():
 #Vita iniziale!
 hp = 100
 
+#La candela!
+candela = False
+
 #Scrivi la storia!
 def racconto(testo):
 	print(testo)
@@ -129,23 +132,53 @@ racconto("Siete in un luogo del tutto buio, ma vedete della luce molto lontano."
 while(True):
 	s = treScelte("Esaminate il luogo circostante", "Muovetevi nella direzione della luce", "Controllate i vostri vestiti")
 	if(s == 1):
-		racconto("Sembrate constatare che il pavimento sia fatto di dura roccia e le parenti intorno non si sentono, tastate per terra quello che sembra una candela spenta (utile eh?).\nDecidete di lasciarla per terra visto che non avete tasche e le mani vi servono ad orientarvi.")
+		racconto("Sembrate constatare che il pavimento sia fatto di dura roccia e le parenti intorno non si sentono, tastate per terra quello che sembra una candela spenta (utile eh?).")
+		candela = True
 	elif(s == 2):
-		racconto("Brancolate nel buio nella direzione della luce, inciampate in qualcosa e vi spaccate il naso per terra.")
-		vita(-10)
+		if(candela == False):
+			racconto("Brancolate nel buio nella direzione della luce, inciampate in qualcosa e vi spaccate il naso per terra.")
+			vita(-10)
+			racconto("Scavando nella dura roccia. Scoprite di essere incastrati in un qualcosa simile a una radice, ma grossa e semovente.")
+			c = treScelte("Proseguite verso la luce con cautela", "Correte verso la luce", "Tornate indietro")
+		elif(candela == True):
+			racconto("Vi dirigete verso la luce, ma scoprite che un enorme pianta vi intralcia la strada. Si sentono soffocati fruscii nel terreno in cui penetra la radice.")
+			racconto("La candela per fortuna si é rivelata essere elettrica per mancanza di fantasia dell'autore, e premendo un pulsantino sul lato illumina l'area circostante. La luce non é abbastanza da illuminare del tutto la caverna, ma potete almeno vedere ciò su cui camminate.")
+			c = treScelte("Proseguite verso la luce con cautela", "Correte verso la luce", "Esaminate la pianta")
+		if(c == 1):
+			racconto("Osservate da vicino quello che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. Il tentacolo affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
+			vita(-2)
+		elif(c == 2):
+			racconto("Avanzate correndo verso la luce, e inciampate in altri tentacoli, subendo solo un po' di danni. Quello che all'inizio sembrava essere un alone di luce si rivelò essere un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
+			vita(-10)
+		elif(c == 3) and (candela == True):
+			racconto("Vedete crepe ovunque, e la pianta che penetra nel terreno creandone altre...")
+		if(c == 1) or (c == 2) or ((c == 3) and (candela == True)):
+			racconto("La terra inizia a tremare e grosse crepe iniziano a comprarire nel terreno, le grosse radici vengono rapidamente rissuchiate nel soffito immenso, e un orribile ruggito vi spacca le orecchie. Siete assordati, e non potete sentire nulla.")
+			racconto("Avete il presentimento che qualcosa di terribile stia per accadere.")
+			b = treScelte("Scappate via dalla zona crepata", "Rimanete come idioti a guardare l'avvenimento", "Vi buttate al centro del buco")
+			if(b == 1):
+				racconto("Vi buttate fuori dal buco appena in tempo, e sentite una forta esplosione alle vostre spalle... Con una forza possente venite spinti giù dalla montagna. Cadete facendo un'incredibile fracasso e sentite un male allucinante. Siete sull'orlo di svenire. Con le ultime forze vi girate ad osservare la scena. Un enorme creatura grande come il picco della montagna si stava levando in cielo, una mastodontica isola composta da tentacoli e occhi gialli. Un enorme tentacolo continua ad essere attaccato nel centro di quello che una volta era un gigantesco picco, finchè non crollò su se stesso ed implose. La grossa nube volò lentamente emettendo il suo ruggito di trionfo sopra di voi, e in quel preciso istante le palpebre divennero troppo pesanti e cedettero.")
+				sendMessage("Conclusione #1! Rigiocate per scoprire le altre.")
+				break
+			elif(b == 2):
+				racconto("Ottima scelta! Il soffito all'improvviso si stacca con un forte boato, inondando la caverna di luce. Grossi tentacoli si ritraggono da sotto il suolo, e la terra inizia a sgretolarsi sotto i vostri piedi. Fate in tempo a vedere un enorme tentacolo al centro del pavimento. Improvvisamente, il tentacolo iniziò a gonfiarsi e tutto il mondo intorno implose. Svenite.")
+				sendMessage("Conclusione #2! Rigiocate per scoprire le altre.")
+				break
+			elif(b == 3):
+				racconto("Siete proprio pirla... La montagna si avvolge su sè stessa e, avvolti da lava e roccia, spiaccicati con una forza enorme, perite.")
+				vita(-100)
 	elif(s == 3):
 		racconto("Vi ritrovate in dei vestiti pesanti e grossi, pieni di tasche.")
-		break
-racconto("Ad una accurata ispezione trovate un barattolo contenente qualcosa che sembra liquido.")
-while(True):
-	s = treScelte("Bevete il liquido", "Vi spalmate addosso il liquido", "Introducete nella cavità anale")
-	if(s == 1):
-		racconto("Ha un sapore orribile!\nVi sentite male...")
-		vita(-10)
-	elif(s == 2):
-		racconto("Congratulazioni, ora siete coperti di feci di origini sconosciute!")
-		vita(-2)
-	elif(s == 3):
-		racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo;\n vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
-		break
-racconto("The End?")
+		racconto("Ad una accurata ispezione trovate un barattolo contenente qualcosa che sembra liquido.")
+		while(True):
+			s = treScelte("Bevete il liquido", "Vi spalmate addosso il liquido", "Introducete nella cavità anale")
+			if(s == 1):
+				racconto("Ha un sapore orribile!\nVi sentite male...")
+				vita(-10)
+			elif(s == 2):
+				racconto("Congratulazioni, ora siete coperti di feci di origini sconosciute!")
+				vita(-2)
+			elif(s == 3):
+				racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo;\n vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
+				break
+racconto("THE END!")
