@@ -272,15 +272,14 @@ while(True):
 				#Ringrazia una persona!
 				elif(msg['text'].startswith("/ty")):
 					if(msg['text'] == "/ty"):
-						ty = readFile("ty/" + selezione + ".tyr")
-						sendMessage(chr(9888) + " Queste persone ti hanno mandato TY da approvare: " + , msg['chat']['id'], msg['from']['id'])
+						sendMessage(chr(9888) + " Non hai specificato un username di Telegram!", msg['chat']['id'], msg['from']['id'])
 					else:
 						#Controlla se la selezione è un username di telegram.
 						if(msg['text'][4:].lower() in tylist):
 							selezione = tylist[msg['text'][4:].lower()]
 							setTyping('typing', msg['chat']['id'])
-							ty = readFile("ty/" + selezione + ".tyr")
-							writeFile("ty/" + selezione + ".tyr", ty + ", @" + msg['from']['username'])
+							ty = readFile("ty/" + selezione + ".tyr"
+							writeFile("ty/" + selezione + ".tyr", ty + ", @" + msg['from']['username']
 							sendMessage(chr(9989) + " Hai proposto un TY per " + selezione + "!", msg['chat']['id'], msg['from']['id'])
 						else:
 							sendMessage(chr(9888) + " Username inesistente!", msg['chat']['id'], msg['from']['id'])
