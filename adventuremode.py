@@ -143,10 +143,18 @@ while(True):
 		elif(candela == True):
 			racconto("Vi dirigete verso la luce, ma scoprite che un enorme pianta vi intralcia la strada. Si sentono soffocati fruscii nel terreno in cui penetra la radice.")
 			racconto("La candela per fortuna si é rivelata essere elettrica per mancanza di fantasia dell'autore, e premendo un pulsantino sul lato illumina l'area circostante. La luce non é abbastanza da illuminare del tutto la caverna, ma potete almeno vedere ciò su cui camminate.")
-			c = treScelte("Proseguite verso la luce con cautela", "Correte verso la luce", "Esaminate la pianta")
+			c = treScelte("Proseguite verso la luce sicuri di voi stessi", "Correte verso la luce", "Esaminate la pianta")
 		if(c == 1):
 			racconto("Osservate da vicino quello che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. Il tentacolo affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
-			vita(-2)
+			vita(-2
+		elif(c == 1) and (candela == True):
+			racconto("Vi addentrate nella caverna, dove la sala si estende nelle profondità della terra. Ad un certo punto del cammino siete costretti a interrompere il viaggio a causa di un bivio. Alla luce della vostra candela qualcosa risplende sulla sinistra, ma allo stesso momento qualcosa emana una luce rossa di suo sulla destra...")
+			v = treScelte("Controllate a sinistra", "Procedete spavaldi verso destra", "Inventate il primo *facewall*")
+			if(v == 1):
+				racconto("Svoltate a sinistra verso lo scintillio. Trovate un ascia, circondata da rune naniche, per terra. Mentre la pulite dall'enorme quantità di ragnatele, vi accorgete di essere a vostra volta avvolti da fili duri e sottili. Un ragno mostruoso vi spunta davanti.")
+				##TODO CONTINUARE QUI
+			if(v == 2):
+			if(v == 3):
 		elif(c == 2):
 			racconto("Avanzate correndo verso la luce, e inciampate in altri tentacoli, subendo solo un po' di danni. Quello che all'inizio sembrava essere un alone di luce si rivelò essere un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
 			vita(-10)
