@@ -2,6 +2,7 @@
 import requests
 import json
 import sys
+import random
 
 #Inizializza la API Key di Telegram
 token = ""
@@ -146,15 +147,34 @@ while(True):
 			c = treScelte("Proseguite verso la luce sicuri di voi stessi", "Correte verso la luce", "Esaminate la pianta")
 		if(c == 1):
 			racconto("Osservate da vicino quello che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. Il tentacolo affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
-			vita(-2
+			vita(-2)
 		elif(c == 1) and (candela == True):
 			racconto("Vi addentrate nella caverna, dove la sala si estende nelle profondità della terra. Ad un certo punto del cammino siete costretti a interrompere il viaggio a causa di un bivio. Alla luce della vostra candela qualcosa risplende sulla sinistra, ma allo stesso momento qualcosa emana una luce rossa di suo sulla destra...")
-			v = treScelte("Controllate a sinistra", "Procedete spavaldi verso destra", "Inventate il primo *facewall*")
-			if(v == 1):
-				racconto("Svoltate a sinistra verso lo scintillio. Trovate un ascia, circondata da rune naniche, per terra. Mentre la pulite dall'enorme quantità di ragnatele, vi accorgete di essere a vostra volta avvolti da fili duri e sottili. Un ragno mostruoso vi spunta davanti.")
-				##TODO CONTINUARE QUI
-			if(v == 2):
-			if(v == 3):
+			while(True):
+				v = treScelte("Controllate a sinistra", "Procedete spavaldi verso destra", "Inventate il primo *facewall*")
+				if(v == 1):
+					racconto("Svoltate a sinistra verso lo scintillio. Trovate un ascia, circondata da rune naniche, per terra. Mentre la pulite dall'enorme quantità di ragnatele, vi accorgete di essere a vostra volta avvolti da fili duri e sottili. Un ragno mostruoso vi spunta davanti.")
+					r = treScelte("Affrontate il ragno usando l'ascia", "Scappate urlando come ragazzine", "Vi pisciate addosso molto forte")
+					if(r == 1):
+						racconto("Il piccolo ragnetto impaurito esplode sotto l'enorme peso della vostra ascia. Quest'ultima però si rompe in mille schegge a causa dell'urto.")
+						racconto("Congratulazioni, vi siete salvati!")
+						sendMessage("Conclusione #3! Rigiocate per scoprire le altre.")
+						break
+					elif(r == 2):
+						racconto("Cercate di scappare, ma inciampate nelle ragnatele. Cadete di faccia sul povero ragnetto, spiaccicandolo. Svenite. (Molto anticlimatico, lo so, ma siete voi che fate scelte da imbranati)")
+						sendMessage("Continua...")
+						break
+					elif(r == 3):
+						racconto("La piscia cola dai vostri pantaloni, inondando la caverna e lasciandovi senza ossigeno. Il ragnetto vi osserva stupito e si nasconde nelle ragnatele.")
+						vita(-100)
+				elif(v == 2):
+					#Non succede nulla. Per ora.
+					sendMessage("Qui non c'è nulla, per ora... Max mandami quel coso")
+				elif(v == 3):
+					racconto("Ahi, che male! La vostra intelligenza aumenta di " + str(random.randint(1, 7)) + " punti.")
+					vita(-10)
+			#Coso buttato lì perchè non mi viene in mente un modo migliore. Eh, vabbè.
+			break
 		elif(c == 2):
 			racconto("Avanzate correndo verso la luce, e inciampate in altri tentacoli, subendo solo un po' di danni. Quello che all'inizio sembrava essere un alone di luce si rivelò essere un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
 			vita(-10)
