@@ -145,10 +145,7 @@ while(True):
 			racconto("Vi dirigete verso la luce, ma scoprite che un enorme pianta vi intralcia la strada. Si sentono soffocati fruscii nel terreno in cui penetra la radice.")
 			racconto("La candela per fortuna si é rivelata essere elettrica per mancanza di fantasia dell'autore, e premendo un pulsantino sul lato illumina l'area circostante. La luce non é abbastanza da illuminare del tutto la caverna, ma potete almeno vedere ciò su cui camminate.")
 			c = treScelte("Proseguite verso la luce sicuri di voi stessi", "Correte verso la luce", "Esaminate la pianta")
-		if(c == 1):
-			racconto("Osservate da vicino quello che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. Il tentacolo affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
-			vita(-2)
-		elif(c == 1) and (candela == True):
+		if(c == 1) and (candela == True):
 			racconto("Vi addentrate nella caverna, dove la sala si estende nelle profondità della terra. Ad un certo punto del cammino siete costretti a interrompere il viaggio a causa di un bivio. Alla luce della vostra candela qualcosa risplende sulla sinistra, ma allo stesso momento qualcosa emana una luce rossa di suo sulla destra...")
 			while(True):
 				v = treScelte("Controllate a sinistra", "Procedete spavaldi verso destra", "Inventate il primo *facewall*")
@@ -175,6 +172,9 @@ while(True):
 					vita(-10)
 			#Coso buttato lì perchè non mi viene in mente un modo migliore. Eh, vabbè.
 			break
+		elif(c == 1):
+			racconto("Osservate da vicino quello che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. Il tentacolo affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
+			vita(-2)
 		elif(c == 2):
 			racconto("Avanzate correndo verso la luce, e inciampate in altri tentacoli, subendo solo un po' di danni. Quello che all'inizio sembrava essere un alone di luce si rivelò essere un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
 			vita(-10)
@@ -209,4 +209,6 @@ while(True):
 			elif(s == 3):
 				racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo;\n vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
 				break
+		#Coso buttato lì perchè non mi viene in mente un modo migliore. Eh, vabbè.
+		break
 racconto("THE END!")
