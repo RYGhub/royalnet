@@ -165,8 +165,7 @@ while(True):
 					#Non succede nulla. Per ora.
 				elif(v == 3):
 					x = str(random.randint(1, 10)
-					intelligenza = intelligenza + x
-					racconto("Ahi, che male! La vostra intelligenza aumenta di " + x) + " punti.")
+					racconto("Ahi, che male! La vostra intelligenza aumenta di " + x + " punti.")
 					vita(-10)
 			#Coso buttato lì perchè non mi viene in mente un modo migliore per fare the end. Eh, vabbè.
 			break
