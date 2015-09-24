@@ -54,19 +54,20 @@ def getUpdates():
 		'timeout': 300, #Secondi da mantenere attiva la richiesta se non c'e' nessun messaggio
 	}
 	#Manda la richiesta ai server di Telegram e convertila in un dizionario
-	data = requests.get("https://api.telegram.org/bot" + token + "/getUpdates", params=parametri).json()
-	if(data['ok']):
-		if(data['result'] != []):
-			#Aggiorna l'update ID sul file
-			writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
-			#...esiste il messaggio? telegram wtf
-			if(data['result'][0]['message'] != []):
-				if(data['result'][0]['message']['text'] != []):
-					return data['result'][0]['message']
+	while(True):	
+		data = requests.get("https://api.telegram.org/bot" + token + "/getUpdates", params=parametri).json()
+		if(data['ok'] == True):
+			if(data['result'] != []):
+				#Aggiorna l'update ID sul file
+				writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
+				#...esiste il messaggio? telegram wtf
+				if(data['result'][0]['message'] != None):
+					if(data['result'][0]['message']['text'] != ""):
+						return data['result'][0]['message']
+					else:
+						raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
 				else:
 					raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
-			else:
-				raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
 
 #############################################
 ## Qui inizia la roba che serve a te, max! ##
@@ -80,7 +81,6 @@ candela = False
 
 #Scrivi la storia!
 def racconto(testo):
-	print(testo)
 	sendMessage(testo)
 
 #Apri una tastiera con due scelte
@@ -89,7 +89,6 @@ def treScelte(puno, pdue, ptre):
 		'keyboard':	[[puno, pdue, ptre]],
 		'one_time_keyboard': True,
 	}
-	print("Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre)
 	sendMessage(chr(10067) + "Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
 	#Aspetta una risposta...
 	waiting = True
@@ -108,7 +107,6 @@ def vita(var):
 	hp = hp + var
 	sendMessage(chr(10084) + ' ' + str(var) + "\n" + "Ora avete " + str(hp) + " punti vita.")
 	if(hp <= 0):
-		print("Game over...")
 		sendMessage("Hai finito la vita! Game over!")
 		sys.exit()
 
