@@ -60,6 +60,7 @@ def getUpdates():
 			if(data['result'] != []):
 				#Aggiorna l'update ID sul file
 				writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
+				parametri['offset'] = str(int(parametri['offset']) + 1)
 				#...esiste il messaggio? telegram wtf
 				if(data['result'][0]['message'] != None):
 					if(data['result'][0]['message']['text'] != ""):
