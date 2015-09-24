@@ -144,7 +144,6 @@ while(True):
 			c = treScelte("Proseguite verso la luce sicuri di non inciampare", "Correte verso la luce", "Esaminate la pianta")
 		if(c == 1) and (candela == True):
 			racconto("Vi addentrate nella caverna, dove una sala si estende nelle profondità della terra. \nAd un certo punto del cammino siete costretti a interrompere il viaggio a causa di un bivio. La luce che stavate seguendo prima risplende sulla sinistra, ma allo stesso momento qualcosa emana una luce rossa di suo sulla destra...")
-			intelligenza = 10;
 			while(True):
 				v = treScelte("Controllate a sinistra", "Procedete spavaldi verso destra", "Inventate il primo *facewall*")
 				if(v == 1):
@@ -167,7 +166,7 @@ while(True):
 				elif(v == 3):
 					x = str(random.randint(1, 10)
 					intelligenza = intelligenza + x
-					racconto("Ahi, che male! La vostra intelligenza aumenta di " + x) + " punti. \nLa vostra intelligenza attuale è " + intelligenza + ".")
+					racconto("Ahi, che male! La vostra intelligenza aumenta di " + x) + " punti.")
 					vita(-10)
 			#Coso buttato lì perchè non mi viene in mente un modo migliore per fare the end. Eh, vabbè.
 			break
