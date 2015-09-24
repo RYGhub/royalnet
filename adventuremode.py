@@ -162,7 +162,7 @@ while(True):
 					elif(r == 3):
 						racconto("La piscia cola dai vostri pantaloni, inondando la caverna e lasciandovi senza ossigeno. Il ragnetto vi osserva stupito e si nasconde nelle ragnatele.")
 						vita(-100)
-				elif(v == 2):
+				#elif(v == 2):
 					#Non succede nulla. Per ora.
 				elif(v == 3):
 					x = str(random.randint(1, 10)
