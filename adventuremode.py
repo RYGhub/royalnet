@@ -20,7 +20,7 @@ json.dumps(no_keyboard)
 target_group = -13164589
 
 #Manda un messaggio.
-def sendMessage(content, tastiera=no_keyboard, to=target_group):
+def sendMessage(content, tastiera="", to=target_group):
 	#Parametri del messaggio
 	parametri = {
 		'chat_id': to, #L'ID della chat a cui mandare il messaggio, Royal Games: -2141322 Royal Bot Testing Group: -13164589
@@ -60,10 +60,10 @@ def getUpdates():
 			if(data['result'] != []):
 				#Aggiorna l'update ID sul file
 				writeFile("lastid.txt", str(data['result'][0]['update_id'] + 1))
-				parametri['offset'] = str(int(parametri['offset']) + 1)
 				#...esiste il messaggio? telegram wtf
 				if(data['result'][0]['message'] != None):
 					if(data['result'][0]['message']['text'] != ""):
+						print(str(data['result'][0]['update_id']) + ": " + data['result'][0]['message']['text'])
 						return data['result'][0]['message']
 					else:
 						raise KeyError("Qualcosa nel messaggio di Telegram è andato storto. Molto storto.")
@@ -82,7 +82,7 @@ candela = False
 
 #Scrivi la storia!
 def racconto(testo):
-	sendMessage(testo)
+	sendMessage(testo, no_keyboard)
 
 #Apri una tastiera con due scelte
 def treScelte(puno, pdue, ptre):
@@ -92,8 +92,7 @@ def treScelte(puno, pdue, ptre):
 	}
 	sendMessage(chr(10067) + "Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
 	#Aspetta una risposta...
-	waiting = True
-	while(waiting):
+	while(True):
 		msg = getUpdates()
 		if(msg['text'] == puno):
 			return 1
@@ -101,7 +100,6 @@ def treScelte(puno, pdue, ptre):
 			return 2
 		elif(msg['text'] == ptre):
 			return 3
-			
 #Modifica la vita. Mettere valori negativi per ridurla, positivi per aumentarla.
 def vita(var):
 	global hp
