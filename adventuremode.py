@@ -171,10 +171,18 @@ while(True):
 						racconto("Di fronte a voi si estende una delle più grandi città naniche del mondo, ma storditi e feriti, non riuscite a coglierne tutta la sua bellezza. Le case più fragili crollano intorno e piccoli ma robusti omini nel panico cercano un rifugio in un grande castello. Sentite un altro ruggito, e il mondo si trasforma in zolfo ed esplosioni. L'ultima cosa che ricordate sono dolori atroci ovunque...")
 						sendMessage("Conclusione #5! Rigiocate per scoprire le altre.")
 						break
-					#elif(p == 2):
-						##Ah, boh.
-					#elif(P == 3):
-						##Ah, non lo so io
+					elif(p == 2):
+						racconto("Rinunciate ad attraversare i portoni, siete infatti dubbiosi dell'ospitalità dei nani. \nPiuttosto decidete di cercare riparo nella caverna. \nVi nascondete dentro una cavità nella parete dall'aspetto solido. \nSentite suoni di esplosioni e roccia sgretolarsi ovunque, e dalla paura vi viene un infarto.")
+						vita(-100)
+					elif(p == 3):
+						racconto("Mmmmh, che bello grattarsi! Ora però sentite prurito al culo...")
+						treScelte("Grattatevi", "Grattatevi", "Grattatevi")
+						racconto("Aaaaah, che piacere! Ma vi viene prurito al pancino...")
+						treScelte("Grattatevi", "Grattatevi", "Grattatevi")
+						racconto("Una stalattite enorme cade molto vicino a voi, e sentite diffondersi un prurito incredibile nelle ascelle...")
+						treScelte("Grattatevi", "Grattatevi", "Grattatevi")
+						racconto("Una stalattite vi arriva in testa, vi buca il cervello e morite. Il tutto mentre avevate prurito al naso...")
+						vita(-100)
 				elif(v == 3):
 					x = str(random.randint(1, 10))
 					racconto("Ahi, che male! La vostra intelligenza aumenta di " + x + " punti.")
@@ -217,6 +225,7 @@ while(True):
 				vita(-2)
 			elif(s == 3):
 				racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo; vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
+				##Ending in sospeso...
 				break
 		#Coso buttato lì perchè non mi viene in mente un modo migliore per fare the end. Eh, vabbè.
 		break
