@@ -82,7 +82,7 @@ candela = False
 
 #Scrivi la storia!
 def racconto(testo):
-	sendMessage(testo, no_keyboard)
+	sendMessage(chr(128493) + " " + testo, no_keyboard)
 
 #Apri una tastiera con due scelte
 def treScelte(puno, pdue, ptre):
@@ -90,7 +90,7 @@ def treScelte(puno, pdue, ptre):
 		'keyboard':	[[puno, pdue, ptre]],
 		'one_time_keyboard': True,
 	}
-	sendMessage(chr(10067) + "Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
+	sendMessage(chr(10067) + " Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
 	#Aspetta una risposta...
 	while(True):
 		msg = getUpdates()
@@ -136,14 +136,15 @@ while(True):
 		if(candela == False):
 			racconto("Brancolate nel buio nella direzione della luce, inciampate in qualcosa e vi spaccate il naso per terra.")
 			vita(-10)
-			racconto("Scavando nella dura roccia. Scoprite di essere incastrati in un qualcosa simile a una radice, ma grossa e semovente.")
+			racconto("Notate che nel pavimento c'è qualcosa di simile a una radice, ma grossa e sembra quasi che si stia muovendo.")
 			c = treScelte("Proseguite verso la luce con cautela", "Correte verso la luce", "Tornate indietro")
 		elif(candela == True):
-			racconto("Vi dirigete verso la luce, ma scoprite che un enorme pianta vi intralcia la strada. Si sentono soffocati fruscii nel terreno in cui penetra la radice.")
-			racconto("La candela per fortuna si é rivelata essere elettrica per mancanza di fantasia dell'autore, e premendo un pulsantino sul lato illumina l'area circostante. La luce non é abbastanza da illuminare del tutto la caverna, ma potete almeno vedere ciò su cui camminate.")
-			c = treScelte("Proseguite verso la luce sicuri di voi stessi", "Correte verso la luce", "Esaminate la pianta")
+			racconto("La candela per fortuna si é rivelata essere elettrica per mancanza di fantasia dell'autore, e premendo un pulsantino sul lato illumina l'area circostante. \nLa luce non é abbastanza da illuminare del tutto la caverna, ma potete almeno vedere ciò su cui camminate.")
+			racconto("Vi dirigete verso la luce, ma scoprite che un enorme pianta vi intralcia la strada. \nSi sentono soffocati fruscii nel terreno in cui penetrano le radici.")
+			c = treScelte("Proseguite verso la luce sicuri di non inciampare", "Correte verso la luce", "Esaminate la pianta")
 		if(c == 1) and (candela == True):
-			racconto("Vi addentrate nella caverna, dove la sala si estende nelle profondità della terra. Ad un certo punto del cammino siete costretti a interrompere il viaggio a causa di un bivio. Alla luce della vostra candela qualcosa risplende sulla sinistra, ma allo stesso momento qualcosa emana una luce rossa di suo sulla destra...")
+			racconto("Vi addentrate nella caverna, dove una sala si estende nelle profondità della terra. \nAd un certo punto del cammino siete costretti a interrompere il viaggio a causa di un bivio. La luce che stavate seguendo prima risplende sulla sinistra, ma allo stesso momento qualcosa emana una luce rossa di suo sulla destra...")
+			intelligenza = 10;
 			while(True):
 				v = treScelte("Controllate a sinistra", "Procedete spavaldi verso destra", "Inventate il primo *facewall*")
 				if(v == 1):
@@ -156,41 +157,42 @@ while(True):
 						break
 					elif(r == 2):
 						racconto("Cercate di scappare, ma inciampate nelle ragnatele. Cadete di faccia sul povero ragnetto, spiaccicandolo. Svenite. (Molto anticlimatico, lo so, ma siete voi che fate scelte da imbranati)")
-						sendMessage("Continua...")
+						sendMessage("Continua in un prossimo episodio... Ma ci sono altri finali possibili! Rigiocate per scoprire gli altri.")
 						break
 					elif(r == 3):
 						racconto("La piscia cola dai vostri pantaloni, inondando la caverna e lasciandovi senza ossigeno. Il ragnetto vi osserva stupito e si nasconde nelle ragnatele.")
 						vita(-100)
 				elif(v == 2):
 					#Non succede nulla. Per ora.
-					sendMessage("Qui non c'è nulla, per ora... Max mandami quel coso")
 				elif(v == 3):
-					racconto("Ahi, che male! La vostra intelligenza aumenta di " + str(random.randint(1, 7)) + " punti.")
+					x = str(random.randint(1, 10)
+					intelligenza = intelligenza + x
+					racconto("Ahi, che male! La vostra intelligenza aumenta di " + x) + " punti. \nLa vostra intelligenza attuale è " + intelligenza + ".")
 					vita(-10)
-			#Coso buttato lì perchè non mi viene in mente un modo migliore. Eh, vabbè.
+			#Coso buttato lì perchè non mi viene in mente un modo migliore per fare the end. Eh, vabbè.
 			break
 		elif(c == 1):
-			racconto("Osservate da vicino quello che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. Il tentacolo affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
+			racconto("Osservate da vicino quella che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. La radice affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
 			vita(-2)
 		elif(c == 2):
-			racconto("Avanzate correndo verso la luce, e inciampate in altri tentacoli, subendo solo un po' di danni. Quello che all'inizio sembrava essere un alone di luce si rivelò essere un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
+			racconto("Avanzate correndo verso la luce, e inciampate in altre radici, subendo solo un po' di danni. Quello che all'inizio sembrava essere un alone di luce si rivelò essere un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
 			vita(-10)
 		elif(c == 3) and (candela == True):
 			racconto("Vedete crepe ovunque, e la pianta che penetra nel terreno creandone altre...")
 		if(c == 1) or (c == 2) or ((c == 3) and (candela == True)):
-			racconto("La terra inizia a tremare e grosse crepe iniziano a comprarire nel terreno, le grosse radici vengono rapidamente rissuchiate nel soffito immenso, e un orribile ruggito vi spacca le orecchie. Siete assordati, e non potete sentire nulla.")
+			racconto("La terra inizia a tremare e grosse crepe iniziano a comprarire nel terreno. \nGrosse radici, ora illuminate dalla luce del sole, vengono rapidamente rissuchiate nel soffito immenso. \nUn orribile ruggito vi spacca le orecchie. Siete assordati, e non potete sentire nulla.")
 			racconto("Avete il presentimento che qualcosa di terribile stia per accadere.")
-			b = treScelte("Scappate via dalla zona crepata", "Rimanete come idioti a guardare l'avvenimento", "Vi buttate al centro del buco")
+			b = treScelte("Scappate via dalla zona crepata", "Rimanete come idioti a guardare l'avvenimento", "Vi buttate in direzione della luce che si vede in lontananza")
 			if(b == 1):
-				racconto("Vi buttate fuori dal buco appena in tempo, e sentite una forta esplosione alle vostre spalle... Con una forza possente venite spinti giù dalla montagna. Cadete facendo un'incredibile fracasso e sentite un male allucinante. Siete sull'orlo di svenire. Con le ultime forze vi girate ad osservare la scena. Un enorme creatura grande come il picco della montagna si stava levando in cielo, una mastodontica isola composta da tentacoli e occhi gialli. Un enorme tentacolo continua ad essere attaccato nel centro di quello che una volta era un gigantesco picco, finchè non crollò su se stesso ed implose. La grossa nube volò lentamente emettendo il suo ruggito di trionfo sopra di voi, e in quel preciso istante le palpebre divennero troppo pesanti e cedettero.")
+				racconto("Vi buttate fuori dal buco appena in tempo, e sentite una forte esplosione alle vostre spalle... Con una forza possente venite spinti giù dalla montagna. Cadete facendo un'incredibile fracasso e sentite un male allucinante. Siete sull'orlo di svenire. Con le ultime forze vi girate ad osservare la scena. Un enorme creatura grande come il picco della montagna si stava levando in cielo, una mastodontica isola composta da tentacoli e occhi gialli. Un enorme tentacolo continuava ad essere attaccato nel centro di quello che una volta era un gigantesco picco, finchè non crollò su se stesso ed implose. La grossa nube volava lentamente, emettendo il suo ruggito di trionfo sopra di voi, e in quel preciso istante le palpebre divennero troppo pesanti e cedettero.")
 				sendMessage("Conclusione #1! Rigiocate per scoprire le altre.")
 				break
 			elif(b == 2):
-				racconto("Ottima scelta! Il soffito all'improvviso si stacca con un forte boato, inondando la caverna di luce. Grossi tentacoli si ritraggono da sotto il suolo, e la terra inizia a sgretolarsi sotto i vostri piedi. Fate in tempo a vedere un enorme tentacolo al centro del pavimento. Improvvisamente, il tentacolo iniziò a gonfiarsi e tutto il mondo intorno implose. Svenite.")
+				racconto("Il soffito all'improvviso si stacca con un forte boato, inondando la caverna di luce. Grossi tentacoli si ritraggono da sotto il suolo, e la terra inizia a sgretolarsi sotto i vostri piedi. Fate in tempo a vedere un enorme tentacolo al centro del pavimento. Improvvisamente, il tentacolo inizia a gonfiarsi e tutto il mondo intorno implode. Svenite.")
 				sendMessage("Conclusione #2! Rigiocate per scoprire le altre.")
 				break
 			elif(b == 3):
-				racconto("Siete proprio pirla... La montagna si avvolge su sè stessa e, avvolti da lava e roccia, spiaccicati con una forza enorme, perite.")
+				racconto("Siete proprio pirla... Intravedete qualcosa a forma di ascia, ma non fate in tempo a raggiungerla che la montagna si avvolge su sè stessa e, avvolti da lava e roccia, spiaccicati con una forza enorme, perite.")
 				vita(-100)
 	elif(s == 3):
 		racconto("Vi ritrovate in dei vestiti pesanti e grossi, pieni di tasche.")
@@ -201,11 +203,11 @@ while(True):
 				racconto("Ha un sapore orribile!\nVi sentite male...")
 				vita(-10)
 			elif(s == 2):
-				racconto("Congratulazioni, ora siete coperti di feci di origini sconosciute!")
+				racconto("Congratulazioni, ora siete coperti di merda di origini sconosciute!")
 				vita(-2)
 			elif(s == 3):
-				racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo;\n vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
+				racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo; vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
 				break
-		#Coso buttato lì perchè non mi viene in mente un modo migliore. Eh, vabbè.
+		#Coso buttato lì perchè non mi viene in mente un modo migliore per fare the end. Eh, vabbè.
 		break
 racconto("THE END!")
