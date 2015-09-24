@@ -156,13 +156,25 @@ while(True):
 						break
 					elif(r == 2):
 						racconto("Cercate di scappare, ma inciampate nelle ragnatele. Cadete di faccia sul povero ragnetto, spiaccicandolo. Svenite. (Molto anticlimatico, lo so, ma siete voi che fate scelte da imbranati)")
-						sendMessage("Continua in un prossimo episodio... Ma ci sono altri finali possibili! Rigiocate per scoprire gli altri.")
+						sendMessage("Conclusione #4! Rigiocate per scoprire le altre.")
 						break
 					elif(r == 3):
 						racconto("La piscia cola dai vostri pantaloni, inondando la caverna e lasciandovi senza ossigeno. Il ragnetto vi osserva stupito e si nasconde nelle ragnatele.")
 						vita(-100)
-				#elif(v == 2):
-					#Non succede nulla. Per ora.
+				elif(v == 2):
+					racconto("Man mano che vi addentrate sempre di più nelle profondità del tunnel, una luce rossa pervade le pareti, sempre più luminosa, finchè non svoltate. Ai vostri occhi si rivela un gigantesco portone nanico, ornato da una moltitudine di rune e circondato da un ruscello di lava.")
+					racconto("All'improvviso sentite la terra tremare e udite un ruggito potentissimo echeggiare. Pochi secondi dopo un corno risuona nelle vicinanze, e i portoni iniziano lentamente a chiudersi (Sto pensando a te, portale nero di Mordor)")
+					p = treScelte("Correte più veloce che potete attraverso le porte", "Vi nascondete e cercate un riparo nella caverna", "Vi grattate le palle")
+					if(p == 1):
+						racconto("Più veloce che potete correte verso gli enormi portoni che si stanno lentamente chiudendo di fronte a voi. Col cuore a mille vedete crollare stalattiti ovunque, una delle quali vi colpisce forte sulla spalla, ma riuscite a saltare un secondo prima di venire schiacciati.")
+						vita(-35)
+						racconto("Di fronte a voi si estende una delle più grandi città naniche del mondo, ma storditi e feriti, non riuscite a coglierne tutta la sua bellezza. Le case più fragili crollano intorno e piccoli ma robusti omini nel panico cercano un rifugio in un grande castello. Sentite un altro ruggito, e il mondo si trasforma in zolfo ed esplosioni. L'ultima cosa che ricordate sono dolori atroci ovunque...")
+						sendMessage("Conclusione #5! Rigiocate per scoprire le altre.")
+						break
+					#elif(p == 2):
+						##Ah, boh.
+					#elif(P == 3):
+						##Ah, non lo so io
 				elif(v == 3):
 					x = str(random.randint(1, 10))
 					racconto("Ahi, che male! La vostra intelligenza aumenta di " + x + " punti.")
