@@ -196,7 +196,7 @@ while(True):
 				vita(-100)
 	elif(s == 3):
 		racconto("Vi ritrovate in dei vestiti pesanti e grossi, pieni di tasche.")
-		racconto("Ad una accurata ispezione trovate un barattolo contenente qualcosa che sembra liquido.")
+		racconto("Ad una accurata ispezione trovate una bottiglia contenente qualcosa che sembra liquido. Sull'etichetta vi è raffigurata una lucciola.")
 		while(True):
 			s = treScelte("Bevete il liquido", "Vi spalmate addosso il liquido", "Introducete nella cavità anale")
 			if(s == 1):
