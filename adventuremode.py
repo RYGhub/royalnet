@@ -82,7 +82,7 @@ candela = False
 
 #Scrivi la storia!
 def racconto(testo):
-	sendMessage(chr(128493) + " " + testo, no_keyboard)
+	sendMessage(chr(128172) + " " + testo, no_keyboard)
 
 #Apri una tastiera con due scelte
 def treScelte(puno, pdue, ptre):
