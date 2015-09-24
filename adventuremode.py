@@ -180,7 +180,7 @@ while(True):
 		if(c == 1) or (c == 2) or ((c == 3) and (candela == True)):
 			racconto("La terra inizia a tremare e grosse crepe iniziano a comprarire nel terreno. \nGrosse radici, ora illuminate dalla luce del sole, vengono rapidamente rissuchiate nel soffito immenso. \nUn orribile ruggito vi spacca le orecchie. Siete assordati, e non potete sentire nulla.")
 			racconto("Avete il presentimento che qualcosa di terribile stia per accadere.")
-			b = treScelte("Scappate via dalla zona crepata", "Rimanete come idioti a guardare l'avvenimento", "Vi buttate in direzione della luce che si vede in lontananza")
+			b = treScelte("Buttatevi fuori dalla zona crepata", "Rimanete come idioti a guardare l'avvenimento", "Correte in direzione dello scintillio che si vede in lontananza")
 			if(b == 1):
 				racconto("Vi buttate fuori dal buco appena in tempo, e sentite una forte esplosione alle vostre spalle... Con una forza possente venite spinti giù dalla montagna. Cadete facendo un'incredibile fracasso e sentite un male allucinante. Siete sull'orlo di svenire. Con le ultime forze vi girate ad osservare la scena. Un enorme creatura grande come il picco della montagna si stava levando in cielo, una mastodontica isola composta da tentacoli e occhi gialli. Un enorme tentacolo continuava ad essere attaccato nel centro di quello che una volta era un gigantesco picco, finchè non crollò su se stesso ed implose. La grossa nube volava lentamente, emettendo il suo ruggito di trionfo sopra di voi, e in quel preciso istante le palpebre divennero troppo pesanti e cedettero.")
 				sendMessage("Conclusione #1! Rigiocate per scoprire le altre.")
