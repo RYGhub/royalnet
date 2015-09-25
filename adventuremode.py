@@ -91,7 +91,7 @@ def treScelte(puno, pdue, ptre):
 		'keyboard':	[[puno, pdue, ptre]],
 		'one_time_keyboard': True,
 	}
-	time.sleep(5)
+	time.sleep(4)
 	sendMessage(chr(10067) + " Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
 	#Aspetta una risposta...
 	while(True):
@@ -115,7 +115,7 @@ def vita(var):
 ## Qui inizia la storia... ##
 #############################
 #Copyright @MaxSensei 2015
-sendMessage("Benvenuto a Royal Bot Adventures (Release Candidate 5, speriamo che vada)!\nStoria scritta da @MaxSensei")
+sendMessage("Benvenuto a Royal Bot Adventures !\nStoria scritta da @MaxSensei")
 racconto("Vi svegliate in un luogo del tutto buio, sentite un flebile respiro da qualche parte nel buio. Tastate la vostra fedelissima spada. Cercate di ricordare qualcosa ma con scarso successo (originale eh?). ")
 while(True):
 	s = treScelte("Brandite la spada verso i respiri nel buio", "Chiedete chi è ad alta voce", "State zitti e immobili")
