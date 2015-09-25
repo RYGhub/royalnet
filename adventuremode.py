@@ -84,7 +84,6 @@ candela = False
 #Scrivi la storia!
 def racconto(testo):
 	sendMessage(chr(128172) + " " + testo, no_keyboard)
-	time.sleep(2)
 
 #Apri una tastiera con due scelte
 def treScelte(puno, pdue, ptre):
@@ -92,6 +91,7 @@ def treScelte(puno, pdue, ptre):
 		'keyboard':	[[puno, pdue, ptre]],
 		'one_time_keyboard': True,
 	}
+	time.sleep(5)
 	sendMessage(chr(10067) + " Cosa volete fare?\n1: " + puno + "\n2: " + pdue + "\n3: " + ptre, json.dumps(tastiera))
 	#Aspetta una risposta...
 	while(True):
@@ -115,7 +115,7 @@ def vita(var):
 ## Qui inizia la storia... ##
 #############################
 #Copyright @MaxSensei 2015
-sendMessage("Benvenuto a Royal Bot Adventures (Release Candidate 3, speriamo che vada)!\nStoria scritta da @MaxSensei")
+sendMessage("Benvenuto a Royal Bot Adventures (Release Candidate 5, speriamo che vada)!\nStoria scritta da @MaxSensei")
 racconto("Vi svegliate in un luogo del tutto buio, sentite un flebile respiro da qualche parte nel buio. Tastate la vostra fedelissima spada. Cercate di ricordare qualcosa ma con scarso successo (originale eh?). ")
 while(True):
 	s = treScelte("Brandite la spada verso i respiri nel buio", "Chiedete chi è ad alta voce", "State zitti e immobili")
@@ -253,4 +253,4 @@ while(True):
 				break
 		#Coso buttato lì perchè non mi viene in mente un modo migliore per fare the end. Eh, vabbè.
 		break
-racconto("THE END!")
+sendMessage("THE END!")
