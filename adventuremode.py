@@ -18,7 +18,7 @@ no_keyboard = {
 json.dumps(no_keyboard)
 
 #Gruppo di destinazione
-target_group = -13164589
+target_group = -2141322
 
 #Manda un messaggio.
 def sendMessage(content, tastiera="", to=target_group):
