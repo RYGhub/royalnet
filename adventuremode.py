@@ -3,6 +3,7 @@ import requests
 import json
 import sys
 import random
+import time
 
 #Inizializza la API Key di Telegram
 token = ""
@@ -83,6 +84,7 @@ candela = False
 #Scrivi la storia!
 def racconto(testo):
 	sendMessage(chr(128172) + " " + testo, no_keyboard)
+	time.sleep(4)
 
 #Apri una tastiera con due scelte
 def treScelte(puno, pdue, ptre):
@@ -113,7 +115,7 @@ def vita(var):
 ## Qui inizia la storia... ##
 #############################
 #Copyright @MaxSensei 2015
-sendMessage("Benvenuto a Royal Bot Adventures!\nVERSIONE ALPHA QUINDI PIENA DI BUG\nStoria scritta da @MaxSensei")
+sendMessage("Benvenuto a Royal Bot Adventures (Release Candidate 2, speriamo che vada)!\nStoria scritta da @MaxSensei")
 racconto("Vi svegliate in un luogo del tutto buio, sentite un flebile respiro da qualche parte nel buio. Tastate la vostra fedelissima spada. Cercate di ricordare qualcosa ma con scarso successo (originale eh?). ")
 while(True):
 	s = treScelte("Brandite la spada verso i respiri nel buio", "Chiedete chi è ad alta voce", "State zitti e immobili")
@@ -137,11 +139,11 @@ while(True):
 			racconto("Brancolate nel buio nella direzione della luce, inciampate in qualcosa e vi spaccate il naso per terra.")
 			vita(-10)
 			racconto("Notate che nel pavimento c'è qualcosa di simile a una radice, ma grossa e sembra quasi che si stia muovendo.")
-			c = treScelte("Proseguite verso la luce con cautela", "Correte verso la luce", "Tornate indietro")
+			c = treScelte("Proseguite verso la luce con cautela", "Correte in direzione opposta", "Tornate indietro")
 		elif(candela == True):
 			racconto("La candela per fortuna si é rivelata essere elettrica per mancanza di fantasia dell'autore, e premendo un pulsantino sul lato illumina l'area circostante. \nLa luce non é abbastanza da illuminare del tutto la caverna, ma potete almeno vedere ciò su cui camminate.")
 			racconto("Vi dirigete verso la luce, ma scoprite che un enorme pianta vi intralcia la strada. \nSi sentono soffocati fruscii nel terreno in cui penetrano le radici.")
-			c = treScelte("Proseguite verso la luce sicuri di non inciampare", "Correte verso la luce", "Esaminate la pianta")
+			c = treScelte("Proseguite verso la luce sicuri di non inciampare", "Correte in direzione opposta", "Esaminate la pianta")
 		if(c == 1) and (candela == True):
 			racconto("Vi addentrate nella caverna, dove una sala si estende nelle profondità della terra. \nAd un certo punto del cammino siete costretti a interrompere il viaggio a causa di un bivio. La luce che stavate seguendo prima risplende sulla sinistra, ma allo stesso momento qualcosa emana una luce rossa di suo sulla destra...")
 			while(True):
@@ -193,7 +195,7 @@ while(True):
 			racconto("Osservate da vicino quella che pare essere un'enorme radice che inizia dai meandri oscuri del soffitto e scende giù, perforando con facilità il duro granito. La radice affonda sempre più giù e potete sentire come rompe e sgretola la terra sottostante...")
 			vita(-2)
 		elif(c == 2):
-			racconto("Avanzate correndo verso la luce, e inciampate in altre radici, subendo solo un po' di danni. Quello che all'inizio sembrava essere un alone di luce si rivelò essere un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
+			racconto("Avanzate correndo verso la parete opposta, ma inciampate in altre radici, subendo solo dei danni. Notate un piccolo varco nella parete. I vostri occhi, ormai abituati al buio, non distinguono chiaramente quello che c'è oltre.")
 			vita(-10)
 		elif(c == 3) and (candela == True):
 			racconto("Vedete crepe ovunque, e la pianta che penetra nel terreno creandone altre...")
@@ -225,7 +227,29 @@ while(True):
 				vita(-2)
 			elif(s == 3):
 				racconto("Sentite all'improvviso una forza sconosciuta pervadervi tutto il corpo; vi concentrate, e riuscite a far splendere le vostre splendide chiappe più del sole in estate.")
-				##Ending in sospeso...
+				racconto("Le vostre chiappe risplendono più del sole, e illuminano tutta la caverna. Vi stupite dalla sua immensità: sembra il picco di una montagna, ma avvolto da una specie di enorme pianta, le cui radici entrano qua e là nel terreno. \nOsservate anche tante sfere gialle alle estremità della caverna. Esattamente al centro, c'é una specie di enorme pilastro...")
+				while(True):
+					h = treScelte("Lodate la bellezza delle vostre chiappe", "Esaminate le radici", "Esaminate il grosso pilastro")
+					if(h == 1):
+						racconto("Lodate la bellezza del vostro culo e ammirate il modo in cui non succede niente!")
+					elif(h == 2):
+						racconto("Quelle che a prima vista sembravano radici in realtà sono grossi tentacoli verdognoli che penetrano dal soffito verso il terreno, scavandolo in profondità. \nNotate alla chiara luce dei vostri glutei che sono semitrasparenti, e potete vedere un liquido rossastro e luminoso scorrere al loro interno.")
+						break
+					elif(h == 3):
+						racconto("Esaminate l'enorme pilastro al centro della caverna per scoprire che in realtà é un enorme tentacolo! Dentro potete vedete confluire altri tentacoli. \nNotate che é semitrasparente, e potete vedere come pietra incandescente e lava scorrono al suo interno. \nNotate anche un luccichio che sembra provenire da gemme all'interno.")
+						break
+				racconto("All'improvviso la terra inizia a tremare e i tentacoli uno ad uno vengono risucchiati nel soffito, mentre il tentacolo madre inizia a gonfiarsi, raggiungendo dimensioni enormi...")
+				racconto("In una parete notate una crepa che potrebbe condurvi all'uscita della caverna.")
+				b = treScelte("Andate verso la crepa", "Aggrappatevi ad un tentacolo", "Abbracciate il grosso tentacolo centrale, magari ha solo bisogno di amore")
+				if(b == 1):
+					racconto("Raggiungete la crepa e cercate di attraversarla, ma notate che il vostro culo oltre a illuminarsi si é anche ingrandito! \nRimanete incastrati nella fessura. All'improvviso sentite un fortissimo ruggito, e le vostre chiappe, in preda alla paura, si contraggono, esplodendo e rilasciando tutta la luminescenza in forma di propulsione. \nSchizzate alla velocità della luce fuori dalla montagna, e fuori dai confini della città nanica al suo esterno. L'ultima cosa che vedete é una casetta sull'albero in un bosco. La attraversate come un proiettile e svenite.")
+					sendMessage("Conclusione #5! Rigiocate per scoprire le altre.")
+				elif(b == 2):
+					racconto("Vi aggrappate al tentacolo più vicino, e appena lo toccate questo schizza verso alto, entrando nel soffito e portandovi dietro. \nAll'improvviso l'intera pianta si stacca dalla montagna e inizia a volare sempre più in alto nel cielo. \nGuardate sotto e vedete come l'enorme tentacolo madre sia ancora attaccato alla montagna. \nNon aveste mai pensato che esso si rimpicciolisse all'istante, rilasciando sotto forma di vapore la roccia incandescente, facendo esplodere la montagna e dando un'ulteriore spinta all'isola pianta volante... \nIl tentacolo a cui pensavate di essere aggrappati invece si aggrappa a sua volta a voi e vi risucchia all'interno di una strana membrana... Svenite e sognate unicorni che sparano arcobaleni e bagni nello spazio profondo.")
+					sendMessage("Conclusione #6! Rigiocate per scoprire le altre.")
+				elif(b == 3):
+					racconto("Abbracciate il tentacolo madre con un sorriso stampato sulle labbra. Vi divertite tantissimo a raccontare in paradiso di come siete esploso e di come i vostri pezzettini siano stati ritrovati nei 5 continenti.")
+					vita(-100)
 				break
 		#Coso buttato lì perchè non mi viene in mente un modo migliore per fare the end. Eh, vabbè.
 		break
