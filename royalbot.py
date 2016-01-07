@@ -283,3 +283,6 @@ while(True):
 							sendMessage(chr(9989) + " Hai proposto un TY per " + selezione + "!", msg['chat']['id'], msg['from']['id'])
 						else:
 							sendMessage(chr(9888) + " Username inesistente!", msg['chat']['id'], msg['from']['id'])
+				#Elenca gli username del gruppo			
+				elif(msg['text'].startswith("/everyonegetinhere")):
+					sendMessage("@ActerRY \n@Adry99 \n@Alleanderl \n@Boni3099 \n@Cosimo03 \n@EnriBenassati \n@EvilBalu \n@FrankRekt \n@Fultz \n@GoToB \n@HeisenDoc \n@iEmax \n@IlGattopardo \n@MaxSensei \n@MRdima98 \n@Peramela99 \n@RuoziR \n@SuperSmurf \n@Steffo \n@Tauei \n@thevagginadestroyer \n@Vivalafigliadellortolano \n@Voltaggio", msg['chat']['id'], msg['from']['id'])
