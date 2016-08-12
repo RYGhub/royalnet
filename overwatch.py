@@ -3,13 +3,15 @@ import requests
 import json
 
 # Get player database from the db.json file
-db = json.load("db.json")
+file = open("db.json")
+db = json.load(file)
+file.close()
 
 # List overwatch players
 players = list()
 for player in db:
-    if player["overwatch"] is not None:
-        players.append(player["overwatch"])
+    if db[player]["overwatch"] is not None:
+        players.append(db[player]["overwatch"])
 
 # Get player data
 async def get_player_data(platform: str, region: str, battletag: str):
