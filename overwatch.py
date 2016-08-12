@@ -14,3 +14,6 @@ async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
         return r.json()
     elif r.status_code == 404:
         raise Exception("Player not found.")
+    else:
+        raise Exception("Unhandled API response.")
+    
