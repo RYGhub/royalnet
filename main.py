@@ -16,18 +16,23 @@ f = open("discordtoken.txt", "r")
 token = f.read()
 f.close()
 
-# Start discord bot client but ignore events
-async def discord_connect():
-    await d_client.login(token)
-    print("Discord login was successful!")
-    d_client.connect()  # Something's not right here...
-    print("Discord connection was successful!")
-
 # List overwatch players
 ow_players = list()
 for player in db:
     if db[player]["overwatch"] is not None:
         ow_players.append(db[player]["overwatch"])
 
-# Connect to Discord
-loop.run_until_complete(discord_connect())
+# Every 300 seconds, update player status and check for levelups
+async def overwatch_level_up(timeout):
+    while True:
+        # Update data for every player in list
+        for ow_player in ow_players:
+            r = await overwatch.get_player_data(**ow_player)
+            if r["data"]["level"] > ow_player["level"]:
+                await d_client.send_message(d_client.get_channel("213655027842154508"), "Level up!")
+                ow_player["level"] = r["data"]["level"]
+        # Wait for the timeout
+        await asyncio.sleep(timeout)
+
+loop.create_task(overwatch_level_up(30))
+d_client.run(token)

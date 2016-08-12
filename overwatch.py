@@ -3,7 +3,7 @@ import requests
 loop = asyncio.get_event_loop()
 
 # Get player data
-async def get_player_data(platform: str, region: str, battletag: str):
+async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
     # Unofficial API requires - for discriminator numbers
     battletag = battletag.replace("#", "-")
     # GET the json unofficial API response
