@@ -10,4 +10,9 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
 
-client.run("token")
+# Get the discord bot token from "discordtoken.txt"
+f = open("discordtoken.txt", "r")
+token = f.read()
+f.close()
+
+client.run(token)
