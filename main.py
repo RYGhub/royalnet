@@ -1,9 +1,9 @@
 import asyncio
 import discord
-
 client = discord.Client()
 
 
+# When the discord client is ready, print something
 @client.event
 async def on_ready():
     print("Connessione riuscita!")
@@ -15,4 +15,5 @@ f = open("discordtoken.txt", "r")
 token = f.read()
 f.close()
 
-client.run(token)
+# Start discord bot client but ignore events
+client.start(token)
