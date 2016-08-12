@@ -39,5 +39,5 @@ async def overwatch_level_up(timeout):
         # Wait for the timeout
         await asyncio.sleep(timeout)
 
-loop.create_task(overwatch_level_up(30))
+loop.create_task(overwatch_level_up(900))
 d_client.run(token)
