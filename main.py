@@ -79,7 +79,7 @@ async def league_rank_change(timeout):
         print("Check for League of Legends completed.")
 
 loop.create_task(overwatch_level_up(900))
-loop.create_task(league_rank_change(5))
+loop.create_task(league_rank_change(900))
 
 try:
     loop.run_until_complete(d_client.start(token))
