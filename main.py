@@ -23,6 +23,7 @@ async def overwatch_level_up(timeout):
     while True:
         # Wait for the timeout
         await asyncio.sleep(timeout)
+        print("Checking for Overwatch updates.")
         # Update data for every player in list
         for player in db:
             if "overwatch" in db[player]:
@@ -39,12 +40,14 @@ async def overwatch_level_up(timeout):
                     f = open("db.json", "w")
                     json.dump(db, f)
                     f.close()
+        print("Check for Overwatch completed.")
 
 # Every timeout seconds, update player league and check for rank changes
 async def league_rank_change(timeout):
     while True:
         # Wait for the timeout
         await asyncio.sleep(timeout)
+        print("Checking for League of Legends updates.")
         # Update data for every player in list
         for player in db:
             if "league" in db[player]:
@@ -58,7 +61,7 @@ async def league_rank_change(timeout):
                     tier_number = league.ranklist.index(r["tier"])
                     roman_number = league.roman.index(r["entries"][0]["division"])
                     # Check for tier changes
-                    if tier_number != db[player]["league"]["tier"] or roman_number < db[player]["league"]["division"]:
+                    if tier_number != db[player]["league"]["tier"] or roman_number != db[player]["league"]["division"]:
                         # Convert user ID into a mention
                         user = "<@" + player + ">"
                         # Prepare the message to send
@@ -73,9 +76,10 @@ async def league_rank_change(timeout):
                         f = open("db.json", "w")
                         json.dump(db, f)
                         f.close()
+        print("Check for League of Legends completed.")
 
 loop.create_task(overwatch_level_up(900))
-loop.create_task(league_rank_change(120))
+loop.create_task(league_rank_change(5))
 
 try:
     loop.run_until_complete(d_client.start(token))

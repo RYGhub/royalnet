@@ -29,11 +29,8 @@ async def get_player_rank(region: str, summonerid: int, **kwargs):
                                    '/entry?api_key={token}'.format(region=region, summonerid=summonerid, token=token))
     # Ensure the request is successful
     if r.status_code == 200:
-        if len(r.json()[str(summonerid)]) > 0:
-            return r.json()[str(summonerid)][0]
-        else:
-            raise NoRankedGamesCompletedException("This player hasn't completed any ranked games.")
+        return r.json()[str(summonerid)][0]
     elif r.status_code == 404:
-        raise NotFoundException("Player not found.")
+        raise NoRankedGamesCompletedException("This player hasn't completed any ranked games.")
     else:
         raise Exception("Unhandled API response.")
