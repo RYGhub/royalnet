@@ -2,6 +2,10 @@ import asyncio
 import requests
 loop = asyncio.get_event_loop()
 
+
+class NotFoundException(Exception):
+    pass
+
 # Get player data
 async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
     print("[Overwatch] Getting player info for: {platform} {region} {battletag}".format(platform=platform,
@@ -14,9 +18,16 @@ async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
                                    'https://api.lootbox.eu/{platform}/{region}/{battletag}/profile'.format(**locals()))
     # Ensure the request is successful
     if r.status_code == 200:
-        return r.json()
-    elif r.status_code == 404:
-        raise Exception("Player not found.")
+        # Parse json and check for the status code inside the response
+        pj = r.json()
+        if "statusCode" in pj:
+            if pj["statusCode"] == 404:
+                raise NotFoundException("Player not found.")
+            else:
+                raise Exception("Unhandled API response.")
+        else:
+            # Success!
+            return pj
     else:
         raise Exception("Unhandled API response.")
     
