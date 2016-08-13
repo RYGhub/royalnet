@@ -69,6 +69,9 @@ async def league_rank_change(timeout):
                     except league.NoRankedGamesCompletedException:
                         # If the player has no ranked games completed, skip him
                         continue
+                    except league.RateLimitException:
+                        # If you've been ratelimited, skip the player and notify the console.
+                        print("[League] Request rejected for rate limit.")
                     else:
                         # Convert tier into a number
                         tier_number = league.ranklist.index(r["tier"])

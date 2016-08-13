@@ -10,6 +10,9 @@ class NoRankedGamesCompletedException(Exception):
     pass
 
 
+class RateLimitException(Exception):
+    pass
+
 loop = asyncio.get_event_loop()
 
 # Load League of Legends API key from the leaguetoken.txt file
@@ -33,5 +36,7 @@ async def get_player_rank(region: str, summonerid: int, **kwargs):
         return r.json()[str(summonerid)][0]
     elif r.status_code == 404:
         raise NoRankedGamesCompletedException("This player hasn't completed any ranked games.")
+    elif r.status_code == 429:
+        raise RateLimitException("You've been ratelimited by Riot. Check your developer dashboard.")
     else:
         raise Exception("Unhandled API response.")
