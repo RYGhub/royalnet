@@ -15,8 +15,8 @@ async def send_message(msg: str, to: int):
         "chat_id": to,
         "text": msg
     }
-    r = loop.run_in_executor(None, functools.partial(requests.get, params=params),
-                             "https://api.telegram.org/bot{token}/sendMessage".format(token=token))
+    r = await loop.run_in_executor(None, functools.partial(requests.get, params=params),
+                                   "https://api.telegram.org/bot{token}/sendMessage".format(token=token))
     if r.status_code == 200:
         return
     else:
