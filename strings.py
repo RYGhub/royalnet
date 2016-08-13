@@ -14,3 +14,6 @@ league_tier_list = ["Bronzo",
                     "Diamante",
                     "Master",
                     "Challenger"]
+
+# League of Legends: Level up!
+league_level_up = "{player} è salito al livello **{level}** su _League of Legends_!"

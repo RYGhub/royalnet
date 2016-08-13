@@ -35,17 +35,24 @@ async def overwatch_level_up(timeout):
             # Update data for every player in list
             for player in db:
                 if "overwatch" in db[player]:
-                    r = await overwatch.get_player_data(**db[player]["overwatch"])
-                    if r["data"]["level"] > db[player]["overwatch"]["level"]:
-                        # Send the message
-                        loop.create_task(send_event(eventmsg=s.overwatch_level_up,
-                                                    player=player,
-                                                    level=r["data"]["level"]))
-                        # Update database
-                        db[player]["overwatch"]["level"] = r["data"]["level"]
-                        f = open("db.json", "w")
-                        json.dump(db, f)
-                        f.close()
+                    try:
+                        r = await overwatch.get_player_data(**db[player]["overwatch"])
+                    except overwatch.NotFoundException:
+                        print("[Overwatch] Player not found.")
+                    else:
+                        if "level" not in db[player]["overwatch"] \
+                                or r["data"]["level"] > db[player]["overwatch"]["level"]:
+                            # Send the message
+                            loop.create_task(send_event(eventmsg=s.overwatch_level_up,
+                                                        player=player,
+                                                        level=r["data"]["level"]))
+                            # Update database
+                            db[player]["overwatch"]["level"] = r["data"]["level"]
+                            f = open("db.json", "w")
+                            json.dump(db, f)
+                            f.close()
+                    finally:
+                        asyncio.sleep(1)
             print("[Overwatch] Check completed successfully.")
             # Wait for the timeout
             await asyncio.sleep(timeout)
@@ -56,7 +63,7 @@ async def overwatch_level_up(timeout):
 async def league_rank_change(timeout):
     while True:
         if discord_is_ready:
-            print("[League] Starting check...")
+            print("[League] Starting check for rank changes...")
             # Update data for every player in list
             for player in db:
                 if "league" in db[player]:
@@ -73,7 +80,8 @@ async def league_rank_change(timeout):
                         tier_number = league.ranklist.index(r["tier"])
                         roman_number = league.roman.index(r["entries"][0]["division"])
                         # Check for tier changes
-                        if tier_number != db[player]["league"]["tier"] or roman_number != db[player]["league"]["division"]:
+                        if tier_number != db[player]["league"]["tier"] \
+                                or roman_number != db[player]["league"]["division"]:
                             # Send the message
                             loop.create_task(send_event(eventmsg=s.league_rank_up,
                                                         player=player,
@@ -87,8 +95,42 @@ async def league_rank_change(timeout):
                             f.close()
                     finally:
                         # Prevent getting ratelimited by Riot
-                        await asyncio.sleep(1)
-            print("[League] Check completed.")
+                        await asyncio.sleep(2)
+            print("[League] Rank check completed.")
+            # Wait for the timeout
+            await asyncio.sleep(timeout)
+        else:
+            await asyncio.sleep(1)
+
+# Every timeout seconds, update player level and check for changes
+async def league_level_up(timeout):
+    while True:
+        if discord_is_ready:
+            print("[League] Starting check for level changes...")
+            # Update data for every player in list
+            for player in db:
+                if "league" in db[player]:
+                    try:
+                        r = await league.get_player_info(**db[player]["league"])
+                    except league.RateLimitException:
+                        # If you've been ratelimited, skip the player and notify the console.
+                        print("[League] Request rejected for rate limit.")
+                    else:
+                        # Check for level changes
+                        if "level" not in db[player]["league"] or r["level"] > db[player]["league"]["level"]:
+                            # Send the message
+                            loop.create_task(send_event(eventmsg=s.league_level_up,
+                                                        player=player,
+                                                        level=r["level"]))
+                            # Update database
+                            db[player]["league"]["level"] = r["level"]
+                            f = open("db.json", "w")
+                            json.dump(db, f)
+                            f.close()
+                    finally:
+                        # Prevent getting ratelimited by Riot
+                        await asyncio.sleep(2)
+            print("[League] Level check completed.")
             # Wait for the timeout
             await asyncio.sleep(timeout)
         else:
@@ -122,6 +164,9 @@ print("[Overwatch] Added level up check to the queue.")
 
 loop.create_task(league_rank_change(900))
 print("[League] Added rank change check to the queue.")
+
+loop.create_task(league_level_up(900))
+print("[League] Added level change check to the queue.")
 
 try:
     loop.run_until_complete(d_client.start(token))
