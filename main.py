@@ -31,7 +31,7 @@ file.close()
 async def overwatch_level_up(timeout):
     while True:
         if discord_is_ready:
-            print("Checking for Overwatch updates.")
+            print("[Overwatch] Starting check...")
             # Update data for every player in list
             for player in db:
                 if "overwatch" in db[player]:
@@ -50,7 +50,7 @@ async def overwatch_level_up(timeout):
                         f = open("db.json", "w")
                         json.dump(db, f)
                         f.close()
-            print("Check for Overwatch completed.")
+            print("[Overwatch] Check completed successfully.")
             # Wait for the timeout
             await asyncio.sleep(timeout)
         else:
@@ -60,7 +60,7 @@ async def overwatch_level_up(timeout):
 async def league_rank_change(timeout):
     while True:
         if discord_is_ready:
-            print("Checking for League of Legends updates.")
+            print("[League] Starting check...")
             # Update data for every player in list
             for player in db:
                 if "league" in db[player]:
@@ -91,16 +91,19 @@ async def league_rank_change(timeout):
                             f = open("db.json", "w")
                             json.dump(db, f)
                             f.close()
-            print("Check for League of Legends completed.")
+                        # Prevent getting ratelimited by Riot
+                        await asyncio.sleep(1)
+            print("[League] Check completed.")
             # Wait for the timeout
             await asyncio.sleep(timeout)
         else:
             await asyncio.sleep(1)
 
-print("Added Overwatch to the queue.")
 loop.create_task(overwatch_level_up(900))
-print("Added League of Legends to the queue.")
+print("[Overwatch] Added level up check to the queue.")
+
 loop.create_task(league_rank_change(900))
+print("[League] Added rank change check to the queue.")
 
 try:
     loop.run_until_complete(d_client.start(token))
