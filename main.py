@@ -4,6 +4,7 @@ import json
 import overwatch
 import league
 import strings as s
+import telegram
 
 loop = asyncio.get_event_loop()
 d_client = discord.Client()
@@ -35,6 +36,8 @@ async def overwatch_level_up(timeout):
                     msg = s.overwatch_level_up.format(player=user, level=r["data"]["level"])
                     # Send the message to the discord channel
                     loop.create_task(d_client.send_message(d_client.get_channel("213655027842154508"), msg))
+                    # Send the message to the telegram group chat
+                    loop.create_task(telegram.send_message(msg, -2141322))
                     # Update database
                     db[player]["overwatch"]["level"] = r["data"]["level"]
                     f = open("db.json", "w")
@@ -70,6 +73,8 @@ async def league_rank_change(timeout):
                                                       division=r["entries"][0]["division"])
                         # Send the message to the discord channel
                         loop.create_task(d_client.send_message(d_client.get_channel("213655027842154508"), msg))
+                        # Send the message to the telegram group chat
+                        loop.create_task(telegram.send_message(msg, -2141322))
                         # Update database
                         db[player]["league"]["tier"] = tier_number
                         db[player]["league"]["division"] = roman_number
@@ -78,7 +83,9 @@ async def league_rank_change(timeout):
                         f.close()
         print("Check for League of Legends completed.")
 
+print("Added Overwatch to the queue.")
 loop.create_task(overwatch_level_up(900))
+print("Added League of Legends to the queue.")
 loop.create_task(league_rank_change(900))
 
 try:
