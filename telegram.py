@@ -14,7 +14,8 @@ async def send_message(msg: str, to: int):
     # Send the message
     params = {
         "chat_id": to,
-        "text": msg
+        "text": msg,
+        "parse_mode": "Markdown"
     }
     r = await loop.run_in_executor(None, functools.partial(requests.get, params=params),
                                    "https://api.telegram.org/bot{token}/sendMessage".format(token=token))
