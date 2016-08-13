@@ -22,8 +22,8 @@ file.close()
 # Every timeout seconds, update player status and check for levelups
 async def overwatch_level_up(timeout):
     while True:
-        # Wait for the timeout
-        await asyncio.sleep(timeout)
+        # Wait for the Discord client to be ready
+        await d_client.wait_until_ready()
         print("Checking for Overwatch updates.")
         # Update data for every player in list
         for player in db:
@@ -44,12 +44,14 @@ async def overwatch_level_up(timeout):
                     json.dump(db, f)
                     f.close()
         print("Check for Overwatch completed.")
+        # Wait for the timeout
+        await asyncio.sleep(timeout)
 
 # Every timeout seconds, update player league and check for rank changes
 async def league_rank_change(timeout):
     while True:
-        # Wait for the timeout
-        await asyncio.sleep(timeout)
+        # Wait for the Discord client to be ready
+        await d_client.wait_until_ready()
         print("Checking for League of Legends updates.")
         # Update data for every player in list
         for player in db:
@@ -82,6 +84,8 @@ async def league_rank_change(timeout):
                         json.dump(db, f)
                         f.close()
         print("Check for League of Legends completed.")
+        # Wait for the timeout
+        await asyncio.sleep(timeout)
 
 print("Added Overwatch to the queue.")
 loop.create_task(overwatch_level_up(900))
