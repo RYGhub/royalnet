@@ -94,6 +94,7 @@ async def league_rank_change(timeout):
                             f = open("db.json", "w")
                             json.dump(db, f)
                             f.close()
+                    finally:
                         # Prevent getting ratelimited by Riot
                         await asyncio.sleep(1)
             print("[League] Check completed.")
