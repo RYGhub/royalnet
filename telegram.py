@@ -4,7 +4,7 @@ import functools
 loop = asyncio.get_event_loop()
 
 # Load Telegram API key from the telegramtoken.txt file
-file = open("telegram.txt", "r")
+file = open("telegramtoken.txt", "r")
 token = file.read()
 file.close()
 
