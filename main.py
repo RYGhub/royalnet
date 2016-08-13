@@ -37,14 +37,10 @@ async def overwatch_level_up(timeout):
                 if "overwatch" in db[player]:
                     r = await overwatch.get_player_data(**db[player]["overwatch"])
                     if r["data"]["level"] > db[player]["overwatch"]["level"]:
-                        # Convert user ID into a mention
-                        user = "<@" + player + ">"
-                        # Prepare the message to send
-                        msg = s.overwatch_level_up.format(player=user, level=r["data"]["level"])
-                        # Send the message to the discord channel
-                        loop.create_task(d_client.send_message(d_client.get_channel("213655027842154508"), msg))
-                        # Send the message to the telegram group chat
-                        loop.create_task(telegram.send_message(msg, -2141322))
+                        # Send the message
+                        loop.create_task(send_event(eventmsg=s.overwatch_level_up,
+                                                    player=player,
+                                                    level=r["data"]["level"]))
                         # Update database
                         db[player]["overwatch"]["level"] = r["data"]["level"]
                         f = open("db.json", "w")
@@ -78,16 +74,11 @@ async def league_rank_change(timeout):
                         roman_number = league.roman.index(r["entries"][0]["division"])
                         # Check for tier changes
                         if tier_number != db[player]["league"]["tier"] or roman_number != db[player]["league"]["division"]:
-                            # Convert user ID into a mention
-                            user = "<@" + player + ">"
-                            # Prepare the message to send
-                            msg = s.league_rank_up.format(player=user,
-                                                          tier=s.league_tier_list[tier_number],
-                                                          division=r["entries"][0]["division"])
-                            # Send the message to the discord channel
-                            loop.create_task(d_client.send_message(d_client.get_channel("213655027842154508"), msg))
-                            # Send the message to the telegram group chat
-                            loop.create_task(telegram.send_message(msg, -2141322))
+                            # Send the message
+                            loop.create_task(send_event(eventmsg=s.league_rank_up,
+                                                        player=player,
+                                                        tier=s.league_tier_list[tier_number],
+                                                        division=r["entries"][0]["division"]))
                             # Update database
                             db[player]["league"]["tier"] = tier_number
                             db[player]["league"]["division"] = roman_number
@@ -102,6 +93,29 @@ async def league_rank_change(timeout):
             await asyncio.sleep(timeout)
         else:
             await asyncio.sleep(1)
+
+# Send a new event to both Discord and Telegram
+async def send_event(eventmsg: str, player: str, **kwargs):
+    # Create arguments dict
+    mapping = kwargs.copy()
+    mapping["eventmsg"] = None
+    # Discord
+    # The user id is the player argument; convert that into a mention
+    mapping["player"] = "<@" + player + ">"
+    # Format the event message
+    msg = eventmsg.format(**mapping)
+    # Send the message
+    loop.create_task(d_client.send_message(d_client.get_channel("213655027842154508"), msg))
+    # Telegram
+    # Find the matching Telegram username inside the db
+    mapping["player"] = "@" + db[player]["telegram"]["username"]
+    # Convert the Discord Markdown to Telegram Markdown
+    msg = eventmsg.replace("**", "*")
+    # Format the event message
+    msg = msg.format(**mapping)
+    # Send the message
+    loop.create_task(telegram.send_message(msg, -2141322))
+
 
 loop.create_task(overwatch_level_up(900))
 print("[Overwatch] Added level up check to the queue.")

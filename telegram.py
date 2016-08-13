@@ -10,6 +10,7 @@ file.close()
 
 # Send a message
 async def send_message(msg: str, to: int):
+    print("[Telegram] Sending a message: " + msg)
     # Send the message
     params = {
         "chat_id": to,
