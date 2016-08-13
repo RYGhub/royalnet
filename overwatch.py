@@ -4,6 +4,9 @@ loop = asyncio.get_event_loop()
 
 # Get player data
 async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
+    print("[Overwatch] Getting player info for: {platform} {region} {battletag}".format(platform=platform,
+                                                                                        region=region,
+                                                                                        battletag=battletag))
     # Unofficial API requires - for discriminator numbers
     battletag = battletag.replace("#", "-")
     # GET the json unofficial API response

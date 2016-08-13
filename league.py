@@ -23,6 +23,7 @@ roman = ['I', 'II', 'III', 'IV', 'V']
 
 # Get player rank info
 async def get_player_rank(region: str, summonerid: int, **kwargs):
+    print("[League] Getting league info for: {region} {summonerid}".format(region=region, summonerid=summonerid))
     # GET the json unofficial API response
     r = await loop.run_in_executor(None, requests.get,
                                    'https://{region}.api.pvp.net/api/lol/{region}/v2.5/league/by-summoner/{summonerid}'
