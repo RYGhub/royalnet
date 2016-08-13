@@ -117,13 +117,13 @@ async def league_level_up(timeout):
                         print("[League] Request rejected for rate limit.")
                     else:
                         # Check for level changes
-                        if "level" not in db[player]["league"] or r["level"] > db[player]["league"]["level"]:
+                        if "level" not in db[player]["league"] or r["summonerLevel"] > db[player]["league"]["level"]:
                             # Send the message
                             loop.create_task(send_event(eventmsg=s.league_level_up,
                                                         player=player,
-                                                        level=r["level"]))
+                                                        level=r["summonerLevel"]))
                             # Update database
-                            db[player]["league"]["level"] = r["level"]
+                            db[player]["league"]["level"] = r["summonerLevel"]
                             f = open("db.json", "w")
                             json.dump(db, f)
                             f.close()
