@@ -46,7 +46,7 @@ async def get_player_rank(region: str, summonerid: int, **kwargs):
 async def get_player_info(region: str, summonerid: int, **kwargs):
     print("[League] Getting profile info for: {region} {summonerid}".format(region=region, summonerid=summonerid))
     # GET the json API response
-    r = await loop.run_in_executor(None, requests.get, 'https://{region}.api.pvp.net//api/lol/{region}/v1.4/summoner/'
+    r = await loop.run_in_executor(None, requests.get, 'https://{region}.api.pvp.net/api/lol/{region}/v1.4/summoner/'
                                                        '{summonerid}/entry?api_key={token}'
                                    .format(region=region, summonerid=summonerid, token=token))
     # Ensure the request is successful
