@@ -168,13 +168,13 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     loop.create_task(telegram.send_message(msg, -2141322))
 
 
-loop.create_task(overwatch_level_up(900))
+loop.create_task(overwatch_level_up(300))
 print("[Overwatch] Added level up check to the queue.")
 
-loop.create_task(league_rank_change(900))
+loop.create_task(league_rank_change(300))
 print("[League] Added rank change check to the queue.")
 
-loop.create_task(league_level_up(900))
+loop.create_task(league_level_up(300))
 print("[League] Added level change check to the queue.")
 
 try:
