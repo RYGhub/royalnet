@@ -39,6 +39,9 @@ async def overwatch_level_up(timeout):
                         r = await overwatch.get_player_data(**db[player]["overwatch"])
                     except overwatch.NotFoundException:
                         print("[Overwatch] Player not found.")
+                    except Exception:
+                        # If some other error occours, skip the player
+                        print("[Overwatch] Request returned an unhandled exception.")
                     else:
                         if "level" not in db[player]["overwatch"] \
                                 or r["data"]["level"] > db[player]["overwatch"]["level"]:
@@ -71,10 +74,13 @@ async def league_rank_change(timeout):
                         r = await league.get_player_rank(**db[player]["league"])
                     except league.NoRankedGamesCompletedException:
                         # If the player has no ranked games completed, skip him
-                        continue
+                        pass
                     except league.RateLimitException:
                         # If you've been ratelimited, skip the player and notify the console.
                         print("[League] Request rejected for rate limit.")
+                    except Exception:
+                        # If some other error occours, skip the player
+                        print("[League] Request returned an unhandled exception.")
                     else:
                         # Convert tier into a number
                         tier_number = league.ranklist.index(r["tier"])
@@ -115,6 +121,9 @@ async def league_level_up(timeout):
                     except league.RateLimitException:
                         # If you've been ratelimited, skip the player and notify the console.
                         print("[League] Request rejected for rate limit.")
+                    except Exception:
+                        # If some other error occours, skip the player
+                        print("[League] Request returned an unhandled exception.")
                     else:
                         # Check for level changes
                         if "level" not in db[player]["league"] or r["summonerLevel"] > db[player]["league"]["level"]:
