@@ -5,6 +5,8 @@ import overwatch
 import league
 import strings as s
 import telegram
+import bs4
+import brawlhalla
 
 loop = asyncio.get_event_loop()
 d_client = discord.Client()
@@ -144,6 +146,53 @@ async def league_level_up(timeout):
             await asyncio.sleep(timeout)
         else:
             await asyncio.sleep(1)
+
+# Every timeout seconds, update player mmr and rank
+async def brawlhalla_update_mmr(timeout):
+    while True:
+        if discord_is_ready:
+            print("[Brawlhalla] Starting check for mmr changes...")
+            # Update mmr for every player in list
+            for player in db:
+                if "brawlhalla" in db[player]:
+                    try:
+                        r = await brawlhalla.get_leaderboard_for(db[player]["brawlhalla"]["username"])
+                    except Exception:
+                        print("[Brawlhalla] Request returned an unhandled exception.")
+                    else:
+                        # Parse the page
+                        bs = bs4.BeautifulSoup(r.text)
+                        # Divide the page into rows
+                        rows = bs.find_all("tr")
+                        # Find the row containing the rank
+                        for row in rows:
+                            # Skip header rows
+                            if row['class'] == "rheader":
+                                continue
+                            # Check if the row belongs to the correct player
+                            # (Brawlhalla searches aren't case sensitive)
+                            for column in row.children:
+                                # Find the player name column
+                                if column['class'] == "pnameleft":
+                                    # Check if the name matches the parameter
+                                    if column.string == db[player]["brawlhalla"]["username"]:
+                                        break
+                            else:
+                                continue
+                            # Get the current mmr
+                            mmr = int(row.children[7].string)
+                            # Compare the mmr with the value saved in the database
+                            if mmr != db[player]["brawlhalla"]["mmr"]:
+                                # Send a message
+                                loop.create_task(send_event(s.brawlhalla_new_mmr, player, mmr=mmr))
+                                # Update database
+                                db[player]["brawlhalla"]["mmr"] = mmr
+                                f = open("db.json", "w")
+                                json.dump(db, f)
+                                f.close()
+                            break
+                    finally:
+                        await asyncio.sleep(1)
 
 # Send a new event to both Discord and Telegram
 async def send_event(eventmsg: str, player: str, **kwargs):

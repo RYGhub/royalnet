@@ -17,3 +17,6 @@ league_tier_list = ["Bronzo",
 
 # League of Legends: Level up!
 league_level_up = "{player} è salito al livello **{level}** su _League of Legends_!"
+
+# Brawlhalla: new MMR
+brawlhalla_new_mmr = "{player} ora ha **{mmr}** MMR su _Brawlhalla_!"
