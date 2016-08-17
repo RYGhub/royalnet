@@ -193,6 +193,9 @@ async def brawlhalla_update_mmr(timeout):
                             break
                     finally:
                         await asyncio.sleep(1)
+            await asyncio.sleep(timeout)
+        else:
+            await asyncio.sleep(1)
 
 # Send a new event to both Discord and Telegram
 async def send_event(eventmsg: str, player: str, **kwargs):
@@ -225,6 +228,10 @@ print("[League] Added rank change check to the queue.")
 
 loop.create_task(league_level_up(300))
 print("[League] Added level change check to the queue.")
+
+loop.create_task(brawlhalla_update_mmr(300))
+print("[Brawlhalla] Added mmr change check to the queue.")
+
 
 try:
     loop.run_until_complete(d_client.start(token))
