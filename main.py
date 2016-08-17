@@ -157,30 +157,31 @@ async def brawlhalla_update_mmr(timeout):
                 if "brawlhalla" in db[player]:
                     try:
                         r = await brawlhalla.get_leaderboard_for(db[player]["brawlhalla"]["username"])
-                    except Exception:
+                    except None:
                         print("[Brawlhalla] Request returned an unhandled exception.")
                     else:
                         # Parse the page
-                        bs = bs4.BeautifulSoup(r.text)
+                        bs = bs4.BeautifulSoup(r.text, "html.parser")
                         # Divide the page into rows
                         rows = bs.find_all("tr")
                         # Find the row containing the rank
                         for row in rows:
                             # Skip header rows
-                            if row['class'] == "rheader":
+                            if row.has_attr('id') and row['id'] == "rheader":
                                 continue
                             # Check if the row belongs to the correct player
                             # (Brawlhalla searches aren't case sensitive)
-                            for column in row.children:
+                            columns = list(row.children)
+                            for column in columns:
                                 # Find the player name column
-                                if column['class'] == "pnameleft":
+                                if column.has_attr('class') and column['class'][0] == "pnameleft":
                                     # Check if the name matches the parameter
                                     if column.string == db[player]["brawlhalla"]["username"]:
                                         break
                             else:
                                 continue
                             # Get the current mmr
-                            mmr = int(row.children[7].string)
+                            mmr = int(list(row.children)[7].string)
                             # Compare the mmr with the value saved in the database
                             if mmr != db[player]["brawlhalla"]["mmr"]:
                                 # Send a message
@@ -193,6 +194,7 @@ async def brawlhalla_update_mmr(timeout):
                             break
                     finally:
                         await asyncio.sleep(1)
+            print("[Brawlhalla] Request returned an unhandled exception.")
             await asyncio.sleep(timeout)
         else:
             await asyncio.sleep(1)

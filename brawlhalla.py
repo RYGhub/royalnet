@@ -7,7 +7,8 @@ loop = asyncio.get_event_loop()
 async def get_leaderboard_for(name: str):
     print("[Brawlhalla] Getting leaderboards page for {name}".format(name=name))
     # Get leaderboards page for that name
-    r = loop.run_in_executor(None, requests.get, "http://www.brawlhalla.com/rankings/1v1/eu/?p={name}".format(name))
+    r = await loop.run_in_executor(None, requests.get,
+                                   "http://www.brawlhalla.com/rankings/1v1/eu/?p={name}".format(name=name))
     # Check if the request is successful
     if r.status_code == 200:
         return r
