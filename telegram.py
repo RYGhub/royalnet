@@ -22,4 +22,4 @@ async def send_message(msg: str, to: int):
     if r.status_code == 200:
         return
     else:
-        raise Exception("Qualcosa è andato storto su Telegram. Ops.")
+        raise Exception("Something went wrong in the Telegram request.")

@@ -94,7 +94,9 @@ async def league_rank_change(timeout):
                             loop.create_task(send_event(eventmsg=s.league_rank_up,
                                                         player=player,
                                                         tier=s.league_tier_list[tier_number],
-                                                        division=r["entries"][0]["division"]))
+                                                        division=r["entries"][0]["division"],
+                                                        oldtier=db[player]["league"]["tier"],
+                                                        olddivision=db[player]["league"]["division"]))
                             # Update database
                             db[player]["league"]["tier"] = tier_number
                             db[player]["league"]["division"] = roman_number
@@ -185,7 +187,8 @@ async def brawlhalla_update_mmr(timeout):
                             # Compare the mmr with the value saved in the database
                             if mmr != db[player]["brawlhalla"]["mmr"]:
                                 # Send a message
-                                loop.create_task(send_event(s.brawlhalla_new_mmr, player, mmr=mmr))
+                                loop.create_task(send_event(s.brawlhalla_new_mmr, player, mmr=mmr,
+                                                            oldmmr=db[player]["brawlhalla"]["mmr"])
                                 # Update database
                                 db[player]["brawlhalla"]["mmr"] = mmr
                                 f = open("db.json", "w")
