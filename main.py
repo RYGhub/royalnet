@@ -188,7 +188,7 @@ async def brawlhalla_update_mmr(timeout):
                             if mmr != db[player]["brawlhalla"]["mmr"]:
                                 # Send a message
                                 loop.create_task(send_event(s.brawlhalla_new_mmr, player, mmr=mmr,
-                                                            oldmmr=db[player]["brawlhalla"]["mmr"])
+                                                            oldmmr=db[player]["brawlhalla"]["mmr"]))
                                 # Update database
                                 db[player]["brawlhalla"]["mmr"] = mmr
                                 f = open("db.json", "w")
