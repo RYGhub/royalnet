@@ -224,9 +224,9 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     # Send the message
     loop.create_task(telegram.send_message(msg, -2141322))
 
-# Disabled Overwatch checks until Blizzard fixes profile pages.
-# loop.create_task(overwatch_level_up(600))
-# print("[Overwatch] Added level up check to the queue.")
+
+loop.create_task(overwatch_level_up(600))
+print("[Overwatch] Added level up check to the queue.")
 
 loop.create_task(league_rank_change(900))
 print("[League] Added rank change check to the queue.")
