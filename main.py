@@ -95,8 +95,9 @@ async def league_rank_change(timeout):
                                                         player=player,
                                                         tier=s.league_tier_list[tier_number],
                                                         division=r["entries"][0]["division"],
-                                                        oldtier=db[player]["league"]["tier"],
-                                                        olddivision=db[player]["league"]["division"]))
+                                                        oldtier=s.league_tier_list[db[player]["league"]["tier"]],
+                                                        olddivision=
+                                                        s.league_roman_list[db[player]["league"]["division"]]))
                             # Update database
                             db[player]["league"]["tier"] = tier_number
                             db[player]["league"]["division"] = roman_number

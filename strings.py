@@ -15,6 +15,13 @@ league_tier_list = ["Bronzo",
                     "Master",
                     "Challenger"]
 
+# League of Legends: Roman tier list
+league_roman_list = ["I",
+                     "II",
+                     "III",
+                     "IV",
+                     "V"]
+
 # League of Legends: Level up!
 league_level_up = "{player} è salito al livello **{level}** su _League of Legends_!"
 
