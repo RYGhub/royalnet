@@ -30,7 +30,7 @@ token = file.read()
 file.close()
 
 # Every timeout seconds, update player status and check for levelups
-async def overwatch_level_up(timeout):
+async def overwatch_status_change(timeout):
     while True:
         if discord_is_ready:
             print("[Overwatch] Starting check...")
@@ -45,6 +45,7 @@ async def overwatch_level_up(timeout):
                         # If some other error occours, skip the player
                         print("[Overwatch] Request returned an unhandled exception.")
                     else:
+                        # Check for levelups
                         if "level" not in db[player]["overwatch"] \
                                 or r["data"]["level"] > db[player]["overwatch"]["level"]:
                             # Send the message
@@ -56,6 +57,24 @@ async def overwatch_level_up(timeout):
                             f = open("db.json", "w")
                             json.dump(db, f)
                             f.close()
+                        # Check for rank changes
+                        if r["data"]["competitive"]["rank"] is not None:
+                            if "rank" not in db[player]["overwatch"] \
+                                    or int(r["data"]["competitive"]["rank"]) != db[player]["overwatch"]["rank"]:
+                                # Send the message
+                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change,
+                                                            player=player,
+                                                            oldmedal=overwatch.rank_to_medal(
+                                                                db[player]["overwatch"]["rank"]),
+                                                            oldrank=db[player]["overwatch"]["rank"],
+                                                            rank=int(r["data"]["competitive"]["rank"]),
+                                                            medal=overwatch.rank_to_medal(
+                                                                int(r["data"]["competitive"]["rank"]))))
+                                # Update database
+                                db[player]["overwatch"]["rank"] = r["data"]["competitive"]["rank"]
+                                f = open("db.json", "w")
+                                json.dump(db, f)
+                                f.close()
                     finally:
                         asyncio.sleep(1)
             print("[Overwatch] Check completed successfully.")
@@ -226,7 +245,7 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     loop.create_task(telegram.send_message(msg, -2141322))
 
 
-loop.create_task(overwatch_level_up(600))
+loop.create_task(overwatch_status_change(600))
 print("[Overwatch] Added level up check to the queue.")
 
 loop.create_task(league_rank_change(900))

@@ -1,5 +1,6 @@
 import asyncio
 import requests
+import strings as s
 loop = asyncio.get_event_loop()
 
 
@@ -30,4 +31,19 @@ async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
             return pj
     else:
         raise Exception("Unhandled API response.")
-    
+
+
+# Convert rank to a medal
+def rank_to_medal(rank):
+    if int(rank) < 1500:
+        return s.overwatch_medal_list[0]
+    elif int(rank) < 2000:
+        return s.overwatch_medal_list[1]
+    elif int(rank) < 2500:
+        return s.overwatch_medal_list[2]
+    elif int(rank) < 3000:
+        return s.overwatch_medal_list[3]
+    elif int(rank) < 3500:
+        return s.overwatch_medal_list[4]
+    elif int(rank) < 4000:
+        return s.overwatch_medal_list[5]
