@@ -61,6 +61,8 @@ async def overwatch_status_change(timeout):
                         if r["data"]["competitive"]["rank"] is not None:
                             if "rank" not in db[player]["overwatch"] \
                                     or int(r["data"]["competitive"]["rank"]) != db[player]["overwatch"]["rank"]:
+                                if "rank" not in db[player]["overwatch"]:
+                                    db[player]["overwatch"]["rank"] = 0
                                 # Send the message
                                 loop.create_task(send_event(eventmsg=s.overwatch_rank_change,
                                                             player=player,
