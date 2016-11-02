@@ -73,7 +73,7 @@ async def overwatch_status_change(timeout):
                                                             medal=overwatch.rank_to_medal(
                                                                 int(r["data"]["competitive"]["rank"]))))
                                 # Update database
-                                db[player]["overwatch"]["rank"] = r["data"]["competitive"]["rank"]
+                                db[player]["overwatch"]["rank"] = int(r["data"]["competitive"]["rank"])
                                 f = open("db.json", "w")
                                 json.dump(db, f)
                                 f.close()
