@@ -4,7 +4,7 @@
 overwatch_level_up = "{player} è salito al livello **{level}** su _Overwatch_!"
 
 # Overwatch: Rank change!
-overwatch_rank_change = "{player} è passato da {oldmedal} {oldrank} a **{medal} {rank}** su _Overwatch_!"
+overwatch_rank_change = "{player} è ora **{medal} {rank}** ({change}) su _Overwatch_!"
 
 # Overwatch: Medal list
 overwatch_medal_list = ["Nulla",

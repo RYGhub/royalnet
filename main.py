@@ -46,34 +46,32 @@ async def overwatch_status_change(timeout):
                         print("[Overwatch] Request returned an unhandled exception.")
                     else:
                         # Check for levelups
-                        if "level" not in db[player]["overwatch"] \
-                                or r["data"]["level"] > db[player]["overwatch"]["level"]:
+                        level = r["data"]["level"]
+                        try:
+                            oldlevel = db[player]["overwatch"]["level"]
+                        except KeyError:
+                            oldlevel = 0
+                        if level > oldlevel:
                             # Send the message
-                            loop.create_task(send_event(eventmsg=s.overwatch_level_up,
-                                                        player=player,
-                                                        level=r["data"]["level"]))
+                            loop.create_task(send_event(eventmsg=s.overwatch_level_up, player=player, level=level))
                             # Update database
-                            db[player]["overwatch"]["level"] = r["data"]["level"]
+                            db[player]["overwatch"]["level"] = level
                             f = open("db.json", "w")
                             json.dump(db, f)
                             f.close()
                         # Check for rank changes
-                        if r["data"]["competitive"]["rank"] is not None:
-                            if "rank" not in db[player]["overwatch"] \
-                                    or int(r["data"]["competitive"]["rank"]) != db[player]["overwatch"]["rank"]:
-                                if "rank" not in db[player]["overwatch"]:
-                                    db[player]["overwatch"]["rank"] = 0
+                        rank = r["data"]["competitive"]["rank"]
+                        if rank is not None:
+                            rank = int(rank)
+                            try:
+                                oldrank = int(db[player]["overwatch"]["rank"])
+                            except KeyError:
+                                oldrank = 0
+                            if rank != oldrank:
                                 # Send the message
-                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change,
-                                                            player=player,
-                                                            oldmedal=overwatch.rank_to_medal(
-                                                                db[player]["overwatch"]["rank"]),
-                                                            oldrank=db[player]["overwatch"]["rank"],
-                                                            rank=int(r["data"]["competitive"]["rank"]),
-                                                            medal=overwatch.rank_to_medal(
-                                                                int(r["data"]["competitive"]["rank"]))))
+                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change, player=player, change=oldrank-rank, rank=rank, medal=overwatch.rank_to_medal(rank)))
                                 # Update database
-                                db[player]["overwatch"]["rank"] = int(r["data"]["competitive"]["rank"])
+                                db[player]["overwatch"]["rank"] = rank
                                 f = open("db.json", "w")
                                 json.dump(db, f)
                                 f.close()
