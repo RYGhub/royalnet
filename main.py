@@ -208,11 +208,14 @@ async def brawlhalla_update_mmr(timeout):
                                 continue
                             # Get the current mmr
                             mmr = int(list(row.children)[7].string)
+                            try:
+                                old_mmr = db[player]["brawlhalla"]["mmr"]
+                            except KeyError:
+                                old_mmr = 0
                             # Compare the mmr with the value saved in the database
-                            if mmr != db[player]["brawlhalla"]["mmr"]:
+                            if mmr != old_mmr:
                                 # Send a message
-                                loop.create_task(send_event(s.brawlhalla_new_mmr, player, mmr=mmr,
-                                                            oldmmr=db[player]["brawlhalla"]["mmr"]))
+                                loop.create_task(send_event(s.brawlhalla_new_mmr, player, mmr=mmr, oldmmr=old_mmr))
                                 # Update database
                                 db[player]["brawlhalla"]["mmr"] = mmr
                                 f = open("db.json", "w")
