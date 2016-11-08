@@ -151,17 +151,16 @@ async def league_level_up(timeout):
                         print("[League] Request returned an unhandled exception.")
                     else:
                         # Check for level changes
+                        level = r["summonerLevel"]
                         try:
-                            level = db[player]["league"]["level"]
+                            old_level = db[player]["league"]["level"]
                         except KeyError:
-
-                        if "level" not in db[player]["league"] or r["summonerLevel"] > :
+                            old_level = 0
+                        if level > old_level:
                             # Send the message
-                            loop.create_task(send_event(eventmsg=s.league_level_up,
-                                                        player=player,
-                                                        level=r["summonerLevel"]))
+                            loop.create_task(send_event(eventmsg=s.league_level_up, player=player, level=level))
                             # Update database
-                            db[player]["league"]["level"] = r["summonerLevel"]
+                            db[player]["league"]["level"] = level
                             f = open("db.json", "w")
                             json.dump(db, f)
                             f.close()
