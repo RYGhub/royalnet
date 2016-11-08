@@ -105,18 +105,19 @@ async def league_rank_change(timeout):
                     else:
                         # Convert tier into a number
                         tier_number = league.ranklist.index(r["tier"])
-                        roman_number = league.roman.index(r["entries"][0]["division"])
+                        roman_number = league.roman.index(r["entries"][0]["division"])  # Potrebbe non funzionare
+                        try:
+                            old_tier_number = db[player]["league"]["tier"]
+                            old_roman_number = db[player]["league"]["division"]
+                        except KeyError:
+                            # Bronze VI?
+                            old_tier_number = 0
+                            old_roman_number = 5
                         # Check for tier changes
-                        if tier_number != db[player]["league"]["tier"] \
-                                or roman_number != db[player]["league"]["division"]:
+                        if tier_number != old_tier_number or roman_number != old_roman_number:
                             # Send the message
-                            loop.create_task(send_event(eventmsg=s.league_rank_up,
-                                                        player=player,
-                                                        tier=s.league_tier_list[tier_number],
-                                                        division=r["entries"][0]["division"],
-                                                        oldtier=s.league_tier_list[db[player]["league"]["tier"]],
-                                                        olddivision=
-                                                        s.league_roman_list[db[player]["league"]["division"]]))
+                            loop.create_task(send_event(eventmsg=s.league_rank_up, player=player, tier=s.league_tier_list[tier_number], division=s.league_roman_list[roman_number],
+                                                        oldtier=s.league_tier_list[old_tier_number], olddivision=s.league_roman_list[old_roman_number]))
                             # Update database
                             db[player]["league"]["tier"] = tier_number
                             db[player]["league"]["division"] = roman_number
@@ -150,7 +151,11 @@ async def league_level_up(timeout):
                         print("[League] Request returned an unhandled exception.")
                     else:
                         # Check for level changes
-                        if "level" not in db[player]["league"] or r["summonerLevel"] > db[player]["league"]["level"]:
+                        try:
+                            level = db[player]["league"]["level"]
+                        except KeyError:
+
+                        if "level" not in db[player]["league"] or r["summonerLevel"] > :
                             # Send the message
                             loop.create_task(send_event(eventmsg=s.league_level_up,
                                                         player=player,
