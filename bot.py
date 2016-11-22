@@ -553,17 +553,6 @@ def share():
                 tosend += "- {game}\n".format(game=game)
         else:
             tosend += "_@{secondo} ha tutti i giochi che ha @{primo}_.\n"
-        # Divisore
-        tosend += "\n"
-        # Giochi che ha il secondo ma non il primo
-        d = list(steammatch.diff_games(tobematched[1], tobematched[0]))
-        if len(d) > 0:
-            # Prepara il messaggio
-            tosend += "*Giochi che ha @{secondo} ma non @{primo}:*\n".format(primo=cmd[0], secondo=cmd[1])
-            for game in d:
-                tosend += "- {game}\n".format(game=game)
-        else:
-            tosend += "_@{primo} ha tutti i giochi che ha @{secondo}_.\n"
         telegram.sendmessage(tosend, sentin, source)
     else:
         telegram.sendmessage(chr(9888) + "Non è stato specificato un numero adeguato di utenti per eseguire l'azione.",
