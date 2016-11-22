@@ -287,20 +287,20 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     # Send the message
     loop.create_task(telegram.send_message(msg, -2141322))
 
-#loop.create_task(overwatch_status_change(600))
-#print("[Overwatch] Added level up check to the queue.")
+loop.create_task(overwatch_status_change(600))
+print("[Overwatch] Added level up check to the queue.")
 
-#loop.create_task(league_rank_change(900))
-#print("[League] Added rank change check to the queue.")
+loop.create_task(league_rank_change(900))
+print("[League] Added rank change check to the queue.")
 
-#loop.create_task(league_level_up(900))
-#print("[League] Added level change check to the queue.")
+loop.create_task(league_level_up(900))
+print("[League] Added level change check to the queue.")
 
-#loop.create_task(brawlhalla_update_mmr(7200))
-#print("[Brawlhalla] Added mmr change check to the queue.")
+loop.create_task(brawlhalla_update_mmr(7200))
+print("[Brawlhalla] Added mmr change check to the queue.")
 
-loop.create_task(opendota_last_match(600))
-print("[OpenDota] Added last match check to the queue.")
+#loop.create_task(opendota_last_match(600))
+#print("[OpenDota] Added last match check to the queue.")
 
 try:
     loop.run_until_complete(d_client.start(token))
