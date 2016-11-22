@@ -564,6 +564,7 @@ def share():
                 tosend += "- {game}\n".format(game=game)
         else:
             tosend += "_@{primo} ha tutti i giochi che ha @{secondo}_.\n"
+        telegram.sendmessage(tosend, sentin, source)
     else:
         telegram.sendmessage(chr(9888) + "Non è stato specificato un numero adeguato di utenti per eseguire l'azione.",
                              sentin, source)
