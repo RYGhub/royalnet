@@ -515,7 +515,7 @@ def match():
                 if userdata['steam'] not in tobematched:
                     tobematched.append(userdata['steam'])
     if len(tobematched) > 1:
-        m = list(steammatch.compare(tobematched))
+        m = list(steammatch.and_games(tobematched))
         if len(m) > 0:
             # Prepara il messaggio
             tosend = "*Giochi in comune tra questi utenti:*\n"
@@ -527,6 +527,45 @@ def match():
             telegram.sendmessage("*Giochi in comune tra questi utenti:*\n_nessuno_", sentin, source)
     else:
         telegram.sendmessage(chr(9888) + "Non sono stati specificati abbastanza utenti per eseguire l'azione.",
+                             sentin, source)
+
+def share():
+    # Visualizza detutti i giochi condivisi tra x persone.
+    print("@" + username + ": /share")
+    # Informa Telegram che il messaggio è stato ricevuto.
+    telegram.sendchataction(sentin)
+    tobematched = list()
+    if len(cmd) > 2:
+        del cmd[0]
+        for name in cmd:
+            userdata = db.findbyname(name.lower())
+            if userdata is not None and 'steam' in userdata:
+                if userdata['steam'] not in tobematched:
+                    tobematched.append(userdata['steam'])
+    if len(tobematched) == 2:
+        tosend = str()
+        # Giochi che ha il primo ma non il secondo
+        d = list(steammatch.diff_games(tobematched[0], tobematched[1]))
+        if len(d) > 0:
+            # Prepara il messaggio
+            tosend += "*Giochi che ha @{primo} ma non @{secondo}:*\n".format(primo=cmd[0], secondo=cmd[1])
+            for game in d:
+                tosend += "- {game}\n".format(game=game)
+        else:
+            tosend += "_@{secondo} ha tutti i giochi che ha @{primo}_.\n"
+        # Divisore
+        tosend += "\n"
+        # Giochi che ha il secondo ma non il primo
+        d = list(steammatch.diff_games(tobematched[1], tobematched[0]))
+        if len(d) > 0:
+            # Prepara il messaggio
+            tosend += "*Giochi che ha @{secondo} ma non @{primo}:*\n".format(primo=cmd[0], secondo=cmd[1])
+            for game in d:
+                tosend += "- {game}\n".format(game=game)
+        else:
+            tosend += "_@{primo} ha tutti i giochi che ha @{secondo}_.\n"
+    else:
+        telegram.sendmessage(chr(9888) + "Non è stato specificato un numero adeguato di utenti per eseguire l'azione.",
                              sentin, source)
 
 # Alias di tutti i comandi. Scrivendo quella stringa in chat viene attivata la funzione corrispondente.
@@ -560,7 +599,8 @@ aliases = {
     "smecds": smecds,
     "online": online,
     "steam": online,
-    "wow": wow
+    "wow": wow,
+    "share": share
 }
 
 # Ciclo principale del bot
