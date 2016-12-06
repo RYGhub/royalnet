@@ -40,3 +40,6 @@ league_level_up = "{player} è salito al livello **{level}** su _League of Legen
 
 # Brawlhalla: new MMR
 brawlhalla_new_mmr = "{player} è passato da {oldmmr} MMR a **{mmr}** MMR su _Brawlhalla_!"
+
+# Dota: new match
+dota_new_match = "{player} ha finito una partita a _Dota 2_ con {k}/{d}/{a}!"

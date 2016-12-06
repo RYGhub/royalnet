@@ -1,6 +1,8 @@
 import asyncio
 import discord
 import json
+
+import opendota
 import overwatch
 import league
 import strings as s
@@ -215,7 +217,7 @@ async def brawlhalla_update_mmr(timeout):
                             # Compare the mmr with the value saved in the database
                             if mmr != old_mmr:
                                 # Send a message
-                                loop.create_task(send_event(s.brawlhalla_new_mmr, player, mmr=mmr, oldmmr=old_mmr))
+                                loop.create_task(send_event(s.brawlhalla_new_mmr, player=player, mmr=mmr, oldmmr=old_mmr))
                                 # Update database
                                 db[player]["brawlhalla"]["mmr"] = mmr
                                 f = open("db.json", "w")
@@ -228,6 +230,40 @@ async def brawlhalla_update_mmr(timeout):
             await asyncio.sleep(timeout)
         else:
             await asyncio.sleep(1)
+
+# Every timeout seconds, report the last match
+async def opendota_last_match(timeout):
+    while True:
+        if discord_is_ready:
+            print("[OpenDota] Starting last match check...")
+            # Check for new dota match for every player in the database
+            for player in db:
+                try:
+                    # TODO: Se uno non ha mai giocato a dota, cosa succede? Aggiungere handling
+                    r = await opendota.get_latest_match(db[player]["steam"]["steamid"])
+                except KeyError:
+                    continue
+                else:
+                    try:
+                        old_last = db[player]["dota"]["lastmatch"]
+                    except KeyError:
+                        old_last = 0
+                    last = r["match_id"]
+                    if last > old_last:
+                        # Send a message
+                        loop.create_task(send_event(s.dota_new_match, player=player, k=r["kills"], d=r["deaths"], a=r["assists"]))
+                        # Update database
+                        db[player]["dota"]["lastmatch"] = last
+                        f = open("db.json", "w")
+                        json.dump(db, f)
+                        f.close()
+                finally:
+                    await asyncio.sleep(2)
+            print("[OpenDota] Check successful.")
+            await asyncio.sleep(timeout)
+        else:
+            await asyncio.sleep(1)
+
 
 # Send a new event to both Discord and Telegram
 async def send_event(eventmsg: str, player: str, **kwargs):
@@ -251,7 +287,6 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     # Send the message
     loop.create_task(telegram.send_message(msg, -2141322))
 
-
 loop.create_task(overwatch_status_change(600))
 print("[Overwatch] Added level up check to the queue.")
 
@@ -264,6 +299,8 @@ print("[League] Added level change check to the queue.")
 loop.create_task(brawlhalla_update_mmr(7200))
 print("[Brawlhalla] Added mmr change check to the queue.")
 
+#loop.create_task(opendota_last_match(600))
+#print("[OpenDota] Added last match check to the queue.")
 
 try:
     loop.run_until_complete(d_client.start(token))
