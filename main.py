@@ -71,7 +71,7 @@ async def overwatch_status_change(timeout):
                                 oldrank = 0
                             if rank != oldrank:
                                 # Send the message
-                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change, player=player, change=oldrank-rank, rank=rank, medal=overwatch.rank_to_medal(rank)))
+                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change, player=player, change=rank-oldrank, rank=rank, medal=overwatch.rank_to_medal(rank)))
                                 # Update database
                                 db[player]["overwatch"]["rank"] = rank
                                 f = open("db.json", "w")
