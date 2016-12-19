@@ -3,12 +3,12 @@ import discord
 import json
 
 import opendota
-import overwatch
-import league
+#import overwatch
+#import league
 import strings as s
 import telegram
 import bs4
-import brawlhalla
+#import brawlhalla
 
 loop = asyncio.get_event_loop()
 d_client = discord.Client()
@@ -250,10 +250,30 @@ async def opendota_last_match(timeout):
                         old_last = 0
                     last = r["match_id"]
                     if last > old_last:
+                        # Get player team
+                        # 0 if radiant
+                        # 1 if dire
+                        team = r["player_slot"] & 0b10000000 >> 7
+                        # Get victory status
+                        victory = (bool(team) == r["radiant_win"])
+                        # Prepare format map
+                        f = {
+                            "k": r["kills"],
+                            "d": r["deaths"],
+                            "a": r["assists"],
+                            "player": player,
+                            "result": s.won if victory else s.lost,
+                            "hero": opendota.get_hero_name(r["hero_id"])
+                        }
                         # Send a message
-                        loop.create_task(send_event(s.dota_new_match, player=player, k=r["kills"], d=r["deaths"], a=r["assists"]))
+                        loop.create_task(send_event(s.dota_new_match, **f))
                         # Update database
-                        db[player]["dota"]["lastmatch"] = last
+                        try:
+                            db[player]["dota"]["lastmatch"] = last
+                        except KeyError:
+                            db[player]["dota"] = {
+                                "lastmatch": last
+                            }
                         f = open("db.json", "w")
                         json.dump(db, f)
                         f.close()
@@ -287,20 +307,20 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     # Send the message
     loop.create_task(telegram.send_message(msg, -2141322))
 
-loop.create_task(overwatch_status_change(600))
-print("[Overwatch] Added level up check to the queue.")
+#loop.create_task(overwatch_status_change(600))
+#print("[Overwatch] Added level up check to the queue.")
 
-loop.create_task(league_rank_change(900))
-print("[League] Added rank change check to the queue.")
+#loop.create_task(league_rank_change(900))
+#print("[League] Added rank change check to the queue.")
 
-loop.create_task(league_level_up(900))
-print("[League] Added level change check to the queue.")
+#loop.create_task(league_level_up(900))
+#print("[League] Added level change check to the queue.")
 
-loop.create_task(brawlhalla_update_mmr(7200))
-print("[Brawlhalla] Added mmr change check to the queue.")
+#loop.create_task(brawlhalla_update_mmr(7200))
+#print("[Brawlhalla] Added mmr change check to the queue.")
 
-#loop.create_task(opendota_last_match(600))
-#print("[OpenDota] Added last match check to the queue.")
+loop.create_task(opendota_last_match(600))
+print("[OpenDota] Added last match check to the queue.")
 
 try:
     loop.run_until_complete(d_client.start(token))

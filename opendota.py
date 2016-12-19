@@ -1,5 +1,6 @@
 import asyncio
 import requests
+import json
 loop = asyncio.get_event_loop()
 
 async def get_latest_match(steamidtre: str):
@@ -11,3 +12,11 @@ async def get_latest_match(steamidtre: str):
         return pj[0]
     else:
         raise Exception("OpenDota request error")
+
+def get_hero_name(heroid: int):
+    j = open("herolist.json", "r")
+    herolist = json.loads(j.read())
+    for hero in herolist:
+        if hero["id"] == heroid:
+            return hero["localized_name"]
+    return None
