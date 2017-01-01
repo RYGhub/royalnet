@@ -204,10 +204,18 @@
     "icon": "ProfiloVuoto",
     "steam": 76561198165551475
   },
-   "albertwerk":
+  "albertwerk":
   {
     "name": "Albert Bulanov",
-    "desc": "nuovo membro ryg",
-    "icon": "ProfiloVuoto"
+    "desc": "",
+    "icon": "ProfiloVuoto",
+    "steam": "76561198078613942"
+  },
+  "protoh":
+  {
+    "name": "ProtoxiDe22",
+    "desc": "",
+    "icon": "ProfiloVuoto",
+    "steam": "76561198056608568"
   }
 }
