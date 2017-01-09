@@ -72,3 +72,9 @@ def url_to_medal(rank: str):
         return s.overwatch_medal_list[6]
     else:
         raise NotFoundException("The medal does not exist.")
+
+def format_rankchange(rankchange: int):
+    if rankchange < 0:
+        return "+" + str(rankchange)
+    else:
+        return str(rankchange)

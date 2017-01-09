@@ -72,7 +72,7 @@ async def overwatch_status_change(timeout):
                             if rank != oldrank:
                                 # Send the message
                                 loop.create_task(send_event(eventmsg=s.overwatch_rank_change,
-                                                            player=player, change=rank-oldrank,
+                                                            player=player, change=overwatch.format_rankchange(rank-oldrank),
                                                             rank=rank, medal=overwatch.url_to_medal(r["data"]["competitive"]["rank_img"])))
                                 # Update database
                                 db[player]["overwatch"]["rank"] = rank
