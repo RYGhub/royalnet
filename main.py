@@ -3,12 +3,12 @@ import discord
 import json
 
 import opendota
-#import overwatch
-#import league
+import overwatch
+import league
 import strings as s
 import telegram
 import bs4
-#import brawlhalla
+import brawlhalla
 
 loop = asyncio.get_event_loop()
 d_client = discord.Client()
@@ -71,7 +71,9 @@ async def overwatch_status_change(timeout):
                                 oldrank = 0
                             if rank != oldrank:
                                 # Send the message
-                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change, player=player, change=rank-oldrank, rank=rank, medal=overwatch.rank_to_medal(rank)))
+                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change,
+                                                            player=player, change=rank-oldrank,
+                                                            rank=rank, medal=overwatch.url_to_medal(r["data"]["competitive"]["rank_img"])))
                                 # Update database
                                 db[player]["overwatch"]["rank"] = rank
                                 f = open("db.json", "w")
@@ -307,17 +309,17 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     # Send the message
     loop.create_task(telegram.send_message(msg, -2141322))
 
-#loop.create_task(overwatch_status_change(600))
-#print("[Overwatch] Added level up check to the queue.")
+loop.create_task(overwatch_status_change(600))
+print("[Overwatch] Added level up check to the queue.")
 
-#loop.create_task(league_rank_change(900))
-#print("[League] Added rank change check to the queue.")
+loop.create_task(league_rank_change(900))
+print("[League] Added rank change check to the queue.")
 
-#loop.create_task(league_level_up(900))
-#print("[League] Added level change check to the queue.")
+loop.create_task(league_level_up(900))
+print("[League] Added level change check to the queue.")
 
-#loop.create_task(brawlhalla_update_mmr(7200))
-#print("[Brawlhalla] Added mmr change check to the queue.")
+loop.create_task(brawlhalla_update_mmr(7200))
+print("[Brawlhalla] Added mmr change check to the queue.")
 
 loop.create_task(opendota_last_match(600))
 print("[OpenDota] Added last match check to the queue.")
