@@ -404,10 +404,11 @@ def diario():
     # Aggiungi una riga al diario Royal Games
     print("@" + username + ": /diario ")
     if len(cmd) > 1:
-        if cmd[1].isprintable():
-            cmd[1] = cmd[1].replace("\n", " ")
+        entry = text.split(" ", 1)[1]
+        if entry.isprintable():
+            entry = entry.replace("\n", " ")
             fdiario = filemanager.readfile("diario.txt")
-            fdiario += str(int(time.time())) + "|" + cmd[1] + "\n"
+            fdiario += str(int(time.time())) + "|" + entry + "\n"
             filemanager.writefile("diario.txt", fdiario)
             telegram.sendmessage("Aggiunto al diario RYG.", sentin, source)
         else:
