@@ -82,15 +82,15 @@ def steamplayers():
     telegram.sendchataction(sentin)
     # Se è stato specificato un AppID...
     if len(cmd) >= 2:
-        n = steam.getnumberofcurrentplayers(cmd[1])
+        n = steam.getnumberofcurrentplayers(entry)
         # Se viene ricevuta una risposta...
         if n is None:
             telegram.sendmessage(chr(9888) + " L'app specificata non esiste!", sentin, source)
         else:
-            name = steam.getschemaforgame(cmd[1])['game']['gameName']
+            name = steam.getschemaforgame(entry)['game']['gameName']
             telegram.sendmessage("In questo momento, *{n}* persone stanno giocando a "
                                  "[{name}](https://steamdb.info/app/{id}/graphs/)."
-                                 .format(n=str(n), name=name, id=cmd[1]), sentin, source)
+                                 .format(n=str(n), name=name, id=entry), sentin, source)
     else:
         telegram.sendmessage(chr(9888) + ' Non hai specificato un AppID!\n'
                                          'La sintassi corretta è /playing <AppID>.', sentin, source)
@@ -130,7 +130,7 @@ def osucmd():
             mode = 0
         # Prova a mandare una richiesta ai server di osu per l'ultima canzone giocata
         try:
-            r = osu.getuserrecent(cmd[1], mode)
+            r = osu.getuserrecent(entry, mode)
         # Se la funzione restituisce un errore, riferisci su Telegram l'errore e previeni il crash.
         except NameError:
             telegram.sendmessage(chr(9888) + " Errore nella richiesta ai server di Osu!", sentin,
@@ -264,11 +264,11 @@ def roll():
     print("@" + username + ": /roll")
     # Se è stato specificato un numero
     if len(cmd) >= 2:
-        if cmd[1] == "tm":
+        if entry == "tm":
             telegram.sendmessage("TM è così grassa che se la lanci rotola!", sentin, source)
         # Controlla che sia convertibile in un intero.
         try:
-            m = int(cmd[1])
+            m = int(entry)
         except ValueError:
             telegram.sendmessage(chr(9888) + " Il numero specificato non è un intero.", sentin, source)
             return
@@ -353,7 +353,7 @@ def online():
     # Informa Telegram che il messaggio è stato ricevuto.
     telegram.sendchataction(sentin)
     if len(cmd) >= 2:
-        if cmd[1].lower() == "help":
+        if entry.lower() == "help":
             telegram.sendmessage(chr(128309) + " Online\n" +
                                  chr(128308) + " In gioco | Occupato\n" +
                                  chr(9899) + " Assente | Inattivo\n" +
@@ -404,10 +404,11 @@ def diario():
     # Aggiungi una riga al diario Royal Games
     print("@" + username + ": /diario ")
     if len(cmd) > 1:
-        if cmd[1].isprintable():
-            cmd[1] = cmd[1].replace("\n", " ")
+        entry = text.split(" ", 1)[1]
+        if entry.isprintable():
+            entry = entry.replace("\n", " ")
             fdiario = filemanager.readfile("diario.txt")
-            fdiario += str(int(time.time())) + "|" + cmd[1] + "\n"
+            fdiario += str(int(time.time())) + "|" + entry + "\n"
             filemanager.writefile("diario.txt", fdiario)
             telegram.sendmessage("Aggiunto al diario RYG.", sentin, source)
         else:
@@ -449,7 +450,7 @@ def lolfree():
     telegram.sendchataction(sentin)
     ora = time.gmtime()
     if len(cmd) > 1:
-        refresh_requested = cmd[1].startswith("refresh")
+        refresh_requested = entry.startswith("refresh")
     else:
         refresh_requested = False
     # Controlla se i dati sono già stati scaricati.
@@ -548,7 +549,7 @@ def share():
         d = list(steammatch.diff_games(tobematched[0], tobematched[1]))
         if len(d) > 0:
             # Prepara il messaggio
-            tosend += "*Giochi che ha @{primo} ma non @{secondo}:*\n".format(primo=cmd[0], secondo=cmd[1])
+            tosend += "*Giochi che ha @{primo} ma non @{secondo}:*\n".format(primo=cmd[0], secondo=entry)
             for game in d:
                 tosend += "- {game}\n".format(game=game)
         else:
