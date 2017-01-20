@@ -481,8 +481,8 @@ def getrygimage():
             directory = "/var/www/html/rygimages/{}.png"
             infile = open("/royal/bot/basiclogo.svg", "r")
             print(infile.read())
-            indata = infile.read().format(cmd[1]).encode()
-            print(indata.decode())
+            indata = infile.read().format(cmd[1]).encode("utf-8")
+            print(indata.decode("utf-8"))
             infile.close()
             try:
                 outfile = open(directory.format(cmd[1]), "x")
