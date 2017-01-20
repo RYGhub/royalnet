@@ -57,19 +57,19 @@ def rank_to_medal(rank):
 # Convert an url to a medal
 def url_to_medal(rank: str):
     if rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-1.png":
-        return s.overwatch_medal_list[0]
-    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-2.png":
         return s.overwatch_medal_list[1]
-    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-3.png":
+    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-2.png":
         return s.overwatch_medal_list[2]
-    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-4.png":
+    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-3.png":
         return s.overwatch_medal_list[3]
-    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-5.png":
+    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-4.png":
         return s.overwatch_medal_list[4]
-    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-6.png":
+    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-5.png":
         return s.overwatch_medal_list[5]
-    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-7.png":
+    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-6.png":
         return s.overwatch_medal_list[6]
+    elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-7.png":
+        return s.overwatch_medal_list[7]
     else:
         raise NotFoundException("The medal does not exist.")
 
