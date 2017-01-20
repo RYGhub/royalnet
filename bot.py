@@ -472,6 +472,7 @@ def lolfree():
 def getrygimage():
     # Ricevi il link alla tua immagine del profilo Royal Games.
     print("@" + username + ": /getrygimage")
+    cmd = text.split(" ", 1)
     if len(cmd) > 1:
         if len(cmd[1]) > 2:
             telegram.sendmessage("Puoi mettere solo due lettere.")
@@ -479,7 +480,9 @@ def getrygimage():
             # FIXME: percorsi assoluti
             directory = "/var/www/html/rygimages/{}.png"
             infile = open("/royal/bot/basiclogo.svg", "r")
+            print(infile.read())
             indata = infile.read().format(cmd[1]).encode()
+            print(indata.decode())
             infile.close()
             try:
                 outfile = open(directory.format(cmd[1]), "x")
