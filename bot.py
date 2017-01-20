@@ -476,8 +476,9 @@ def getrygimage():
         if len(cmd[1]) > 2:
             telegram.sendmessage("Puoi mettere solo due lettere.")
         else:
+            # FIXME: percorsi assoluti
             directory = "/var/www/html/rygimages/{}.png"
-            infile = open("basiclogo.svg", "r")
+            infile = open("/royal/bot/basiclogo.svg", "r")
             indata = infile.read().format(cmd[1]).encode()
             infile.close()
             try:
