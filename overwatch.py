@@ -74,7 +74,7 @@ def url_to_medal(rank: str):
         raise NotFoundException("The medal does not exist.")
 
 def format_rankchange(rankchange: int):
-    if rankchange < 0:
+    if rankchange > 0:
         return "+" + str(rankchange)
     else:
         return str(rankchange)
