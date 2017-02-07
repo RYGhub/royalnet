@@ -323,11 +323,11 @@ async def osu_pp(timeout):
                         json.dump(db, f)
                         f.close()
                     finally:
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(5)
             print("[Osu!] Check successful.")
             await asyncio.sleep(timeout)
         else:
-            await asyncio.sleep(5)
+            await asyncio.sleep(1)
 
 
 
