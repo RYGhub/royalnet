@@ -44,6 +44,15 @@ brawlhalla_new_mmr = "{player} è passato da {oldmmr} MMR a **{mmr}** MMR su _Br
 # Dota: new match
 dota_new_match = "{player} ha **{result}** a _Dota 2_ con {k}/{d}/{a}, giocando **{hero}**!"
 
+# Osu: modes
+osu_modes = ["osu!",
+             "osu!taiko",
+             "osu!catch",
+             "osu!mania"]
+
+# Osu: moar pp
+osu_pp_change = "{player} è salito a **{pp}pp** (+{change}) su _{mode}_ !"
+
 # Win: past participle
 won = "vinto"
 

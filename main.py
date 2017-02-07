@@ -9,6 +9,7 @@ import strings as s
 import telegram
 import bs4
 import brawlhalla
+import osu
 
 loop = asyncio.get_event_loop()
 d_client = discord.Client()
@@ -287,6 +288,49 @@ async def opendota_last_match(timeout):
             await asyncio.sleep(1)
 
 
+async def osu_pp(timeout):
+    while True:
+        if discord_is_ready:
+            print("[Osu!] Starting pp check...")
+            for mode in range(0, 4):
+                for player in db:
+                    try:
+                        r = await osu.get_user(db[player]["osu"]["id"], mode)
+                    except KeyError:
+                        continue
+                    else:
+                        if r["pp_raw"] is not None:
+                            pp = float(r["pp_raw"])
+                        else:
+                            pp = 0
+                        if pp != 0:
+                            try:
+                                old = db[player]["osu"][str(mode)]
+                            except KeyError:
+                                old = 0
+                            if pp != old:
+                                db[player]["osu"][str(mode)] = pp
+                                f = {
+                                    "player": player,
+                                    "mode": s.osu_modes[mode],
+                                    "pp": int(pp),
+                                    "change": int(pp - old)
+                                }
+                                loop.create_task(send_event(s.osu_pp_change, **f))
+                        else:
+                            db[player]["osu"][str(mode)] = 0.0
+                        f = open("db.json", "w")
+                        json.dump(db, f)
+                        f.close()
+                    finally:
+                        await asyncio.sleep(1)
+            print("[Osu!] Check successful.")
+            await asyncio.sleep(timeout)
+        else:
+            await asyncio.sleep(1)
+
+
+
 # Send a new event to both Discord and Telegram
 async def send_event(eventmsg: str, player: str, **kwargs):
     # Create arguments dict
@@ -309,20 +353,23 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     # Send the message
     loop.create_task(telegram.send_message(msg, -2141322))
 
-loop.create_task(overwatch_status_change(600))
-print("[Overwatch] Added level up check to the queue.")
+#loop.create_task(overwatch_status_change(600))
+#print("[Overwatch] Added level up check to the queue.")
 
-loop.create_task(league_rank_change(900))
-print("[League] Added rank change check to the queue.")
+#loop.create_task(league_rank_change(900))
+#print("[League] Added rank change check to the queue.")
 
-loop.create_task(league_level_up(900))
-print("[League] Added level change check to the queue.")
+#loop.create_task(league_level_up(900))
+#print("[League] Added level change check to the queue.")
 
-loop.create_task(brawlhalla_update_mmr(7200))
-print("[Brawlhalla] Added mmr change check to the queue.")
+#loop.create_task(brawlhalla_update_mmr(7200))
+#print("[Brawlhalla] Added mmr change check to the queue.")
 
-loop.create_task(opendota_last_match(600))
-print("[OpenDota] Added last match check to the queue.")
+#loop.create_task(opendota_last_match(600))
+#print("[OpenDota] Added last match check to the queue.")
+
+loop.create_task(osu_pp(600))
+print("[Osu!] Added pp change check to the queue.")
 
 try:
     loop.run_until_complete(d_client.start(token))
