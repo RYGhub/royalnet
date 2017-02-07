@@ -8,6 +8,9 @@ file = open("telegramtoken.txt", "r")
 token = file.read()
 file.close()
 
+class TelegramError(Exception):
+    pass
+
 # Send a message
 async def send_message(msg: str, to: int):
     print("[Telegram] Sending a message: " + msg)
@@ -22,4 +25,4 @@ async def send_message(msg: str, to: int):
     if r.status_code == 200:
         return
     else:
-        raise Exception("Something went wrong in the Telegram request.")
+        raise TelegramError("Something went wrong in the Telegram request: {}".format(r.json()["description"]))
