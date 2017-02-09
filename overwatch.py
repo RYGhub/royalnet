@@ -35,39 +35,55 @@ async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
 
 # Convert rank to a medal
 def rank_to_medal(rank):
+    # Unranked
     if int(rank) == 0:
         return s.overwatch_medal_list[0]
-    if int(rank) < 1500:
+    # Bronze
+    elif int(rank) < 1500:
         return s.overwatch_medal_list[1]
+    # Silver
     elif int(rank) < 2000:
         return s.overwatch_medal_list[2]
+    # Gold
     elif int(rank) < 2500:
         return s.overwatch_medal_list[3]
+    # Platinum
     elif int(rank) < 3000:
         return s.overwatch_medal_list[4]
+    # Diamond
     elif int(rank) < 3500:
         return s.overwatch_medal_list[5]
+    # Master
     elif int(rank) < 4000:
         return s.overwatch_medal_list[6]
+    # Grandmaster
+    elif int(rank) <= 5000:
+        return s.overwatch_medal_list[7]
+    # ???
     else:
-        # TODO: what
-        raise Exception("Mi sfugge qualcosa.")
-
+        raise NotFoundException("The medal does not exist.")
 
 # Convert an url to a medal
 def url_to_medal(rank: str):
+    # Bronze
     if rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-1.png":
         return s.overwatch_medal_list[1]
+    # Silver
     elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-2.png":
         return s.overwatch_medal_list[2]
+    # Gold
     elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-3.png":
         return s.overwatch_medal_list[3]
+    # Platinum
     elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-4.png":
         return s.overwatch_medal_list[4]
+    # Diamond
     elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-5.png":
         return s.overwatch_medal_list[5]
+    # Master
     elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-6.png":
         return s.overwatch_medal_list[6]
+    # Grandmaster
     elif rank == "https://blzgdapipro-a.akamaihd.net/game/rank-icons/season-2/rank-7.png":
         return s.overwatch_medal_list[7]
     else:
