@@ -85,7 +85,7 @@ async def overwatch_status_change(timeout):
                                 db[player]["overwatch"]["rank"] = rank
                                 save_db()
                     finally:
-                        asyncio.sleep(1)
+                        await asyncio.sleep(1)
             print("[Overwatch] Check completed successfully.")
             # Wait for the timeout
             await asyncio.sleep(timeout)
