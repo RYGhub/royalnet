@@ -67,6 +67,7 @@ async def overwatch_status_change(timeout):
                             loop.create_task(send_event(eventmsg=s.overwatch_level_up, player=player, level=level))
                             # Update database
                             db[player]["overwatch"]["level"] = level
+                            save_db()
                         # Check for rank changes
                         rank = r["data"]["competitive"]["rank"]
                         if rank is not None:
