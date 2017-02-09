@@ -32,6 +32,14 @@ file = open("discordtoken.txt", "r")
 token = file.read()
 file.close()
 
+# Save the db
+def save_db():
+    f = open("db.json", "w")
+    json.dump(db, f)
+    f.close()
+    del f
+
+
 # Every timeout seconds, update player status and check for levelups
 async def overwatch_status_change(timeout):
     while True:
@@ -59,9 +67,6 @@ async def overwatch_status_change(timeout):
                             loop.create_task(send_event(eventmsg=s.overwatch_level_up, player=player, level=level))
                             # Update database
                             db[player]["overwatch"]["level"] = level
-                            f = open("db.json", "w")
-                            json.dump(db, f)
-                            f.close()
                         # Check for rank changes
                         rank = r["data"]["competitive"]["rank"]
                         if rank is not None:
@@ -77,9 +82,7 @@ async def overwatch_status_change(timeout):
                                                             rank=rank, medal=overwatch.url_to_medal(r["data"]["competitive"]["rank_img"])))
                                 # Update database
                                 db[player]["overwatch"]["rank"] = rank
-                                f = open("db.json", "w")
-                                json.dump(db, f)
-                                f.close()
+                                save_db()
                     finally:
                         asyncio.sleep(1)
             print("[Overwatch] Check completed successfully.")
@@ -126,9 +129,7 @@ async def league_rank_change(timeout):
                             # Update database
                             db[player]["league"]["tier"] = tier_number
                             db[player]["league"]["division"] = roman_number
-                            f = open("db.json", "w")
-                            json.dump(db, f)
-                            f.close()
+                            save_db()
                     finally:
                         # Prevent getting ratelimited by Riot
                         await asyncio.sleep(2)
@@ -166,9 +167,7 @@ async def league_level_up(timeout):
                             loop.create_task(send_event(eventmsg=s.league_level_up, player=player, level=level))
                             # Update database
                             db[player]["league"]["level"] = level
-                            f = open("db.json", "w")
-                            json.dump(db, f)
-                            f.close()
+                            save_db()
                     finally:
                         # Prevent getting ratelimited by Riot
                         await asyncio.sleep(2)
@@ -223,9 +222,7 @@ async def brawlhalla_update_mmr(timeout):
                                 loop.create_task(send_event(s.brawlhalla_new_mmr, player=player, mmr=mmr, oldmmr=old_mmr))
                                 # Update database
                                 db[player]["brawlhalla"]["mmr"] = mmr
-                                f = open("db.json", "w")
-                                json.dump(db, f)
-                                f.close()
+                                save_db()
                             break
                     finally:
                         await asyncio.sleep(1)
@@ -277,9 +274,7 @@ async def opendota_last_match(timeout):
                             db[player]["dota"] = {
                                 "lastmatch": last
                             }
-                        f = open("db.json", "w")
-                        json.dump(db, f)
-                        f.close()
+                        save_db()
                 finally:
                     await asyncio.sleep(2)
             print("[OpenDota] Check successful.")
@@ -319,9 +314,7 @@ async def osu_pp(timeout):
                                 loop.create_task(send_event(s.osu_pp_change, **f))
                         else:
                             db[player]["osu"][str(mode)] = 0.0
-                        f = open("db.json", "w")
-                        json.dump(db, f)
-                        f.close()
+                        save_db()
                     finally:
                         await asyncio.sleep(5)
             print("[Osu!] Check successful.")
@@ -371,10 +364,10 @@ print("[League] Added level change check to the queue.")
 loop.create_task(osu_pp(1800))
 print("[Osu!] Added pp change check to the queue.")
 
+# Run until ^C
 try:
     loop.run_until_complete(d_client.start(token))
 except KeyboardInterrupt:
     loop.run_until_complete(d_client.logout())
-    # cancel all tasks lingering
 finally:
     loop.close()
