@@ -32,16 +32,16 @@ file = open("discordtoken.txt", "r")
 token = file.read()
 file.close()
 
-# Save the db
 def save_db():
+    """Save the current db object to the db.json file."""
     f = open("db.json", "w")
     json.dump(db, f)
     f.close()
     del f
 
 
-# Every timeout seconds, update player status and check for levelups
 async def overwatch_status_change(timeout):
+    """Check for Overwatch levelups and rank changes."""
     while True:
         if discord_is_ready:
             print("[Overwatch] Starting check...")
@@ -91,8 +91,9 @@ async def overwatch_status_change(timeout):
         else:
             await asyncio.sleep(1)
 
-# Every timeout seconds, update player league and check for rank changes
+
 async def league_rank_change(timeout):
+    """Check for League of Legends solo-duo ranked status changes."""
     while True:
         if discord_is_ready:
             print("[League] Starting check for rank changes...")
@@ -139,8 +140,9 @@ async def league_rank_change(timeout):
         else:
             await asyncio.sleep(1)
 
-# Every timeout seconds, update player level and check for changes
+
 async def league_level_up(timeout):
+    """Check for League of Legends profile level ups."""
     while True:
         if discord_is_ready:
             print("[League] Starting check for level changes...")
@@ -177,8 +179,9 @@ async def league_level_up(timeout):
         else:
             await asyncio.sleep(1)
 
-# Every timeout seconds, update player mmr and rank
+
 async def brawlhalla_update_mmr(timeout):
+    """Check for Brawlhalla MMR changes."""
     while True:
         if discord_is_ready:
             print("[Brawlhalla] Starting check for mmr changes...")
@@ -231,8 +234,9 @@ async def brawlhalla_update_mmr(timeout):
         else:
             await asyncio.sleep(1)
 
-# Every timeout seconds, report the last match
+
 async def opendota_last_match(timeout):
+    """Check for new played Dota 2 matches using the OpenDota API."""
     while True:
         if discord_is_ready:
             print("[OpenDota] Starting last match check...")
@@ -284,6 +288,7 @@ async def opendota_last_match(timeout):
 
 
 async def osu_pp(timeout):
+    """Check for changes in Osu! pp."""
     while True:
         if discord_is_ready:
             print("[Osu!] Starting pp check...")
@@ -323,9 +328,8 @@ async def osu_pp(timeout):
             await asyncio.sleep(1)
 
 
-
-# Send a new event to both Discord and Telegram
 async def send_event(eventmsg: str, player: str, **kwargs):
+    """Send a message about a new event on both Telegram and Discord"""
     # Create arguments dict
     mapping = kwargs.copy()
     mapping["eventmsg"] = None
