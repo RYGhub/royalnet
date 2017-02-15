@@ -478,19 +478,21 @@ def getrygimage():
             telegram.sendmessage("Puoi mettere solo due lettere.")
         else:
             # FIXME: percorsi assoluti
-            directory = "/var/www/html/rygimages/{}.png"
-            infile = open("/royal/bot/basiclogo.svg", "r")
-            print(infile.read())
-            indata = infile.read().format(cmd[1]).encode("utf-8")
-            print(indata.decode("utf-8"))
+            directory = "/var/www/html/rygimages/{}.png".format(cmd[1])
+            infile = open("basiclogo.svg", "rb")
+            # FIXME: possibile exploit qui
+            indata = infile.read().replace(b"REPLACEME", cmd[1].encode("utf-8"))
             infile.close()
             try:
-                outfile = open(directory.format(cmd[1]), "x")
+                outfile = open(directory, "x")
+                outfile.write("")
                 outfile.close()
-            except Exception:
+            except FileExistsError:
                 pass
-            outfile = open(directory.format(cmd[1]), "wb")
-            cairosvg.svg2png(bytestring=indata, write_to=outfile)
+            outfile = open(directory, "wb")
+            outdata = cairosvg.svg2png(bytestring=indata)
+            print(outdata)
+            outfile.write(outdata)
             outfile.close()
             telegram.sendmessage("[Scarica](http://royal.steffo.me/rygimages/{}.png)"
                                  " la tua immagine del profilo Royal Games!".format(cmd[1]),
@@ -671,8 +673,10 @@ while True:
             else:
                 print("@" + username + " bloccato.")
     except Exception as e:
-        telegram.sendmessage(chr(9762) + " *Errore critico:\n*"
-                                         "{0}\n\n"
-                                         "Secondo me, è colpa dello stagista.".format(repr(e)), -2141322)
-        print("\033[1mERRORE CRITICO:\n"
-              "{0}\033[0m".format(repr(e)))
+        if __debug__:
+            raise
+        else:
+            telegram.sendmessage(chr(9762) + " *Errore critico:\n*"
+                                             "{0}\n\n"
+                                             "Secondo me, è colpa dello stagista.".format(repr(e)), -2141322)
+            print("\033[1mERRORE CRITICO:\n{0}\033[0m".format(repr(e)))
