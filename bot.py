@@ -426,7 +426,13 @@ def diario():
 def leggi():
     # Leggi dal diario Royal Games
     print("@" + username + ": /leggi")
-    telegram.sendmessage("[Apri il diario RYG](http://royal.steffo.me/diario.htm)!", sentin, source)
+    if len(cmd) == 1:
+        telegram.sendmessage("[Apri il diario RYG](http://royal.steffo.me/diario.htm)!\n_(Puoi visualizzare un elemento casuale scrivendo /leggi random o leggere un elemento specifico con /leggi [numero])_", sentin, source)
+    else if cmd[1] == "random":
+        fdiario = filemanager.readfile("diario.txt").split("\n")
+        n = random.randrange(len(fdiario))
+        entry = fdiario[n].split("|")
+        telegram.sendmessage(entry[1], sentin, source)
 
 
 def balurage():
@@ -493,7 +499,7 @@ def getrygimage():
             cairosvg.svg2png(bytestring=indata, write_to=outfile)
             outfile.close()
             telegram.sendmessage("[Scarica](http://royal.steffo.me/rygimages/{}.png)"
-                                 " la tua immagine del profilo Royal Games!".format(cmd[1]),
+                                 " la tua immagine del profilo Royal Games!\n_(Tanto non funziona.)_".format(cmd[1]),
                                  sentin, source)
 
 def ciaospaggia():
@@ -531,7 +537,7 @@ def match():
     if len(cmd) > 2:
         del cmd[0]
         for name in cmd:
-            userdata = db.findbyname(name.lower())
+            userdata = db.findbyname(name)
             if userdata is not None and 'steam' in userdata:
                 if userdata['steam'] not in tobematched:
                     tobematched.append(userdata['steam'])
@@ -559,7 +565,7 @@ def share():
     if len(cmd) > 2:
         del cmd[0]
         for name in cmd:
-            userdata = db.findbyname(name.lower())
+            userdata = db.findbyname(name)
             if userdata is not None and 'steam' in userdata:
                 if userdata['steam'] not in tobematched:
                     tobematched.append(userdata['steam'])
@@ -676,3 +682,5 @@ while True:
                                          "Secondo me, è colpa dello stagista.".format(repr(e)), -2141322)
         print("\033[1mERRORE CRITICO:\n"
               "{0}\033[0m".format(repr(e)))
+        if __debug__:
+            raise

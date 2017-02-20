@@ -6,7 +6,7 @@ db = json.loads(filemanager.readfile("db.json"))
 
 def findbyname(name: str):
     for player in db:
-        if player == name:
+        if db[player]["telegram"]["username"] == name:
             return db[player]
     else:
         return None
