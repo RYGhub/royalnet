@@ -19,6 +19,14 @@ royalgames = json.loads(filemanager.readfile("db.json"))
 # Stringa dove mettere l'elenco di champion di lol gratuiti
 lolfreestring = str()
 
+# Elenco dello stagismo
+stagismo = ["dello stagista", "degli sposi", "di Santinelli", "di Sensei", "di Steffo", "di Spaggia",
+            "della sedia", "di Satana", "del Sangue (degli occhi di Adry)", "del Sale",
+            "del Serpente", "della Samsung", "di /smecds", "della succursale", "di succ",
+            "di Sans", "di [SiivaGunner](https://www.youtube.com/channel/UC9ecwl3FTG66jIKA9JRDtmg)",
+            "di saaaaaas", "del semaforo", "della Seriale", "di Sistemi", "della Supercell",
+            "di Santaclaus", "dei Sims", "dei Santi", "di SES2017", "di Salvini"]
+
 random.seed()
 
 
@@ -299,6 +307,8 @@ def cv():
     # Elenco di tutte le persone online su Discord
     tosend = "*Online su Discord, nel server {servername}:*\n".format(servername=r['name'])
     # Qui inizia il codice peggiore di sempre
+    # oddio cosa ho scritto
+    # aiuto
     for member in r['members']:
         m = dict()
         if 'bot' not in member or not member['bot']:
@@ -351,48 +361,49 @@ def cv():
 def online():
     # Elenco di tutte le persone online su Steam
     print("@" + username + ": /online ")
+    telegram.sendmessage("_Funzione temporaneamente disattivata._", sentin, source)
     # Informa Telegram che il messaggio è stato ricevuto.
-    telegram.sendchataction(sentin)
-    if len(cmd) >= 2:
-        if cmd[1].lower() == "help":
-            telegram.sendmessage(chr(128309) + " Online\n" +
-                                 chr(128308) + " In gioco | Occupato\n" +
-                                 chr(9899) + " Assente | Inattivo\n" +
-                                 chr(128310) + " Disponibile per scambiare\n" +
-                                 chr(128311) + " Disponibile per giocare", sentin, source)
-    else:
-        # Stringa utilizzata per ottenere informazioni su tutti gli utenti in una sola richiesta a steam
-        userids = str()
-        for membro in royalgames:
-            if "steam" in royalgames[membro]:
-                userids += str(royalgames[membro]["steam"]) + ','
-        tosend = "*Su Steam ora:*\n"
-        r = steam.getplayersummaries(userids)
-        for player in r:
-            # In gioco
-            if 'gameextrainfo' in player:
-                tosend += chr(128308) + " _" + player['gameextrainfo'] + "_ |"
-            elif 'gameid' in player:
-                tosend += chr(128308) + " _" + player['gameid'] + "_ |"
-            # Online
-            elif player['personastate'] == 1:
-                tosend += chr(128309)
-            # Occupato
-            elif player['personastate'] == 2:
-                tosend += chr(128308)
-            # Assente o Inattivo
-            elif player['personastate'] == 3 or player['personastate'] == 4:
-                tosend += chr(9899)
-            # Disponibile per scambiare
-            elif player['personastate'] == 5:
-                tosend += chr(128310)
-            # Disponibile per giocare
-            elif player['personastate'] == 6:
-                tosend += chr(128311)
-            if player['personastate'] != 0:
-                tosend += " " + player['personaname'] + "\n"
-        else:
-            telegram.sendmessage(tosend, sentin, source)
+    # telegram.sendchataction(sentin)
+    # if len(cmd) >= 2:
+    #     if cmd[1].lower() == "help":
+    #         telegram.sendmessage(chr(128309) + " Online\n" +
+    #                              chr(128308) + " In gioco | Occupato\n" +
+    #                              chr(9899) + " Assente | Inattivo\n" +
+    #                              chr(128310) + " Disponibile per scambiare\n" +
+    #                              chr(128311) + " Disponibile per giocare", sentin, source)
+    # else:
+    #     # Stringa utilizzata per ottenere informazioni su tutti gli utenti in una sola richiesta a steam
+    #     userids = str()
+    #     for membro in royalgames:
+    #         if "steam" in royalgames[membro]:
+    #             userids += str(royalgames[membro]["steam"]) + ','
+    #     tosend = "*Su Steam ora:*\n"
+    #     r = steam.getplayersummaries(userids)
+    #     for player in r:
+    #         # In gioco
+    #         if 'gameextrainfo' in player:
+    #             tosend += chr(128308) + " _" + player['gameextrainfo'] + "_ |"
+    #         elif 'gameid' in player:
+    #             tosend += chr(128308) + " _" + player['gameid'] + "_ |"
+    #         # Online
+    #         elif player['personastate'] == 1:
+    #             tosend += chr(128309)
+    #         # Occupato
+    #         elif player['personastate'] == 2:
+    #             tosend += chr(128308)
+    #         # Assente o Inattivo
+    #         elif player['personastate'] == 3 or player['personastate'] == 4:
+    #             tosend += chr(9899)
+    #         # Disponibile per scambiare
+    #         elif player['personastate'] == 5:
+    #             tosend += chr(128310)
+    #         # Disponibile per giocare
+    #         elif player['personastate'] == 6:
+    #             tosend += chr(128311)
+    #         if player['personastate'] != 0:
+    #             tosend += " " + player['personaname'] + "\n"
+    #     else:
+    #         telegram.sendmessage(tosend, sentin, source)
 
 
 def shrek():
@@ -511,12 +522,7 @@ def ciaospaggia():
 def smecds():
     # Secondo me, è colpa...
     print("@" + username + ": /smecds")
-    accusato = random.sample(["dello stagista", "degli sposi", "di Santinelli", "di Sensei", "di Steffo", "di Spaggia",
-                              "della sedia", "di Satana", "del Sangue (degli occhi di Adry)", "del Sale",
-                              "del Serpente", "della Samsung", "di /smecds", "della succursale", "di succ",
-                              "di Sans", "di [SiivaGunner](https://www.youtube.com/channel/UC9ecwl3FTG66jIKA9JRDtmg)",
-                              "di saaaaaas", "del semaforo", "della Seriale", "di Sistemi", "della Supercell",
-                              "di Santaclaus", "dei Sims", "dei Santi", "di SES2017", "di Salvini"], 1)[0]
+    accusato = random.sample(stagismo, 1)[0]
     telegram.sendmessage("Secondo me è colpa {accusato}...".format(accusato=accusato), sentin, source)
 
 
@@ -531,59 +537,61 @@ def version():
 def match():
     # Visualizza detutti i giochi condivisi tra x persone.
     print("@" + username + ": /match")
+    telegram.sendmessage("_Funzione temporaneamente disattivata._", sentin, source)
     # Informa Telegram che il messaggio è stato ricevuto.
-    telegram.sendchataction(sentin)
-    tobematched = list()
-    if len(cmd) > 2:
-        del cmd[0]
-        for name in cmd:
-            userdata = db.findbyname(name)
-            if userdata is not None and 'steam' in userdata:
-                if userdata['steam'] not in tobematched:
-                    tobematched.append(userdata['steam'])
-    if len(tobematched) > 1:
-        m = list(steammatch.and_games(tobematched))
-        if len(m) > 0:
-            # Prepara il messaggio
-            tosend = "*Giochi in comune tra questi utenti:*\n"
-            for game in m:
-                tosend += "- {game}\n".format(game=game)
-            # Manda il messaggio
-            telegram.sendmessage(tosend, sentin, source)
-        else:
-            telegram.sendmessage("*Giochi in comune tra questi utenti:*\n_nessuno_", sentin, source)
-    else:
-        telegram.sendmessage(chr(9888) + "Non sono stati specificati abbastanza utenti per eseguire l'azione.",
-                             sentin, source)
+    # telegram.sendchataction(sentin)
+    # tobematched = list()
+    # if len(cmd) > 2:
+    #     del cmd[0]
+    #     for name in cmd:
+    #         userdata = db.findbyname(name)
+    #         if userdata is not None and 'steam' in userdata:
+    #             if userdata['steam'] not in tobematched:
+    #                 tobematched.append(userdata['steam'])
+    # if len(tobematched) > 1:
+    #     m = list(steammatch.and_games(tobematched))
+    #     if len(m) > 0:
+    #         # Prepara il messaggio
+    #         tosend = "*Giochi in comune tra questi utenti:*\n"
+    #         for game in m:
+    #             tosend += "- {game}\n".format(game=game)
+    #         # Manda il messaggio
+    #         telegram.sendmessage(tosend, sentin, source)
+    #     else:
+    #         telegram.sendmessage("*Giochi in comune tra questi utenti:*\n_nessuno_", sentin, source)
+    # else:
+    #     telegram.sendmessage(chr(9888) + "Non sono stati specificati abbastanza utenti per eseguire l'azione.",
+    #                          sentin, source)
 
 def share():
     # Visualizza detutti i giochi condivisi tra x persone.
     print("@" + username + ": /share")
+    telegram.sendmessage("_Funzione temporaneamente disattivata._", sentin, source)
     # Informa Telegram che il messaggio è stato ricevuto.
-    telegram.sendchataction(sentin)
-    tobematched = list()
-    if len(cmd) > 2:
-        del cmd[0]
-        for name in cmd:
-            userdata = db.findbyname(name)
-            if userdata is not None and 'steam' in userdata:
-                if userdata['steam'] not in tobematched:
-                    tobematched.append(userdata['steam'])
-    if len(tobematched) == 2:
-        tosend = str()
-        # Giochi che ha il primo ma non il secondo
-        d = list(steammatch.diff_games(tobematched[0], tobematched[1]))
-        if len(d) > 0:
-            # Prepara il messaggio
-            tosend += "*Giochi che ha @{primo} ma non @{secondo}:*\n".format(primo=cmd[0], secondo=cmd[1])
-            for game in d:
-                tosend += "- {game}\n".format(game=game)
-        else:
-            tosend += "_@{secondo} ha tutti i giochi che ha @{primo}_.\n"
-        telegram.sendmessage(tosend, sentin, source)
-    else:
-        telegram.sendmessage(chr(9888) + "Non è stato specificato un numero adeguato di utenti per eseguire l'azione.",
-                             sentin, source)
+    # telegram.sendchataction(sentin)
+    # tobematched = list()
+    # if len(cmd) > 2:
+    #     del cmd[0]
+    #     for name in cmd:
+    #         userdata = db.findbyname(name)
+    #         if userdata is not None and 'steam' in userdata:
+    #             if userdata['steam'] not in tobematched:
+    #                 tobematched.append(userdata['steam'])
+    # if len(tobematched) == 2:
+    #     tosend = str()
+    #     # Giochi che ha il primo ma non il secondo
+    #     d = list(steammatch.diff_games(tobematched[0], tobematched[1]))
+    #     if len(d) > 0:
+    #         # Prepara il messaggio
+    #         tosend += "*Giochi che ha @{primo} ma non @{secondo}:*\n".format(primo=cmd[0], secondo=cmd[1])
+    #         for game in d:
+    #             tosend += "- {game}\n".format(game=game)
+    #     else:
+    #         tosend += "_@{secondo} ha tutti i giochi che ha @{primo}_.\n"
+    #     telegram.sendmessage(tosend, sentin, source)
+    # else:
+    #     telegram.sendmessage(chr(9888) + "Non è stato specificato un numero adeguato di utenti per eseguire l'azione.",
+    #                          sentin, source)
 
 # Alias di tutti i comandi. Scrivendo quella stringa in chat viene attivata la funzione corrispondente.
 aliases = {
@@ -608,7 +616,6 @@ aliases = {
     "d": diario,
     "leggi": leggi,
     "match": match,
-    "lol": lolfree,
     "lolfree": lolfree,
     "legoflegend": lolfree,
     "getrygimage": getrygimage,
@@ -643,7 +650,7 @@ while True:
                         # Altrimenti, salva l'userID
                         username = str(msg['edit_data']['from']['id'])
                     # Se sei un membro della Royal Games
-                    if username.lower() in royalgames:
+                    if db.findbyname(username) in royalgames:
                         # Riconosci il comando.
                         if text.startswith('wow'):
                             wow()
@@ -664,7 +671,7 @@ while True:
                 # Altrimenti, salva l'userID
                 username = str(msg['from']['id'])
             # Se sei un membro della Royal Games
-            if username.lower() in royalgames:
+            if db.findbyname(username):
                 # Riconosci il comando e dividilo in comando e argomenti.
                 cmd = text.lower().split(" ")
                 # Togli il @RoyalBot alla fine del comando
@@ -674,13 +681,24 @@ while True:
                     aliases[cmd[0]]()
                 except KeyError:
                     print("@" + username + ": comando inesistente")
+                except Exception as e:
+                    # Se durante l'esecuzione di un comando viene generato un errore, visualizzalo nella chat in cui è stato generato.
+                    telegram.sendmessage(chr(9762) + " *Errore durante l'esecuzione del comando:\n*"
+                                         "{}\n\n"
+                                         "Secondo me, è colpa {}.".format(repr(e), random.sample(stagismo, 1)[0]), sentin, source)
+                    print("\033[1mERRORE:\n{}\033[0m".format(repr(e)))
+                    # Se sei in modalità debug, interrompi l'esecuzione
+                    if __debug__:
+                        raise
             else:
                 print("@" + username + " bloccato.")
     except Exception as e:
+        # Se la fase iniziale causa un errore, mandalo nel gruppo Royal Games.
         telegram.sendmessage(chr(9762) + " *Errore critico:\n*"
-                                         "{0}\n\n"
-                                         "Secondo me, è colpa dello stagista.".format(repr(e)), -2141322)
+                                         "{}\n\n"
+                                         "Secondo me, è colpa {}.".format(repr(e), random.sample(stagismo, 1)[0]), -2141322)
         print("\033[1mERRORE CRITICO:\n"
               "{0}\033[0m".format(repr(e)))
+        # Se sei in modalità debug, interrompi l'esecuzione
         if __debug__:
             raise

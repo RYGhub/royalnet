@@ -12,10 +12,10 @@ def findbyname(name: str):
         return None
 
 
-def findbykey(key, value):
-    for player in db:
-        if player[key] == value:
-            return db[player]
-    else:
-        return None
+# def findbykey(key, value):
+#     for player in db:
+#         if player[key] == value:
+#             return db[player]
+#     else:
+#         return None
 
