@@ -695,19 +695,7 @@ while True:
             else:
                 print("@" + username + " bloccato.")
     except Exception as e:
-<<<<<<< HEAD
-<<<<<<< HEAD
-        if __debug__:
-            raise
-        else:
-            telegram.sendmessage(chr(9762) + " *Errore critico:\n*"
-                                             "{0}\n\n"
-                                             "Secondo me, è colpa dello stagista.".format(repr(e)), -2141322)
-            print("\033[1mERRORE CRITICO:\n{0}\033[0m".format(repr(e)))
-=======
-=======
         # Se la fase iniziale causa un errore, mandalo nel gruppo Royal Games.
->>>>>>> 83a7b92f9e2ee0a9380d5da3971cf9740450dda4
         telegram.sendmessage(chr(9762) + " *Errore critico:\n*"
                                          "{}\n\n"
                                          "Secondo me, è colpa {}.".format(repr(e), random.sample(stagismo, 1)[0]), -2141322)
@@ -716,4 +704,3 @@ while True:
         # Se sei in modalità debug, interrompi l'esecuzione
         if __debug__:
             raise
->>>>>>> 935fed70c14612ffa6d8942306a36a05df123b5e
