@@ -16,7 +16,7 @@ async def get_user(user, mode=0):
         "u": user
     }
     # Get the data
-    r = await loop.run_in_executor(None, functools.partial(requests.get, timeout=6.1) 'https://osu.ppy.sh/api/get_user?k={k}&m={m}&u={u}'.format(**params))
+    r = await loop.run_in_executor(None, functools.partial(requests.get, timeout=6.1), 'https://osu.ppy.sh/api/get_user?k={k}&m={m}&u={u}'.format(**params))
     if r.status_code == 200:
         return r.json()[0]
     else:
