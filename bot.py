@@ -439,7 +439,7 @@ def leggi():
     print("@" + username + ": /leggi")
     if len(cmd) == 1:
         telegram.sendmessage("[Apri il diario RYG](http://royal.steffo.me/diario.htm)!\n_(Puoi visualizzare un elemento casuale scrivendo /leggi random o leggere un elemento specifico con /leggi [numero])_", sentin, source)
-    else if cmd[1] == "random":
+    elif cmd[1] == "random":
         fdiario = filemanager.readfile("diario.txt").split("\n")
         n = random.randrange(len(fdiario))
         entry = fdiario[n].split("|")
