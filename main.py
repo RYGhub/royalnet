@@ -143,7 +143,7 @@ async def league_rank_change(timeout):
 
 
 async def league_level_up(timeout):
-    """Check for League of Legends profile level ups."""
+    """Check for League of Legends profile level ups and name changes."""
     while True:
         if discord_is_ready:
             print("[League] Starting check for level changes...")
@@ -159,6 +159,9 @@ async def league_level_up(timeout):
                         # If some other error occours, skip the player
                         print("[League] Request returned an unhandled exception.")
                     else:
+                        # Update summoner name
+                        name = r["name"]
+                        db[player]["league"]["name"] = name
                         # Check for level changes
                         level = r["summonerLevel"]
                         try:
@@ -170,7 +173,7 @@ async def league_level_up(timeout):
                             loop.create_task(send_event(eventmsg=s.league_level_up, player=player, level=level))
                             # Update database
                             db[player]["league"]["level"] = level
-                            save_db()
+                        save_db()
                     finally:
                         # Prevent getting ratelimited by Riot
                         await asyncio.sleep(2)
