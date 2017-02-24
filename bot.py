@@ -25,7 +25,7 @@ stagismo = ["dello stagista", "degli sposi", "di Santinelli", "di Sensei", "di S
             "del Serpente", "della Samsung", "di /smecds", "della succursale", "di succ",
             "di Sans", "di [SiivaGunner](https://www.youtube.com/channel/UC9ecwl3FTG66jIKA9JRDtmg)",
             "di saaaaaas", "del semaforo", "della Seriale", "di Sistemi", "della Supercell",
-            "di Santaclaus", "dei Sims", "dei Santi", "di SES2017", "di Salvini"]
+            "di Santaclaus", "dei Sims", "dei Santi", "di SES2017", "di Salvini", "della scolopendra"]
 
 random.seed()
 
@@ -440,9 +440,26 @@ def leggi():
     if len(cmd) == 1:
         telegram.sendmessage("[Apri il diario RYG](http://royal.steffo.me/diario.htm)!\n_(Puoi visualizzare un elemento casuale scrivendo /leggi random o leggere un elemento specifico con /leggi [numero])_", sentin, source)
     elif cmd[1] == "random":
-        fdiario = filemanager.readfile("diario.txt").split("\n")
-        n = random.randrange(len(fdiario))
-        entry = fdiario[n].split("|")
+        fdiario = open("diario.txt")
+        ldiario = fdiario.readlines()
+        n = random.randrange(len(ldiario))
+        entry = ldiario[n].strip("\n").split("|")
+        telegram.sendmessage(entry[1], sentin, source)
+        fdiario.close()
+    else:
+        try:
+            index = int(cmd[1])
+        except ValueError:
+            telegram.sendmessage(chr(9888) + "Il valore specificato non é un numero.", sentin, source)
+            return
+        fdiario = open("diario.txt")
+        ldiario = fdiario.readlines()
+        fdiario.close()
+        try:
+            entry = ldiario[index].strip("\n").split("|")
+        except IndexError:
+            telegram.sendmessage(chr(9888) + "Non esiste una citazione con quel numero.", sentin,source)
+            return
         telegram.sendmessage(entry[1], sentin, source)
 
 
