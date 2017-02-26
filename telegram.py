@@ -34,7 +34,10 @@ class Bot:
 
     async def get_updates(self):
         """Get the latest updates from the Telegram API with /getUpdates."""
-        data = await self.api_request("getUpdates", offset=self.offset, timeout=0)
+        try:
+            data = await self.api_request("getUpdates", offset=self.offset, timeout=0)
+        except asyncio.TimeoutError:
+            return
         for update in data:
             try:
                 self.updates.append(Update(update))
@@ -51,7 +54,17 @@ class Bot:
         chat = self.find_chat(update.message.chat.chat_id)
         if update.message.sent_from not in chat.users:
             chat.users.append(update.message.sent_from)
-        chat.messages.append(update.message)
+        if not update.message.edited:
+            chat.messages.append(update.message)
+        else:
+            try:
+                i = chat.messages.index(chat.find_message(update.message.msg_id))
+            except ValueError:
+                pass
+            else:
+                chat.messages[i] = update.message
+
+
         del self.updates[0]
 
     def find_chat(self, chat_id):
@@ -87,11 +100,11 @@ class Update:
         if "message" in upd_dict:
             self.message = Message(upd_dict["message"])
         elif "edited_message" in upd_dict:
-            self.message = Message(upd_dict["edited_message"])
+            self.message = Message(upd_dict["edited_message"], edited=True)
         elif "channel_post" in upd_dict:
             self.message = Message(upd_dict["channel_post"])
         elif "edited_channel_post" in upd_dict:
-            self.message = Message(upd_dict["edited_channel_post"])
+            self.message = Message(upd_dict["edited_channel_post"], edited=True)
         else:
             raise NotImplementedError("No inline support yet.")
 
@@ -144,6 +157,12 @@ class Chat:
         else:
             TypeError("Can't compare Chat to a different object.")
 
+    def find_message(self, msg_id):
+        for msg in self.messages:
+            if msg.msg_id == msg_id:
+                return msg
+
+
 
 class User:
     def __init__(self, user_dict):
@@ -175,10 +194,11 @@ class User:
 
 
 class Message:
-    def __init__(self, msg_dict):
+    def __init__(self, msg_dict, edited=False):
         self.msg_id = msg_dict["message_id"]
         self.date = datetime.datetime.fromtimestamp(msg_dict["date"])
         self.chat = Chat(msg_dict["chat"])
+        self.edited = edited
         if "from" in msg_dict:
             self.sent_from = User(msg_dict["from"])
         else:
