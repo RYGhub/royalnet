@@ -46,14 +46,16 @@ class Bot:
         if len(data) > 0:
             self.offset = self.updates[-1].update_id + 1
 
-    async def parse_update(self):
+    async def parse_update(self, update):
         """Parse the first update in the list."""
-        update = self.updates[0]
+        # Add the chat to the chat list
         if update.message.chat not in self.chats:
             self.chats.append(update.message.chat)
+        # Add the user to the chat
         chat = self.find_chat(update.message.chat.chat_id)
         if update.message.sent_from not in chat.users:
             chat.users.append(update.message.sent_from)
+        # Add / edit the message to the message list
         if not update.message.edited:
             chat.messages.append(update.message)
         else:
@@ -63,7 +65,17 @@ class Bot:
                 pass
             else:
                 chat.messages[i] = update.message
-        del self.updates[0]
+        # Check if a command can be run
+        # TODO: use message entities?
+        if isinstance(update.message.content, str) and update.message.content.startswith("/"):
+            command = update.message.content.split(" ")[0].lstrip("/")
+            if command in self.commands:
+                self.commands[command](self, update)
+
+    def find_update(self, upd_id):
+        for update in self.updates:
+            if update.update_id == upd_id:
+                return update
 
     def find_chat(self, chat_id):
         for chat in self.chats:
@@ -323,9 +335,14 @@ class Venue:
         raise NotImplementedError("Not yet.")
 
 
-b = Bot("infopz pls non sono così stupido")
+def legoflegend(bot, update):
+    print("Message received: " + repr(update))
+
+b = Bot("ciao ruozi ciao ciao")
+b.commands["lol"] = legoflegend
 while True:
     loop.run_until_complete(b.get_updates())
-    while len(b.updates) > 0:
-        loop.create_task(b.parse_update())
+    for u in b.updates:
+        loop.create_task(b.parse_update(u))
+    b.updates = list()
     print("Completed.")
