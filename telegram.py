@@ -71,6 +71,31 @@ class Bot:
             command = update.message.content.split(" ")[0].lstrip("/")
             if command in self.commands:
                 self.commands[command](self, update)
+        # Update message status if a service message is received
+        if isinstance(update.message.content, ServiceMessage):
+            # New user in chat
+            if update.message.content.type == "new_chat_user":
+                new_user = update.message.content.content
+                chat.users.append(new_user)
+            # User left chat
+            elif update.message.content.type == "left_chat_user":
+                left_user = update.message.content.content
+                if left_user in chat.users:
+                    # Remove the user from the list
+                    del chat.users[chat.users.index(left_user)]
+            # Chat title changed
+            elif update.message.content.type == "new_chat_title":
+                chat.title = update.message.content.content
+            # New chat photo
+            elif update.message.content.type == "new_chat_photo":
+                chat.chat_photo = update.message.content.content
+            # Chat photo deleted
+            elif update.message.content.type == "delete_chat_photo":
+                chat.chat_photo = None
+            # New pinned message
+            elif update.message.content.type == "pinned_message":
+                chat.pinned_msg = update.message.content.content
+            # TODO: handle group -> supergroup migrations
 
     def find_update(self, upd_id):
         for update in self.updates:
@@ -127,6 +152,7 @@ class Chat:
         self.admins = list()
         self.messages = list()
         self.chat_photo = None
+        self.pinned_msg = None
         if self.type == "private":
             self.first_name = chat_dict["first_name"]
             if "last_name" in chat_dict:
@@ -338,7 +364,7 @@ class Venue:
 def legoflegend(bot, update):
     print("Message received: " + repr(update))
 
-b = Bot("ciao ruozi ciao ciao")
+b = Bot("369842636:AAEal9io4zmgc73i6GlJSLzkccG__A4sYbo")
 b.commands["lol"] = legoflegend
 while True:
     loop.run_until_complete(b.get_updates())
