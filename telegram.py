@@ -3,6 +3,7 @@ loop = asyncio.get_event_loop()
 import aiohttp
 import async_timeout
 import datetime
+import os
 
 class TelegramAPIError(Exception):
     pass
@@ -26,6 +27,14 @@ class Bot:
 
     def __hash__(self):
         return hash(self.token)
+
+    async def run(self):
+        """Run the bot automatically."""
+        while True:
+            loop.run_until_complete(self.get_updates())
+            for u in self.updates:
+                loop.create_task(self.parse_update(u))
+            self.updates = list()
 
     async def update_bot_data(self):
         """Update self.user_data with the latest information from /getMe."""
@@ -70,7 +79,7 @@ class Bot:
         if isinstance(update.message.content, str) and update.message.content.startswith("/"):
             command = update.message.content.split(" ")[0].lstrip("/")
             if command in self.commands:
-                self.commands[command](self, update)
+                loop.create_task(self.commands[command](self, update))
         # Update message status if a service message is received
         if isinstance(update.message.content, ServiceMessage):
             # New user in chat
@@ -361,14 +370,5 @@ class Venue:
         raise NotImplementedError("Not yet.")
 
 
-def legoflegend(bot, update):
-    print("Message received: " + repr(update))
-
-b = Bot("369842636:AAEal9io4zmgc73i6GlJSLzkccG__A4sYbo")
-b.commands["lol"] = legoflegend
-while True:
-    loop.run_until_complete(b.get_updates())
-    for u in b.updates:
-        loop.create_task(b.parse_update(u))
-    b.updates = list()
-    print("Completed.")
+b = Bot(os.environ["royalbottelegram"])
+loop.run_until_complete(b.run())
