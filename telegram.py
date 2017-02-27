@@ -28,7 +28,7 @@ class Bot:
     def __hash__(self):
         return hash(self.token)
 
-    async def run(self):
+    def run(self):
         """Run the bot automatically."""
         while True:
             loop.run_until_complete(self.get_updates())
@@ -368,7 +368,3 @@ class Location:
 class Venue:
     def __init__(self, init_dict):
         raise NotImplementedError("Not yet.")
-
-
-b = Bot(os.environ["royalbottelegram"])
-loop.run_until_complete(b.run())
