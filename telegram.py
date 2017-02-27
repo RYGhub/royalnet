@@ -60,10 +60,15 @@ class Bot:
         # Add the chat to the chat list
         if update.message.chat not in self.chats:
             self.chats.append(update.message.chat)
+        else:
+            # Replace the chat object in the update with the correct one
+            update.message.chat = self.chats[self.chats.index(update.message.chat)]
         # Add the user to the chat
         chat = self.find_chat(update.message.chat.chat_id)
         if update.message.sent_from not in chat.users:
             chat.users.append(update.message.sent_from)
+        else:
+            update.message.sent_from = chat.users[chat.users.index(update.message.sent_from)]
         # Add / edit the message to the message list
         if not update.message.edited:
             chat.messages.append(update.message)
@@ -77,9 +82,11 @@ class Bot:
         # Check if a command can be run
         # TODO: use message entities?
         if isinstance(update.message.content, str) and update.message.content.startswith("/"):
-            command = update.message.content.split(" ")[0].lstrip("/")
+            split_msg = update.message.content.split(" ")
+            command = split_msg[0].lstrip("/")
             if command in self.commands:
-                loop.create_task(self.commands[command](self, update))
+                arguments = split_msg[1:]
+                loop.create_task(self.commands[command](bot=self, update=update, arguments=arguments))
         # Update message status if a service message is received
         if isinstance(update.message.content, ServiceMessage):
             # New user in chat
@@ -207,6 +214,9 @@ class Chat:
             if msg.msg_id == msg_id:
                 return msg
 
+    async def send_message(self, bot, text, **params):
+        """Send a message in the chat through the bot object."""
+        await bot.api_request("sendMessage", text=text, chat_id=self.chat_id, **params)
 
 
 class User:
