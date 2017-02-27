@@ -16,10 +16,10 @@ class Bot:
         self.user_data = None
         self.updates = list()
         self.chats = list()
-        self.commands = list()
+        self.commands = dict()
         self.offset = 0
         # Update user_data
-        loop.run_until_complete(self.update_bot_data())
+        loop.create_task(self.update_bot_data())
 
     def __repr__(self):
         return f"<Bot {self.user_data.first_name}>"
@@ -35,7 +35,7 @@ class Bot:
     async def get_updates(self):
         """Get the latest updates from the Telegram API with /getUpdates."""
         try:
-            data = await self.api_request("getUpdates", offset=self.offset, timeout=0)
+            data = await self.api_request("getUpdates", offset=self.offset, timeout=300)
         except asyncio.TimeoutError:
             return
         for update in data:
@@ -46,7 +46,7 @@ class Bot:
         if len(data) > 0:
             self.offset = self.updates[-1].update_id + 1
 
-    def parse_update(self):
+    async def parse_update(self):
         """Parse the first update in the list."""
         update = self.updates[0]
         if update.message.chat not in self.chats:
@@ -63,8 +63,6 @@ class Bot:
                 pass
             else:
                 chat.messages[i] = update.message
-
-
         del self.updates[0]
 
     def find_chat(self, chat_id):
@@ -325,9 +323,9 @@ class Venue:
         raise NotImplementedError("Not yet.")
 
 
-b = Bot("369842636:AAGfCd1ZNIgmU5w2ltmpSjMFt2c7O8tHvaU")
+b = Bot("infopz pls non sono così stupido")
 while True:
     loop.run_until_complete(b.get_updates())
     while len(b.updates) > 0:
-        b.parse_update()
+        loop.create_task(b.parse_update())
     print("Completed.")
