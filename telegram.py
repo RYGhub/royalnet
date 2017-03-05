@@ -130,13 +130,13 @@ class Bot:
     async def api_request(self, endpoint, t=10, **params):
         """Send a request to the Telegram API at the specified endpoint."""
         # Request timeout is 10 seconds.
+        # TODO: get rid of that t variable
         with async_timeout.timeout(t):
             # Create a new session for each request.
             async with aiohttp.ClientSession() as session:
                 # Send the request to the Telegram API
                 token = self.token
-                async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}",
-                                           params=params) as response:
+                async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}", params=params) as response:
                     # Check for errors in the request
                     if response.status != 200:
                         raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
@@ -236,6 +236,15 @@ class User:
             self.username = user_dict["username"]
         else:
             self.username = None
+
+    def __str__(self):
+        if self.username is not None:
+            return f"@{self.username}"
+        else:
+            if self.last_name is not None:
+                return f"{self.first_name} {self.last_name}"
+            else:
+                return self.first_name
 
     def __repr__(self):
         if self.username is not None:

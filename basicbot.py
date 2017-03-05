@@ -1,11 +1,15 @@
 import asyncio
+import json
+
 loop = asyncio.get_event_loop()
 import telegram
 import random
 import datetime
+import async_timeout
+import aiohttp
+import royalbotconfig
 
-
-b = telegram.Bot("lul")
+b = telegram.Bot(royalbotconfig.telegram_token)
 
 
 async def diario(bot, update, arguments):
@@ -68,7 +72,46 @@ Sintassi: `/help [comando]`"""
             await update.message.chat.send_message(bot, "⚠ Il comando specificato non esiste.")
 
 
+async def discord(bot, update, arguments):
+    """Manda un messaggio a #chat di Discord.
+
+Sintassi: `/discord <messaggio>`"""
+    # TODO: create a discord module
+    # Send a message through a Discord webhook
+    # Message to send
+    if len(arguments) == 0:
+        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`")
+        return
+    username = f"{update.message.sent_from}"
+    message = " ".join(arguments)
+    # Parameters to send
+    params = {
+        # TODO: show the message sender's Discord username
+        "content": f"{username}: {message}"
+    }
+    # Headers to send
+    headers = {
+        "Content-Type": "application/json"
+    }
+    # Request timeout is 10 seconds.
+    with async_timeout.timeout(10):
+        # Create a new session for each request.
+        async with aiohttp.ClientSession() as session:
+            # Send the request to the Discord webhook
+            async with session.request("POST", royalbotconfig.discord_webhook, data=json.dumps(params), headers=headers) as response:
+                # Check if the request was successful
+                if response.status != 204:
+                    # Request failed
+                    # Answer on Telegram
+                    await update.message.chat.send_message(bot, "⚠ L'invio del messaggio è fallito. Oops!")
+                    # TODO: handle Discord webhooks errors
+                    raise Exception("Qualcosa è andato storto durante l'invio del messaggio a Discord.")
+                # Answer on Telegram
+                await update.message.chat.send_message(bot, "Richiesta inviata.")
+
+
 b.commands["leggi"] = leggi
 b.commands["diario"] = diario
+b.commands["discord"] = discord
 b.commands["help"] = help
 b.run()
