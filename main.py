@@ -83,7 +83,9 @@ async def overwatch_status_change(timeout):
                                                             rank=rank, medal=overwatch.url_to_medal(r["data"]["competitive"]["rank_img"])))
                                 # Update database
                                 db[player]["overwatch"]["rank"] = rank
-                                save_db()
+                        else:
+                            db[player]["overwatch"]["rank"] = 0
+                        save_db()
                     finally:
                         await asyncio.sleep(1)
             print("[Overwatch] Check completed successfully.")
