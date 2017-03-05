@@ -92,3 +92,9 @@ ENV/
 
 .gitignore
 .idea/
+
+# config file
+royalbotconfig.py
+
+# basicbot.py files
+diario.txt
