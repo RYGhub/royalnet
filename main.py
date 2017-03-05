@@ -71,20 +71,20 @@ async def overwatch_status_change(timeout):
                         # Check for rank changes
                         rank = r["data"]["competitive"]["rank"]
                         if rank is not None:
-                            rank = int(rank)
-                            try:
-                                oldrank = int(db[player]["overwatch"]["rank"])
-                            except KeyError:
-                                oldrank = 0
-                            if rank != oldrank:
-                                # Send the message
-                                loop.create_task(send_event(eventmsg=s.overwatch_rank_change,
-                                                            player=player, change=overwatch.format_rankchange(rank-oldrank),
-                                                            rank=rank, medal=overwatch.url_to_medal(r["data"]["competitive"]["rank_img"])))
-                                # Update database
-                                db[player]["overwatch"]["rank"] = rank
-                        else:
-                            db[player]["overwatch"]["rank"] = None
+                        #     rank = int(rank)
+                        #     try:
+                        #         oldrank = int(db[player]["overwatch"]["rank"])
+                        #     except KeyError:
+                        #         oldrank = 0
+                        #     if rank != oldrank:
+                        #         # Send the message
+                        #         loop.create_task(send_event(eventmsg=s.overwatch_rank_change,
+                        #                                     player=player, change=overwatch.format_rankchange(rank-oldrank),
+                        #                                     rank=rank, medal=overwatch.url_to_medal(r["data"]["competitive"]["rank_img"])))
+                        #         # Update database
+                        #         db[player]["overwatch"]["rank"] = rank
+                        # else:
+                        db[player]["overwatch"]["rank"] = None
                         save_db()
                     finally:
                         await asyncio.sleep(1)
