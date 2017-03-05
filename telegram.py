@@ -1,15 +1,18 @@
 import asyncio
+
 loop = asyncio.get_event_loop()
 import aiohttp
 import async_timeout
 import datetime
-import os
+
 
 class TelegramAPIError(Exception):
     pass
 
+
 class UpdateError(Exception):
     pass
+
 
 class Bot:
     def __init__(self, token):
@@ -44,7 +47,7 @@ class Bot:
     async def get_updates(self):
         """Get the latest updates from the Telegram API with /getUpdates."""
         try:
-            data = await self.api_request("getUpdates", offset=self.offset, timeout=300)
+            data = await self.api_request("getUpdates", 300, offset=self.offset, timeout=300)
         except asyncio.TimeoutError:
             return
         for update in data:
@@ -83,7 +86,8 @@ class Bot:
         # TODO: use message entities?
         if isinstance(update.message.content, str) and update.message.content.startswith("/"):
             split_msg = update.message.content.split(" ")
-            command = split_msg[0].lstrip("/")
+            # Ignore the left slash and the right @botname
+            command = split_msg[0].lstrip("/").split("@")[0]
             if command in self.commands:
                 arguments = split_msg[1:]
                 loop.create_task(self.commands[command](bot=self, update=update, arguments=arguments))
@@ -111,7 +115,7 @@ class Bot:
             # New pinned message
             elif update.message.content.type == "pinned_message":
                 chat.pinned_msg = update.message.content.content
-            # TODO: handle group -> supergroup migrations
+                # TODO: handle group -> supergroup migrations
 
     def find_update(self, upd_id):
         for update in self.updates:
@@ -123,15 +127,16 @@ class Bot:
             if chat.chat_id == chat_id:
                 return chat
 
-    async def api_request(self, endpoint, **params):
+    async def api_request(self, endpoint, t=10, **params):
         """Send a request to the Telegram API at the specified endpoint."""
         # Request timeout is 10 seconds.
-        with async_timeout.timeout(10):
+        with async_timeout.timeout(t):
             # Create a new session for each request.
             async with aiohttp.ClientSession() as session:
                 # Send the request to the Telegram API
                 token = self.token
-                async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}", params=params) as response:
+                async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}",
+                                           params=params) as response:
                     # Check for errors in the request
                     if response.status != 200:
                         raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
