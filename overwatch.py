@@ -1,5 +1,6 @@
 import asyncio
 import requests
+import functools
 import strings as s
 loop = asyncio.get_event_loop()
 
@@ -15,7 +16,7 @@ async def get_player_data(platform: str, region: str, battletag: str, **kwargs):
     # Unofficial API requires - for discriminator numbers
     battletag = battletag.replace("#", "-")
     # GET the json unofficial API response
-    r = await loop.run_in_executor(None, requests.get,
+    r = await loop.run_in_executor(None, functools.partial(requests.get, verify=False),
                                    'https://api.lootbox.eu/{platform}/{region}/{battletag}/profile'.format(**locals()))
     # Ensure the request is successful
     if r.status_code == 200:
