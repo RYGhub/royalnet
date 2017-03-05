@@ -84,7 +84,7 @@ async def overwatch_status_change(timeout):
                                 # Update database
                                 db[player]["overwatch"]["rank"] = rank
                         else:
-                            db[player]["overwatch"]["rank"] = 0
+                            db[player]["overwatch"]["rank"] = None
                         save_db()
                     finally:
                         await asyncio.sleep(1)
