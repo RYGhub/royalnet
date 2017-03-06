@@ -26,7 +26,6 @@ Sintassi: `/diario <frase>`"""
         return
     entry = entry.replace("\n", " ")
     time = update.message.date.timestamp()
-    # TODO: add better file handling, maybe use GET requests?
     file = open("diario.txt", "a")
     file.write(f"{int(time)}|{entry}\n")
     file.close()
@@ -43,7 +42,6 @@ Sintassi: `/leggi <random | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
         await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`")
         return
-    # TODO: add better file handling, maybe use GET requests?
     file = open("diario.txt", "r")
     entries = file.read().split("\n")
     file.close()
