@@ -25,6 +25,9 @@ class Bot:
         # Update user_data
         loop.create_task(self.update_bot_data())
 
+    def __str__(self):
+        return self.user_data.first_name
+
     def __repr__(self):
         return f"<Bot {self.user_data.first_name}>"
 
@@ -202,6 +205,9 @@ class Chat:
         else:
             raise UpdateError(f"Unknown message type: {self.type}")
 
+    def __str__(self):
+        return self.title
+
     def __repr__(self):
         return f"<{self.type} Chat {self.title}>"
 
@@ -337,6 +343,9 @@ class Message:
         else:
             return f"<Message containing {type(self.content)}>"
 
+    def reply(self, bot, text, **params):
+        """Reply to this message."""
+        self.chat.send_message(bot, text, reply_to_message_id=self.msg_id, **params)
 
 class ServiceMessage:
     def __init__(self, msg_type, extra=None):
