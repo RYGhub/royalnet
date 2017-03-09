@@ -7,6 +7,8 @@ import async_timeout
 import aiohttp
 import royalbotconfig
 import json
+import database
+
 
 b = telegram.Bot(royalbotconfig.telegram_token)
 
@@ -107,9 +109,25 @@ Sintassi: `/discord <messaggio>`"""
                 await update.message.reply(bot, "Richiesta inviata.")
 
 
+# TODO: delete me
+async def login(bot, update, arguments):
+    """Fai il login usando i dati del database Royal Games.
+
+Sintassi: `/login <username> <password>`"""
+    if len(arguments) != 2:
+        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/login <username> <password>`")
+        return
+    logged_user = database.login(arguments[0], arguments[1])
+    if logged_user is not None:
+        await update.message.chat.send_message(bot, f"Login riuscito: {logged_user}")
+    else:
+        await update.message.chat.send_message(bot, "⚠ Username o password non validi.")
+
+
 if __name__ == "__main__":
     b.commands["leggi"] = leggi
     b.commands["diario"] = diario
     b.commands["discord"] = discord
+    b.commands["login"] = login
     b.commands["help"] = help
     b.run()
