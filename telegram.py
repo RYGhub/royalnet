@@ -1,5 +1,4 @@
 import asyncio
-
 loop = asyncio.get_event_loop()
 import aiohttp
 import async_timeout
@@ -343,9 +342,9 @@ class Message:
         else:
             return f"<Message containing {type(self.content)}>"
 
-    def reply(self, bot, text, **params):
+    async def reply(self, bot, text, **params):
         """Reply to this message."""
-        self.chat.send_message(bot, text, reply_to_message_id=self.msg_id, **params)
+        await self.chat.send_message(bot, text, reply_to_message_id=self.msg_id, **params)
 
 class ServiceMessage:
     def __init__(self, msg_type, extra=None):
