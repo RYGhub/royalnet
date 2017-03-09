@@ -1,6 +1,4 @@
 import asyncio
-import json
-
 loop = asyncio.get_event_loop()
 import telegram
 import random
@@ -8,6 +6,7 @@ import datetime
 import async_timeout
 import aiohttp
 import royalbotconfig
+import json
 
 b = telegram.Bot(royalbotconfig.telegram_token)
 
@@ -40,7 +39,7 @@ Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere u
 
 Sintassi: `/leggi <random | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`")
         return
     file = open("diario.txt", "r")
     entries = file.read().split("\n")
@@ -52,7 +51,7 @@ Sintassi: `/leggi <random | numerofrase>`"""
     entry = entries[entry_number].split("|", 1)
     date = datetime.datetime.fromtimestamp(entry[0]).isoformat()
     text = entry[1]
-    await update.message.chat.send_message(bot, f"Frase #{entry_number} | {date}\n{text}")
+    await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}")
 
 
 async def help(bot, update, arguments):
@@ -60,14 +59,14 @@ async def help(bot, update, arguments):
 
 Sintassi: `/help [comando]`"""
     if len(arguments) == 0:
-        await update.message.chat.send_message(bot, help.__doc__)
+        await update.message.reply(bot, help.__doc__)
     elif len(arguments) > 1:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/help [comando]`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/help [comando]`")
     else:
         if arguments[0] in b.commands:
-            await update.message.chat.send_message(bot, b.commands[arguments[0]].__doc__)
+            await update.message.reply(bot, b.commands[arguments[0]].__doc__)
         else:
-            await update.message.chat.send_message(bot, "⚠ Il comando specificato non esiste.")
+            await update.message.reply(bot, "⚠ Il comando specificato non esiste.")
 
 
 async def discord(bot, update, arguments):
@@ -80,7 +79,7 @@ Sintassi: `/discord <messaggio>`"""
     if len(arguments) == 0:
         await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`")
         return
-    username = f"{update.message.sent_from}"
+    username = str(update.message.sent_from)
     message = " ".join(arguments)
     # Parameters to send
     params = {
@@ -101,15 +100,16 @@ Sintassi: `/discord <messaggio>`"""
                 if response.status != 204:
                     # Request failed
                     # Answer on Telegram
-                    await update.message.chat.send_message(bot, "⚠ L'invio del messaggio è fallito. Oops!")
+                    await update.message.reply(bot, "⚠ L'invio del messaggio è fallito. Oops!")
                     # TODO: handle Discord webhooks errors
                     raise Exception("Qualcosa è andato storto durante l'invio del messaggio a Discord.")
                 # Answer on Telegram
-                await update.message.chat.send_message(bot, "Richiesta inviata.")
+                await update.message.reply(bot, "Richiesta inviata.")
 
 
-b.commands["leggi"] = leggi
-b.commands["diario"] = diario
-b.commands["discord"] = discord
-b.commands["help"] = help
-b.run()
+if __name__ == "__main__":
+    b.commands["leggi"] = leggi
+    b.commands["diario"] = diario
+    b.commands["discord"] = discord
+    b.commands["help"] = help
+    b.run()
