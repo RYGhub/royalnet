@@ -97,3 +97,7 @@ royalbotconfig.py
 
 # basicbot.py files
 diario.txt
+
+# Database files
+db.json
+tempdb.sqlite
