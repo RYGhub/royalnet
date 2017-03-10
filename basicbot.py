@@ -109,17 +109,25 @@ Sintassi: `/discord <messaggio>`"""
                 await update.message.reply(bot, "Richiesta inviata.")
 
 
-# TODO: delete me
-async def login(bot, update, arguments):
-    """Fai il login usando i dati del database Royal Games.
+async def sync(bot, update, arguments):
+    """Connetti il tuo account Telegram al Database Royal Games.
 
-Sintassi: `/login <username> <password>`"""
+Sintassi: `/sync <username> <password>`"""
     if len(arguments) != 2:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/login <username> <password>`")
+        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`")
         return
-    logged_user = database.login(arguments[0], arguments[1])
+    # Try to login
+    session, logged_user = database.login(arguments[0], arguments[1])
+    # Check if the login is successful
     if logged_user is not None:
-        await update.message.chat.send_message(bot, f"Login riuscito: {logged_user}")
+        # Add the telegram_id to the user if it's missing
+        if logged_user.telegram_id is None:
+            # Handle duplicate
+            logged_user.telegram_id = update.message.sent_from.user_id
+            session.commit()
+            await update.message.chat.send_message(bot, f"Sincronizzazione riuscita: {logged_user}")
+        else:
+            await update.message.chat.send_message(bot, "⚠ L'account è già stato sincronizzato.")
     else:
         await update.message.chat.send_message(bot, "⚠ Username o password non validi.")
 
@@ -128,6 +136,6 @@ if __name__ == "__main__":
     b.commands["leggi"] = leggi
     b.commands["diario"] = diario
     b.commands["discord"] = discord
-    b.commands["login"] = login
+    b.commands["sync"] = sync
     b.commands["help"] = help
     b.run()
