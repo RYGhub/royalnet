@@ -17,14 +17,18 @@ def currently_logged_in(update):
     """Find the database user which sent the update."""
     session = database.Session()
     user = session.query(database.User).filter_by(telegram_id=update.message.sent_from.user_id).first()
-    return session, user
+    return user
 
 
 async def diario(bot, update, arguments):
     """Aggiungi una frase al diario Royal Games.
 
+Devi essere un Royal per poter eseguire questo comando.
+
 Sintassi: `/diario <frase>`"""
-    # Sì, ho copiato la funzione dal bot vecchio
+    if not currently_logged_in(update).royal:
+        await update.message.chat.send_message(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
     if len(arguments) == 0:
         await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | numerofrase>`")
         return
@@ -147,7 +151,7 @@ Sintassi: `/changepassword <newpassword>`"""
         await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`")
         return
     # TODO: this can be improved, maybe?
-    session, logged_user = currently_logged_in(update)
+    logged_user = currently_logged_in(update)
     # Check if the login is successful
     if logged_user is not None:
         # Change the password
