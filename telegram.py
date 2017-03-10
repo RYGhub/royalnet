@@ -346,6 +346,7 @@ class Message:
         """Reply to this message."""
         await self.chat.send_message(bot, text, reply_to_message_id=self.msg_id, **params)
 
+
 class ServiceMessage:
     def __init__(self, msg_type, extra=None):
         self.type = msg_type

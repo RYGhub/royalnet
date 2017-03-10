@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import bcrypt
 
+
 class NoUsersMatchingError(Exception):
     pass
 
