@@ -100,4 +100,4 @@ diario.txt
 
 # Database files
 db.json
-tempdb.sqlite
+db.sqlite
