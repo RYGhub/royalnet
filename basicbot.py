@@ -14,7 +14,7 @@ b = telegram.Bot(royalbotconfig.telegram_token)
 
 
 def currently_logged_in(update):
-    """Find the database user which sent the update."""
+    """Trova l'utente connesso all'account di Telegram che ha mandato l'update."""
     session = database.Session()
     user = session.query(database.User).filter_by(telegram_id=update.message.sent_from.user_id).first()
     return user
@@ -168,4 +168,5 @@ if __name__ == "__main__":
     b.commands["sync"] = sync
     b.commands["changepassword"] = changepassword
     b.commands["help"] = help
+    print("Bot started!")
     b.run()
