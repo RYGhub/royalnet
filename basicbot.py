@@ -13,6 +13,13 @@ import database
 b = telegram.Bot(royalbotconfig.telegram_token)
 
 
+def currently_logged_in(update):
+    """Find the database user which sent the update."""
+    session = database.Session()
+    user = session.query(database.User).filter_by(telegram_id=update.message.sent_from.user_id).first()
+    return session, user
+
+
 async def diario(bot, update, arguments):
     """Aggiungi una frase al diario Royal Games.
 
@@ -125,7 +132,7 @@ Sintassi: `/sync <username> <password>`"""
             # Handle duplicate
             logged_user.telegram_id = update.message.sent_from.user_id
             session.commit()
-            await update.message.chat.send_message(bot, f"Sincronizzazione riuscita: {logged_user}")
+            await update.message.chat.send_message(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.")
         else:
             await update.message.chat.send_message(bot, "⚠ L'account è già stato sincronizzato.")
     else:
@@ -135,17 +142,16 @@ Sintassi: `/sync <username> <password>`"""
 async def changepassword(bot, update, arguments):
     """Cambia la tua password del Database Royal Games.
 
-Sintassi: `/changepassword <username> <oldpassword> <newpassword>`"""
-    if len(arguments) != 3:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`")
+Sintassi: `/changepassword <newpassword>`"""
+    if len(arguments) != 2:
+        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`")
         return
-    # TODO: this can be improved
-    # Try to login
-    _, logged_user = database.login(arguments[0], arguments[1])
+    # TODO: this can be improved, maybe?
+    session, logged_user = currently_logged_in(update)
     # Check if the login is successful
     if logged_user is not None:
         # Change the password
-        database.change_password(logged_user.username, arguments[2])
+        database.change_password(logged_user.username, arguments[1])
         await update.message.chat.send_message(bot, f"Il cambio password è riuscito!\n\n_Info per smanettoni: la tua password è hashata nel database come_ `{logged_user.password}`.")
     else:
         await update.message.chat.send_message(bot, "⚠ Username o password non validi.")

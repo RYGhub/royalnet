@@ -65,7 +65,7 @@ def login(username, password, enable_exceptions=False):
     # Create a new session
     session = Session()
     # Find the matching user
-    users = session.query(User).filter(User.username == username).all()
+    users = session.query(User).filter_by(username=username).all()
     # No user with a matching username found
     if len(users) == 0:
         if enable_exceptions:
