@@ -132,10 +132,30 @@ Sintassi: `/sync <username> <password>`"""
         await update.message.chat.send_message(bot, "⚠ Username o password non validi.")
 
 
+async def changepassword(bot, update, arguments):
+    """Cambia la tua password del Database Royal Games.
+
+Sintassi: `/changepassword <username> <oldpassword> <newpassword>`"""
+    if len(arguments) != 3:
+        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`")
+        return
+    # TODO: this can be improved
+    # Try to login
+    _, logged_user = database.login(arguments[0], arguments[1])
+    # Check if the login is successful
+    if logged_user is not None:
+        # Change the password
+        database.change_password(logged_user.username, arguments[2])
+        await update.message.chat.send_message(bot, f"Il cambio password è riuscito!\n\n_Info per smanettoni: la tua password è hashata nel database come_ `{logged_user.password}`.")
+    else:
+        await update.message.chat.send_message(bot, "⚠ Username o password non validi.")
+
+
 if __name__ == "__main__":
     b.commands["leggi"] = leggi
     b.commands["diario"] = diario
     b.commands["discord"] = discord
     b.commands["sync"] = sync
+    b.commands["changepassword"] = changepassword
     b.commands["help"] = help
     b.run()
