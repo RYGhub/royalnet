@@ -27,14 +27,14 @@ Devi essere un Royal per poter eseguire questo comando.
 
 Sintassi: `/diario <frase>`"""
     if not currently_logged_in(update).royal:
-        await update.message.chat.send_message(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
         return
     if len(arguments) == 0:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | numerofrase>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | numerofrase>`")
         return
     entry = " ".join(arguments)
     if not entry.isprintable():
-        await update.message.chat.send_message(bot, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!")
+        await update.message.reply(bot, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!")
         return
     entry = entry.replace("\n", " ")
     time = update.message.date.timestamp()
@@ -90,7 +90,7 @@ Sintassi: `/discord <messaggio>`"""
     # Send a message through a Discord webhook
     # Message to send
     if len(arguments) == 0:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`")
         return
     username = str(update.message.sent_from)
     message = " ".join(arguments)
@@ -125,7 +125,7 @@ async def sync(bot, update, arguments):
 
 Sintassi: `/sync <username> <password>`"""
     if len(arguments) != 2:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`")
         return
     # Try to login
     session, logged_user = database.login(arguments[0], arguments[1])
@@ -136,11 +136,12 @@ Sintassi: `/sync <username> <password>`"""
             # Handle duplicate
             logged_user.telegram_id = update.message.sent_from.user_id
             session.commit()
-            await update.message.chat.send_message(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.")
+            print(f"{logged_user} ha sincronizzato l'account.")
+            await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.")
         else:
-            await update.message.chat.send_message(bot, "⚠ L'account è già stato sincronizzato.")
+            await update.message.reply(bot, "⚠ L'account è già stato sincronizzato.")
     else:
-        await update.message.chat.send_message(bot, "⚠ Username o password non validi.")
+        await update.message.reply(bot, "⚠ Username o password non validi.")
 
 
 async def changepassword(bot, update, arguments):
@@ -156,9 +157,9 @@ Sintassi: `/changepassword <newpassword>`"""
     if logged_user is not None:
         # Change the password
         database.change_password(logged_user.username, arguments[1])
-        await update.message.chat.send_message(bot, f"Il cambio password è riuscito!\n\n_Info per smanettoni: la tua password è hashata nel database come_ `{logged_user.password}`.")
+        await update.message.reply(bot, f"Il cambio password è riuscito!\n\n_Info per smanettoni: la tua password è hashata nel database come_ `{logged_user.password}`.")
     else:
-        await update.message.chat.send_message(bot, "⚠ Username o password non validi.")
+        await update.message.reply(bot, "⚠ Username o password non validi.")
 
 
 if __name__ == "__main__":
