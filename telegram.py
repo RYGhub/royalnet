@@ -131,22 +131,17 @@ class Bot:
 
     async def api_request(self, endpoint, **params):
         """Send a request to the Telegram API at the specified endpoint."""
-        if "timeout" in params:
-            t = params["timeout"] + 5
-        else:
-            # Default timeout is 5 seconds.
-            t = 5
-        with async_timeout.timeout(t):
-            # Create a new session for each request.
-            async with aiohttp.ClientSession() as session:
-                # Send the request to the Telegram API
-                token = self.token
-                async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}", params=params) as response:
-                    # Check for errors in the request
-                    if response.status != 200:
-                        raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
-                    # Parse the json data as soon it's ready
-                    data = await response.json()
+        # TODO: Reintroduce the timeout to prevent stuck requests
+        # Create a new session for each request.
+        async with aiohttp.ClientSession() as session:
+            # Send the request to the Telegram API
+            token = self.token
+            async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}", params=params) as response:
+                # Check for errors in the request
+                if response.status != 200:
+                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
+                # Parse the json data as soon it's ready
+                data = await response.json()
         # Check for errors in the response
         if not data["ok"]:
             error = data["description"]
