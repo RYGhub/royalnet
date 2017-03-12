@@ -49,7 +49,7 @@ class Bot:
     async def get_updates(self):
         """Get the latest updates from the Telegram API with /getUpdates."""
         try:
-            data = await self.api_request("getUpdates", 300, offset=self.offset, timeout=300)
+            data = await self.api_request("getUpdates", offset=self.offset, timeout=300)
         except asyncio.TimeoutError:
             return
         for update in data:
@@ -129,10 +129,13 @@ class Bot:
             if chat.chat_id == chat_id:
                 return chat
 
-    async def api_request(self, endpoint, t=10, **params):
+    async def api_request(self, endpoint, **params):
         """Send a request to the Telegram API at the specified endpoint."""
-        # Request timeout is 10 seconds.
-        # TODO: get rid of that t variable
+        if "timeout" in params:
+            t = params["timeout"] + 5
+        else:
+            # Default timeout is 5 seconds.
+            t = 5
         with async_timeout.timeout(t):
             # Create a new session for each request.
             async with aiohttp.ClientSession() as session:
@@ -144,12 +147,12 @@ class Bot:
                         raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
                     # Parse the json data as soon it's ready
                     data = await response.json()
-                    # Check for errors in the response
-                    if not data["ok"]:
-                        error = data["description"]
-                        raise TelegramAPIError(f"Response returned an error: {error}")
-                    # Return a dictionary containing the data
-                    return data["result"]
+        # Check for errors in the response
+        if not data["ok"]:
+            error = data["description"]
+            raise TelegramAPIError(f"Response returned an error: {error}")
+        # Return a dictionary containing the data
+        return data["result"]
 
 
 class Update:
