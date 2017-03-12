@@ -42,7 +42,7 @@ Sintassi: `/diario <frase>`"""
     file.write(f"{int(time)}|{entry}\n")
     file.close()
     del file
-    await update.message.chat.send_message(bot, "Aggiunto al diario!")
+    await update.message.reply(bot, "Aggiunto al diario!")
 
 
 async def leggi(bot, update, arguments):
@@ -149,7 +149,7 @@ async def changepassword(bot, update, arguments):
 
 Sintassi: `/changepassword <newpassword>`"""
     if len(arguments) != 2:
-        await update.message.chat.send_message(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`")
         return
     # TODO: this can be improved, maybe?
     logged_user = currently_logged_in(update)
