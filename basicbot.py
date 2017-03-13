@@ -27,14 +27,14 @@ Devi essere un Royal per poter eseguire questo comando.
 
 Sintassi: `/diario <frase>`"""
     if not currently_logged_in(update).royal:
-        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.", parse_mode="Markdown")
         return
     if len(arguments) == 0:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | numerofrase>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | numerofrase>`", parse_mode="Markdown")
         return
     entry = " ".join(arguments)
     if not entry.isprintable():
-        await update.message.reply(bot, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!")
+        await update.message.reply(bot, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!", parse_mode="Markdown")
         return
     entry = entry.replace("\n", " ")
     time = update.message.date.timestamp()
@@ -42,7 +42,7 @@ Sintassi: `/diario <frase>`"""
     file.write(f"{int(time)}|{entry}\n")
     file.close()
     del file
-    await update.message.reply(bot, "Aggiunto al diario!")
+    await update.message.reply(bot, "Aggiunto al diario!", parse_mode="Markdown")
 
 
 async def leggi(bot, update, arguments):
@@ -53,7 +53,7 @@ Puoi anche generare una frase usando catene di markov scrivendo `/leggi markov`.
 
 Sintassi: `/leggi <random | markov | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`", parse_mode="Markdown")
         return
     file = open("diario.txt", "r", encoding="utf8")
     string = file.read()
@@ -74,7 +74,7 @@ Sintassi: `/leggi <random | markov | numerofrase>`"""
     entry = line.split("|", 1)
     date = datetime.datetime.fromtimestamp(int(entry[0])).isoformat()
     text = entry[1]
-    await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}")
+    await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}", parse_mode="Markdown")
 
 
 async def help(bot, update, arguments):
@@ -82,14 +82,14 @@ async def help(bot, update, arguments):
 
 Sintassi: `/help [comando]`"""
     if len(arguments) == 0:
-        await update.message.reply(bot, help.__doc__)
+        await update.message.reply(bot, help.__doc__, parse_mode="Markdown")
     elif len(arguments) > 1:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/help [comando]`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/help [comando]`", parse_mode="Markdown")
     else:
         if arguments[0] in b.commands:
-            await update.message.reply(bot, b.commands[arguments[0]].__doc__)
+            await update.message.reply(bot, b.commands[arguments[0]].__doc__, parse_mode="Markdown")
         else:
-            await update.message.reply(bot, "⚠ Il comando specificato non esiste.")
+            await update.message.reply(bot, "⚠ Il comando specificato non esiste.", parse_mode="Markdown")
 
 
 async def discord(bot, update, arguments):
@@ -100,7 +100,7 @@ Sintassi: `/discord <messaggio>`"""
     # Send a message through a Discord webhook
     # Message to send
     if len(arguments) == 0:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`", parse_mode="Markdown")
         return
     username = str(update.message.sent_from)
     message = " ".join(arguments)
@@ -123,11 +123,11 @@ Sintassi: `/discord <messaggio>`"""
                 if response.status != 204:
                     # Request failed
                     # Answer on Telegram
-                    await update.message.reply(bot, "⚠ L'invio del messaggio è fallito. Oops!")
+                    await update.message.reply(bot, "⚠ L'invio del messaggio è fallito. Oops!", parse_mode="Markdown")
                     # TODO: handle Discord webhooks errors
                     raise Exception("Qualcosa è andato storto durante l'invio del messaggio a Discord.")
                 # Answer on Telegram
-                await update.message.reply(bot, "Richiesta inviata.")
+                await update.message.reply(bot, "Richiesta inviata.", parse_mode="Markdown")
 
 
 async def sync(bot, update, arguments):
@@ -135,7 +135,7 @@ async def sync(bot, update, arguments):
 
 Sintassi: `/sync <username> <password>`"""
     if len(arguments) != 2:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`", parse_mode="Markdown")
         return
     # Try to login
     session, logged_user = database.login(arguments[0], arguments[1])
@@ -147,11 +147,11 @@ Sintassi: `/sync <username> <password>`"""
             logged_user.telegram_id = update.message.sent_from.user_id
             session.commit()
             print(f"{logged_user} ha sincronizzato l'account.")
-            await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.")
+            await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.", parse_mode="Markdown")
         else:
-            await update.message.reply(bot, "⚠ L'account è già stato sincronizzato.")
+            await update.message.reply(bot, "⚠ L'account è già stato sincronizzato.", parse_mode="Markdown")
     else:
-        await update.message.reply(bot, "⚠ Username o password non validi.")
+        await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
 
 
 async def changepassword(bot, update, arguments):
@@ -159,7 +159,7 @@ async def changepassword(bot, update, arguments):
 
 Sintassi: `/changepassword <newpassword>`"""
     if len(arguments) != 2:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`", parse_mode="Markdown")
         return
     # TODO: this can be improved, maybe?
     logged_user = currently_logged_in(update)
@@ -167,9 +167,9 @@ Sintassi: `/changepassword <newpassword>`"""
     if logged_user is not None:
         # Change the password
         database.change_password(logged_user.username, arguments[1])
-        await update.message.reply(bot, f"Il cambio password è riuscito!\n\n_Info per smanettoni: la tua password è hashata nel database come_ `{logged_user.password}`.")
+        await update.message.reply(bot, f"Il cambio password è riuscito!\n\n_Info per smanettoni: la tua password è hashata nel database come_ `{logged_user.password}`.", parse_mode="Markdown")
     else:
-        await update.message.reply(bot, "⚠ Username o password non validi.")
+        await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
 
 
 if __name__ == "__main__":
