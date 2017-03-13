@@ -8,7 +8,7 @@ import aiohttp
 import royalbotconfig
 import json
 import database
-
+import markovify
 
 b = telegram.Bot(royalbotconfig.telegram_token)
 
@@ -38,7 +38,7 @@ Sintassi: `/diario <frase>`"""
         return
     entry = entry.replace("\n", " ")
     time = update.message.date.timestamp()
-    file = open("diario.txt", "a")
+    file = open("diario.txt", "a", encoding="utf8")
     file.write(f"{int(time)}|{entry}\n")
     file.close()
     del file
@@ -49,20 +49,30 @@ async def leggi(bot, update, arguments):
     """Leggi una frase dal diario Royal Games.
 
 Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
+Puoi anche generare una frase usando catene di markov scrivendo `/leggi markov`.
 
-Sintassi: `/leggi <random | numerofrase>`"""
+Sintassi: `/leggi <random | markov | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`")
         return
-    file = open("diario.txt", "r")
-    entries = file.read().split("\n")
+    file = open("diario.txt", "r", encoding="utf8")
+    string = file.read()
     file.close()
-    if arguments[0] == "random":
-        entry_number = random.randrange(len(entries))
+    if arguments[0] == "markov":
+        generator = markovify.NewlineText(string)
+        line = None
+        while line is None:
+            line = generator.make_sentence()
+        entry_number = "???"
     else:
-        entry_number = arguments[0]
-    entry = entries[entry_number].split("|", 1)
-    date = datetime.datetime.fromtimestamp(entry[0]).isoformat()
+        entries = string.split("\n")
+        if arguments[0] == "random":
+            entry_number = random.randrange(len(entries))
+        else:
+            entry_number = arguments[0]
+        line = entries[entry_number]
+    entry = line.split("|", 1)
+    date = datetime.datetime.fromtimestamp(int(entry[0])).isoformat()
     text = entry[1]
     await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}")
 
