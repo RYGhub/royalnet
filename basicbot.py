@@ -49,32 +49,48 @@ async def leggi(bot, update, arguments):
     """Leggi una frase dal diario Royal Games.
 
 Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
-Puoi anche generare una frase usando catene di markov scrivendo `/leggi markov`.
 
-Sintassi: `/leggi <random | markov | numerofrase>`"""
+Sintassi: `/leggi <random | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`", parse_mode="Markdown")
         return
-    file = open("diario.txt", "r", encoding="utf8")
-    string = file.read()
+    file = open("diario.txt", "r")
+    entries = file.read().split("\n")
     file.close()
-    if arguments[0] == "markov":
-        generator = markovify.NewlineText(string)
-        line = None
-        while line is None:
-            line = generator.make_sentence()
-        entry_number = "???"
+    if arguments[0] == "random":
+        entry_number = random.randrange(len(entries))
     else:
-        entries = string.split("\n")
-        if arguments[0] == "random":
-            entry_number = random.randrange(len(entries))
-        else:
-            entry_number = arguments[0]
-        line = entries[entry_number]
-    entry = line.split("|", 1)
-    date = datetime.datetime.fromtimestamp(int(entry[0])).isoformat()
+        entry_number = arguments[0]
+    entry = entries[entry_number].split("|", 1)
+    date = datetime.datetime.fromtimestamp(entry[0]).isoformat()
     text = entry[1]
     await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}", parse_mode="Markdown")
+
+
+async def markov(bot, update, arguments):
+    """Genera una frase del diario utilizzando le catene di Markov.
+
+Puoi specificare con che parola deve iniziare la frase generata.
+
+Sintassi: `/markov [inizio]`"""
+    file = open("diario.txt", "r", encoding="utf8")
+    # Clean the diario
+    clean_diario = str()
+    # Remove the timestamps in each row
+    for row in file:
+        clean_diario += row.split("|", 1)[1]
+    # The text is split by newlines
+    generator = markovify.NewlineText(clean_diario)
+    file.close()
+    if len(arguments) == 0:
+        # Generate a sentence with a random start
+        # TODO: the generator sometimes returns None?
+        text = generator.make_sentence()
+    else:
+        # Generate a sentence with a specific start
+        start = " ".join(arguments)
+        text = generator.make_sentence_with_start(start)
+    await update.message.reply(bot, f"*Frase generata:*\n{text}", parse_mode="Markdown", tries=50)
 
 
 async def help(bot, update, arguments):
@@ -179,5 +195,6 @@ if __name__ == "__main__":
     b.commands["sync"] = sync
     b.commands["changepassword"] = changepassword
     b.commands["help"] = help
+    b.commands["markov"] = markov
     print("Bot started!")
     b.run()
