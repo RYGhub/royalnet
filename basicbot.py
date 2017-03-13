@@ -30,7 +30,7 @@ Sintassi: `/diario <frase>`"""
         await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.", parse_mode="Markdown")
         return
     if len(arguments) == 0:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | numerofrase>`", parse_mode="Markdown")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | markov | numerofrase>`", parse_mode="Markdown")
         return
     entry = " ".join(arguments)
     if not entry.isprintable():
