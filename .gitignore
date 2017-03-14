@@ -95,7 +95,7 @@ ENV/
 # config file
 royalbotconfig.py
 
-# royal_telegram.py files
+# grandbot.py files
 diario.txt
 
 # Database files
