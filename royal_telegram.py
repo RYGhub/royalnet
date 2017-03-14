@@ -9,9 +9,9 @@ import royalbotconfig
 import json
 import database
 import markovify
+import discord
 
 b = telegram.Bot(royalbotconfig.telegram_token)
-
 
 def currently_logged_in(update):
     """Trova l'utente connesso all'account di Telegram che ha mandato l'update."""
