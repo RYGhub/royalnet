@@ -84,16 +84,23 @@ Sintassi: `/markov [inizio]`"""
     file.close()
     if len(arguments) == 0:
         # Generate a sentence with a random start
-        # TODO: the generator sometimes returns None?
-        text = generator.make_sentence()
+        text = generator.make_sentence(tries=50)
     else:
         # Generate a sentence with a specific start
         start = " ".join(arguments)
-        text = generator.make_sentence_with_start(start)
-    await update.message.reply(bot, f"*Frase generata:*\n{text}", parse_mode="Markdown", tries=50)
+        try:
+            text = generator.make_sentence_with_start(start, tries=100)
+        # No entry can start in that word.
+        except KeyError:
+            await update.message.reply(bot, f"⚠ Non sono state trovate corrispondenze nel diario dell'inizio che hai specificato.", parse_mode="Markdown")
+            return
+    if text is not None:
+        await update.message.reply(bot, f"*Frase generata:*\n{text}", parse_mode="Markdown")
+    else:
+        await update.message.reply(bot, f"⚠ Il bot non è riuscito a generare una nuova frase.\nSe è la prima volta che vedi questo errore, riprova, altrimenti prova a cambiare configurazione.")
 
 
-async def help(bot, update, arguments):
+async def help_cmd(bot, update, arguments):
     """Visualizza la descrizione di un comando.
 
 Sintassi: `/help [comando]`"""
@@ -194,7 +201,7 @@ if __name__ == "__main__":
     b.commands["discord"] = discord
     b.commands["sync"] = sync
     b.commands["changepassword"] = changepassword
-    b.commands["help"] = help
+    b.commands["help"] = help_cmd
     b.commands["markov"] = markov
     print("Bot started!")
     b.run()
