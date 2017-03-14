@@ -40,6 +40,8 @@ class Bot:
             for u in self.updates:
                 loop.create_task(self.parse_update(u))
             self.updates = list()
+            # Wait 1 second between two requests, allowing the parsing of updates.
+            loop.run_until_complete(asyncio.sleep(1))
 
     async def update_bot_data(self):
         """Update self.user_data with the latest information from /getMe."""
