@@ -225,30 +225,46 @@ Sintassi: `/cv`"""
         for user in channels[channel]:
             # Online status
             if user.status.name == "online":
+                # Online
                 status = "🔵"
-            elif user.status.name == "dnd":
+            elif user.status.name == "dnd" or user.game.type == 1:
+                # Do not disturb or streaming
                 status = "🔴"
             elif user.status.name == "idle":
+                # Idle
                 status = "⚫"
             elif user.status.name == "offline":
+                # Invisible
                 status = "⚪"
             else:
+                # Unknown
                 status = "❓"
             # Voice status
             if user.bot:
+                # Music bot
                 volume = "🎵"
             elif user.voice.deaf or user.voice.self_deaf:
+                # Deafened
                 volume = "🔇"
             elif user.voice.mute or user.voice.self_mute:
+                # Muted
                 volume = "🔈"
             else:
+                # Speaking
                 volume = "🔊"
             # Game, is formatted
             if user.game is not None:
-                game = f"- *{user.game.name}*"
+                # Playing
+                if user.game.type == 0:
+                    # Game name
+                    game = f"- *{user.game.name}*"
+                # Streaming
+                elif user.game.type == 1:
+                    # Stream name and url
+                    game = f"- [{user.game.name}]({user.game.url})"
             else:
                 game = ""
-            # Name
+            # Nickname if available, otherwise use the username
             if user.nick is not None:
                 name = user.nick
             else:
@@ -257,7 +273,7 @@ Sintassi: `/cv`"""
             to_send += f"{volume} {status} {name} {game}\n"
         # Channel footer
         to_send += "\n"
-    await update.message.reply(bot, to_send, parse_mode="Markdown")
+    await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
 
 if __name__ == "__main__":
     # Init Telegram bot commands
