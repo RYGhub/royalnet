@@ -227,7 +227,7 @@ Sintassi: `/cv`"""
             if user.status.name == "online":
                 status = "🔵"
             elif user.status.name == "dnd":
-                status = "⚪"
+                status = "🔴"
             elif user.status.name == "idle":
                 status = "⚫"
             elif user.status.name == "offline":
