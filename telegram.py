@@ -33,15 +33,15 @@ class Bot:
     def __hash__(self):
         return hash(self.token)
 
-    def run(self):
+    async def run(self):
         """Run the bot automatically."""
         while True:
-            loop.run_until_complete(self.get_updates())
+            await self.get_updates()
             for u in self.updates:
                 loop.create_task(self.parse_update(u))
             self.updates = list()
             # Wait 1 second between two requests, allowing the parsing of updates.
-            loop.run_until_complete(asyncio.sleep(1))
+            await asyncio.sleep(1)
 
     async def update_bot_data(self):
         """Update self.user_data with the latest information from /getMe."""

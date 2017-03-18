@@ -12,6 +12,7 @@ import markovify
 import discord
 
 b = telegram.Bot(royalbotconfig.telegram_token)
+d = discord.Client()
 
 def currently_logged_in(update):
     """Trova l'utente connesso all'account di Telegram che ha mandato l'update."""
@@ -78,7 +79,7 @@ Sintassi: `/markov [inizio]`"""
     clean_diario = str()
     # Remove the timestamps in each row
     for row in file:
-        clean_diario += row.split("|", 1)[1]
+        clean_diario += row.split("|", 1)[1].lower()
     # The text is split by newlines
     generator = markovify.NewlineText(clean_diario)
     file.close()
@@ -195,7 +196,71 @@ Sintassi: `/changepassword <newpassword>`"""
         await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
 
 
+async def cv(bot, update, arguments):
+    """Visualizza lo stato attuale della chat vocale Discord.
+
+Sintassi: `/cv`"""
+    if len(arguments) != 0:
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/cv`", parse_mode="Markdown")
+        return
+    # Wait for the Discord bot to login
+    while not d.is_logged_in:
+        await asyncio.sleep(1)
+    # Find all the users in the server
+    # Change this if the bot is logged in more than one server at once?
+    users = list(d.get_all_members())
+    # Find all the channels
+    channels = dict()
+    for user in users:
+        if user.voice_channel is not None:
+            if user.voice_channel.name not in channels:
+                channels[user.voice_channel.name] = list()
+            channels[user.voice_channel.name].append(user)
+    # Create the string to send to Telegram
+    to_send = str()
+    for channel in channels:
+        # Channel header
+        to_send += f"*{channel}:*\n"
+        # Users in channel
+        for user in channels[channel]:
+            # Online status
+            if user.status.name == "online":
+                status = "🔵"
+            elif user.status.name == "dnd":
+                status = "⚪"
+            elif user.status.name == "idle":
+                status = "⚫"
+            elif user.status.name == "offline":
+                status = "⚪"
+            else:
+                status = "❓"
+            # Voice status
+            if user.bot:
+                volume = "🎵"
+            elif user.voice.deaf or user.voice.self_deaf:
+                volume = "🔇"
+            elif user.voice.mute or user.voice.self_mute:
+                volume = "🔈"
+            else:
+                volume = "🔊"
+            # Game, is formatted
+            if user.game is not None:
+                game = f"- *{user.game.name}*"
+            else:
+                game = ""
+            # Name
+            if user.nick is not None:
+                name = user.nick
+            else:
+                name = user.name
+            # Add the user
+            to_send += f"{volume} {status} {name} {game}\n"
+        # Channel footer
+        to_send += "\n"
+    await update.message.reply(bot, to_send, parse_mode="Markdown")
+
 if __name__ == "__main__":
+    # Init Telegram bot commands
     b.commands["leggi"] = leggi
     b.commands["diario"] = diario
     b.commands["discord"] = discord
@@ -203,5 +268,13 @@ if __name__ == "__main__":
     b.commands["changepassword"] = changepassword
     b.commands["help"] = help_cmd
     b.commands["markov"] = markov
-    print("Bot started!")
-    b.run()
+    b.commands["cv"] = cv
+    # Init Telegram bot
+    loop.create_task(b.run())
+    print("Telegram bot start scheduled!")
+    # Init Discord bot
+    loop.run_until_complete(d.login(royalbotconfig.discord_token))
+    loop.create_task(d.connect())
+    print("Discord bot start scheduled!")
+    # Run everything!
+    loop.run_forever()
