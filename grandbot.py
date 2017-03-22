@@ -263,7 +263,7 @@ Sintassi: `/cv`"""
             if user.status.name == "online":
                 # Online
                 status = "🔵"
-            elif user.status.name == "dnd" or user.game.type == 1:
+            elif user.status.name == "dnd" or (user.game is not None and user.game.type == 1):
                 # Do not disturb or streaming
                 status = "🔴"
             elif user.status.name == "idle":
