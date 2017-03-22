@@ -40,8 +40,8 @@ class Bot:
             for u in self.updates:
                 loop.create_task(self.parse_update(u))
             self.updates = list()
-            # Wait 1 second between two requests, allowing the parsing of updates.
-            await asyncio.sleep(1)
+            # Wait 5 seconds between two requests, allowing the parsing of updates.
+            await asyncio.sleep(5)
 
     async def update_bot_data(self):
         """Update self.user_data with the latest information from /getMe."""
@@ -51,7 +51,8 @@ class Bot:
     async def get_updates(self):
         """Get the latest updates from the Telegram API with /getUpdates."""
         try:
-            data = await self.api_request("getUpdates", offset=self.offset, timeout=300)
+            # TODO: Fix long polling
+            data = await self.api_request("getUpdates", offset=self.offset)
         except asyncio.TimeoutError:
             return
         for update in data:
