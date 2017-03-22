@@ -25,9 +25,9 @@ def currently_logged_in(update):
 async def start(bot, update, arguments):
     user = currently_logged_in(update)
     if user is None:
-        await update.message.reply(f"Ciao!\n_Non hai eseguito l'accesso al RYGdb.")
+        await update.message.reply(bot, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb.", parse_mode="Markdown")
     else:
-        await update.message.reply(f"Ciao!\n_Hai eseguito l'accesso come_ `{user}`.")
+        await update.message.reply(bot, f"Ciao!\nHai eseguito l'accesso come `{user}`.", parse_mode="Markdown")
 
 
 async def diario(bot, update, arguments):
@@ -80,9 +80,12 @@ Sintassi: `/leggi <random | numerofrase>`"""
 async def markov(bot, update, arguments):
     """Genera una frase del diario utilizzando le catene di Markov.
 
-Puoi specificare con che parola deve iniziare la frase generata.
+Puoi specificare con che parole (massimo 2) deve iniziare la frase generata.
+Se non vengono specificate, verrà scelta una parola a caso.
 
 Sintassi: `/markov [inizio]`"""
+    if len(arguments) > 2:
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/markov [inizio]`")
     file = open("diario.txt", "r", encoding="utf8")
     # Clean the diario
     clean_diario = str()
@@ -97,9 +100,9 @@ Sintassi: `/markov [inizio]`"""
         text = generator.make_sentence(tries=50)
     else:
         # Generate a sentence with a specific start
-        start = " ".join(arguments)
+        start_with = " ".join(arguments)
         try:
-            text = generator.make_sentence_with_start(start, tries=100)
+            text = generator.make_sentence_with_start(start_with, tries=100)
         # No entry can start in that word.
         except KeyError:
             await update.message.reply(bot, f"⚠ Non sono state trovate corrispondenze nel diario dell'inizio che hai specificato.", parse_mode="Markdown")
