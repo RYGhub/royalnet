@@ -1,14 +1,14 @@
 import asyncio
-import telegram
-import random
 import datetime
-import async_timeout
-import aiohttp
-import royalbotconfig
 import json
-import database
-import markovify
+import random
+import aiohttp
+import async_timeout
 import discord
+import markovify
+import database
+import royalbotconfig
+import telegram
 
 loop = asyncio.get_event_loop()
 b = telegram.Bot(royalbotconfig.telegram_token)

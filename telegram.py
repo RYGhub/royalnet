@@ -1,7 +1,6 @@
 import asyncio
 loop = asyncio.get_event_loop()
 import aiohttp
-import async_timeout
 import datetime
 
 
