@@ -110,3 +110,6 @@ def init_royal_db():
     create_user("albertwerk", "ventidue", True)
     create_user("voltaggio", "ventitre", True)
     create_user("doc", "ventiquattro", True)
+
+if __name__ == "__main__":
+    init_royal_db()
