@@ -27,7 +27,10 @@ class User(Base):
     telegram_id = Column(Integer, unique=True)
 
     def __str__(self):
-        return f"{self.id} - {self.username}"
+        return self.username
+
+    def __repr__(self):
+        return f"<User {self.id}: {self.username}>"
 
 Base.metadata.create_all(engine)
 
