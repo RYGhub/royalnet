@@ -115,7 +115,8 @@ def init_royal_db():
     create_user("voltaggio", "ventitre", True)
     create_user("doc", "ventiquattro", True)
 
-with Session() as session:
-    # Generate the database if it's empty
-    if session.query(User).first() is None:
-        init_royal_db()
+session = Session()
+# Generate the database if it's empty
+if session.query(User).first() is None:
+    init_royal_db()
+del session
