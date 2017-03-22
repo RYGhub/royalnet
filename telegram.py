@@ -141,15 +141,15 @@ class Bot:
             async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}", params=params) as response:
                 # Check for errors in the request
                 if response.status != 200:
-                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}\n{response.text}")
+                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}\n{response.text()}")
                 # Parse the json data as soon it's ready
                 data = await response.json()
-        # Check for errors in the response
-        if not data["ok"]:
-            error = data["description"]
-            raise TelegramAPIError(f"Response returned an error: {error}")
-        # Return a dictionary containing the data
-        return data["result"]
+                # Check for errors in the response
+                if not data["ok"]:
+                    error = data["description"]
+                    raise TelegramAPIError(f"Response returned an error: {error}")
+                # Return a dictionary containing the data
+                return data["result"]
 
 
 class Update:
