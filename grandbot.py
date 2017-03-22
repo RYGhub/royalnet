@@ -1,5 +1,4 @@
 import asyncio
-loop = asyncio.get_event_loop()
 import telegram
 import random
 import datetime
@@ -11,14 +10,24 @@ import database
 import markovify
 import discord
 
+loop = asyncio.get_event_loop()
 b = telegram.Bot(royalbotconfig.telegram_token)
 d = discord.Client()
+
 
 def currently_logged_in(update):
     """Trova l'utente connesso all'account di Telegram che ha mandato l'update."""
     session = database.Session()
     user = session.query(database.User).filter_by(telegram_id=update.message.sent_from.user_id).first()
     return user
+
+
+async def start(bot, update, arguments):
+    user = currently_logged_in(update)
+    if user is None:
+        await update.message.reply(f"Ciao!\n_Non hai eseguito l'accesso al RYGdb.")
+    else:
+        await update.message.reply(f"Ciao!\n_Hai eseguito l'accesso come_ `{user}`.")
 
 
 async def diario(bot, update, arguments):
@@ -277,6 +286,7 @@ Sintassi: `/cv`"""
 
 if __name__ == "__main__":
     # Init Telegram bot commands
+    b.commands["start"] = start
     b.commands["leggi"] = leggi
     b.commands["diario"] = diario
     b.commands["discord"] = discord
