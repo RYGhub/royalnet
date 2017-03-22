@@ -4,7 +4,7 @@ import json
 import random
 import aiohttp
 import async_timeout
-import discord
+import extra_discord
 import markovify
 import database
 import royalbotconfig
@@ -12,7 +12,7 @@ import telegram
 
 loop = asyncio.get_event_loop()
 b = telegram.Bot(royalbotconfig.telegram_token)
-d = discord.Client()
+d = extra_discord.ExtraClient(royalbotconfig.discord_token)
 
 
 def currently_logged_in(update):
@@ -25,9 +25,11 @@ def currently_logged_in(update):
 async def start(bot, update, arguments):
     user = currently_logged_in(update)
     if user is None:
-        await update.message.reply(bot, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb.", parse_mode="Markdown")
+        await update.message.reply(bot, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb._", parse_mode="Markdown")
     else:
-        await update.message.reply(bot, f"Ciao!\nHai eseguito l'accesso come `{user}`.", parse_mode="Markdown")
+        telegram_status = "🔵" if user.telegram_id is not None else "⚪"
+        discord_status = "🔵" if user.discord_id is not None else "⚪"
+        await update.message.reply(bot, f"Ciao!\nHai eseguito l'accesso come `{user}`.\n\n*Account collegati:*\n{telegram_status} Telegram\n{discord_status} Discord", parse_mode="Markdown")
 
 
 async def diario(bot, update, arguments):
@@ -166,7 +168,7 @@ Sintassi: `/discord <messaggio>`"""
                 await update.message.reply(bot, "Richiesta inviata.", parse_mode="Markdown")
 
 
-async def sync(bot, update, arguments):
+async def sync_telegram(bot, update, arguments):
     """Connetti il tuo account Telegram al Database Royal Games.
 
 Sintassi: `/sync <username> <password>`"""
@@ -179,15 +181,37 @@ Sintassi: `/sync <username> <password>`"""
     if logged_user is not None:
         # Add the telegram_id to the user if it's missing
         if logged_user.telegram_id is None:
-            # Handle duplicate
             logged_user.telegram_id = update.message.sent_from.user_id
             session.commit()
-            print(f"{logged_user} ha sincronizzato l'account.")
+            print(f"{logged_user} ha sincronizzato l'account di Telegram.")
             await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.", parse_mode="Markdown")
         else:
             await update.message.reply(bot, "⚠ L'account è già stato sincronizzato.", parse_mode="Markdown")
     else:
         await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
+
+
+async def sync_discord(bot, message, arguments):
+    """Connetti il tuo account Discord al Database Royal Games.
+
+Sintassi: `!sync <username> <password>`"""
+    if len(arguments) != 2:
+        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!sync <username> <password>`")
+        return
+    # Try to login
+    session, logged_user = database.login(arguments[0], arguments[1])
+    # Check if the login is successful
+    if logged_user is not None:
+        # Add the discord_id to the user if it's missing
+        if logged_user.discord_id is None:
+            logged_user.discord_id = int(message.author.id)
+            session.commit()
+            print(f"{logged_user} ha sincronizzato l'account di Discord.")
+            await bot.send_message(message.channel, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.")
+        else:
+            await bot.send_message(message.channel, "⚠ L'account è già stato sincronizzato.")
+    else:
+        await bot.send_message(message.channel, "⚠ Username o password non validi.")
 
 
 async def changepassword(bot, update, arguments):
@@ -216,11 +240,11 @@ Sintassi: `/cv`"""
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/cv`", parse_mode="Markdown")
         return
     # Wait for the Discord bot to login
-    while not d.is_logged_in:
+    while not d.client.is_logged_in:
         await asyncio.sleep(1)
     # Find all the users in the server
     # Change this if the bot is logged in more than one server at once?
-    users = list(d.get_all_members())
+    users = list(d.client.get_all_members())
     # Find all the channels
     channels = dict()
     for user in users:
@@ -287,23 +311,27 @@ Sintassi: `/cv`"""
         to_send += "\n"
     await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
 
+
 if __name__ == "__main__":
+    # Generate the db if it's empty
+
     # Init Telegram bot commands
     b.commands["start"] = start
     b.commands["leggi"] = leggi
     b.commands["diario"] = diario
     b.commands["discord"] = discord
-    b.commands["sync"] = sync
+    b.commands["sync"] = sync_telegram
     b.commands["changepassword"] = changepassword
     b.commands["help"] = help_cmd
     b.commands["markov"] = markov
     b.commands["cv"] = cv
+    # Init Discord bot commands
+    d.commands["sync"] = sync_discord
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
     # Init Discord bot
-    loop.run_until_complete(d.login(royalbotconfig.discord_token))
-    loop.create_task(d.connect())
+    loop.create_task(d.run())
     print("Discord bot start scheduled!")
     # Run everything!
     loop.run_forever()
