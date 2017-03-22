@@ -25,6 +25,7 @@ class User(Base):
     password = Column(String, nullable=False)
     royal = Column(Boolean, nullable=False)
     telegram_id = Column(Integer, unique=True)
+    discord_id = Column(Integer, unique=True)
 
     def __str__(self):
         return self.username
@@ -114,5 +115,7 @@ def init_royal_db():
     create_user("voltaggio", "ventitre", True)
     create_user("doc", "ventiquattro", True)
 
-if __name__ == "__main__":
-    init_royal_db()
+with Session() as session:
+    # Generate the database if it's empty
+    if session.query(User).first() is None:
+        init_royal_db()
