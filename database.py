@@ -26,6 +26,7 @@ class User(Base):
     royal = Column(Boolean, nullable=False)
     telegram_id = Column(Integer, unique=True)
     discord_id = Column(Integer, unique=True)
+    coins = Column(Integer)
 
     def __str__(self):
         return self.username
@@ -42,7 +43,7 @@ def create_user(username, password, royal=False):
     # Hash the password with bcrypt
     hashed_password = bcrypt.hashpw(password.encode("utf8"), bcrypt.gensalt())
     # Create a new user
-    new_member = User(username=username, password=hashed_password, royal=royal)
+    new_member = User(username=username, password=hashed_password, royal=royal, coins=0)
     # Add the newly created member to the session
     session.add(new_member)
     # Commit the changes

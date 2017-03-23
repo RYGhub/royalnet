@@ -29,7 +29,7 @@ async def start(bot, update, arguments):
     else:
         telegram_status = "🔵" if user.telegram_id is not None else "⚪"
         discord_status = "🔵" if user.discord_id is not None else "⚪"
-        await update.message.reply(bot, f"Ciao!\nHai eseguito l'accesso come `{user}`.\n\n*Account collegati:*\n{telegram_status} Telegram\n{discord_status} Discord", parse_mode="Markdown")
+        await update.message.reply(bot, f"Ciao!\nHai eseguito l'accesso come `{user}`.\nAttualmente hai {user.coins} ℝ.\n\n*Account collegati:*\n{telegram_status} Telegram\n{discord_status} Discord", parse_mode="Markdown")
 
 
 async def diario(bot, update, arguments):
@@ -222,9 +222,10 @@ Sintassi: `/sync <username> <password>`"""
         # Add the telegram_id to the user if it's missing
         if logged_user.telegram_id is None:
             logged_user.telegram_id = update.message.sent_from.user_id
+            logged_user.coins += 1
             session.commit()
             print(f"{logged_user} ha sincronizzato l'account di Telegram.")
-            await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.", parse_mode="Markdown")
+            await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.\nHai guadagnato 1 ℝ.", parse_mode="Markdown")
         else:
             await update.message.reply(bot, "⚠ L'account è già stato sincronizzato.", parse_mode="Markdown")
     else:
@@ -245,9 +246,10 @@ Sintassi: `!sync <username> <password>`"""
         # Add the discord_id to the user if it's missing
         if logged_user.discord_id is None:
             logged_user.discord_id = int(message.author.id)
+            logged_user.coins += 1
             session.commit()
             print(f"{logged_user} ha sincronizzato l'account di Discord.")
-            await bot.send_message(message.channel, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.")
+            await bot.send_message(message.channel, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.\nHai guadagnato 1 ℝ.")
         else:
             await bot.send_message(message.channel, "⚠ L'account è già stato sincronizzato.")
     else:
@@ -350,6 +352,31 @@ Sintassi: `/cv`"""
         # Channel footer
         to_send += "\n"
     await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
+
+
+async def buy(bot, update, arguments):
+    """Compra nuovi ℝ!
+
+Sintassi: /buy"""
+    # TODO: finiscimi
+    app = random.sample(["https://play.google.com/store/apps/details?id=com.mp.HorseRide",
+                         "https://play.google.com/store/apps/details?id=com.kick.ultimate.rooftop.police.chase",
+                         "https://play.google.com/store/apps/details?id=com.do_apps.catalog_65",
+                         "https://play.google.com/store/apps/details?id=com.pikpok.rua2",
+                         "http://steffo.me/barbaxmas.htm"], 1)[0]
+    await update.message.reply(bot, f"*Scegli un'operazione:*\n"
+                                    f"[Acquista 1 ℝ](https://royal.steffo.me/store/1) per € 0.99!\n"
+                                    f"[Acquista 3 ℝ](https://royal.steffo.me/store/3) per € 1.99 (Risparmi € 0.98!)!\n"
+                                    f"[Acquista 6 ℝ](https://royal.steffo.me/store/6) per € 2.49 (Risparmi € 3.45!)!\n"
+                                    f"[Acquista 25 ℝ](https://royal.steffo.me/store/25) per € 4.99 (Risparmi € 19.76!)\n"
+                                    f"[Acquista 69 ℝ](https://royal.steffo.me/store/69) per € 6.66 (Risparmi € 61.65!)\n"
+                                    f"[OFFERTA FORTUNATA SOLO PER TE! Acquista 777 ℝ](https://royal.steffo.me/store/777) per € 17.77!\n"
+                                    f"[Ottieni 322 ℝ](https://dotabuff.com/betting) scommettendo per la prima volta sul sito dei nostri sponsor!\n"
+                                    f"[Ottieni 104 ℝ](https://royal.steffo.me/store/video) guardando un video sponsorizzato!\n"
+                                    f"**Ottieni 30 ℝ** per ogni amico che inviti alla Royal Games!\n"
+                                    f"[Ottieni 1337 ℝ]({app}) installando l'app dei nostri partner!\n"
+                                    f"**Ottieni 1 ℝ** al giorno aggiungendo `steffo.me` alla fine del tuo username di Steam!\n\n"
+                                    f"NOTA LEGALE: @Steffo non si assume responsabilità per il contenuto delle app sponsorizzate. Fate attenzione!")
 
 
 if __name__ == "__main__":
