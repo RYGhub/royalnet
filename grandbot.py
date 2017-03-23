@@ -390,6 +390,7 @@ if __name__ == "__main__":
     b.commands["help"] = help_cmd
     b.commands["markov"] = markov
     b.commands["cv"] = cv
+    b.commands["buy"] = buy
     # Init Discord bot commands
     d.commands["sync"] = sync_discord
     # Init Telegram bot
