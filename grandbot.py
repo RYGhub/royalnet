@@ -313,8 +313,6 @@ Sintassi: `/cv`"""
 
 
 if __name__ == "__main__":
-    # Generate the db if it's empty
-
     # Init Telegram bot commands
     b.commands["start"] = start
     b.commands["leggi"] = leggi
