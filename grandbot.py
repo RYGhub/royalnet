@@ -38,23 +38,35 @@ async def diario(bot, update, arguments):
 Devi essere un Royal per poter eseguire questo comando.
 
 Sintassi: `/diario <frase>`"""
-    if not currently_logged_in(update).royal:
-        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.", parse_mode="Markdown")
+    # Check if the user is logged in
+    if not currently_logged_in(update):
+        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
         return
+    # Check if the currently logged in user is a Royal Games member
+    if not currently_logged_in(update).royal:
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
+    # Check the command syntax
     if len(arguments) == 0:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | markov | numerofrase>`", parse_mode="Markdown")
         return
+    # Check for non-ASCII characters
     entry = " ".join(arguments)
     if not entry.isprintable():
-        await update.message.reply(bot, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!", parse_mode="Markdown")
+        await update.message.reply(bot, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!")
         return
+    # Remove endlines
     entry = entry.replace("\n", " ")
+    # TODO: check if a end-of-file character can be sent on Telegram
+    # Generate a timestamp
     time = update.message.date.timestamp()
+    # Write on the diario file
     file = open("diario.txt", "a", encoding="utf8")
     file.write(f"{int(time)}|{entry}\n")
     file.close()
     del file
-    await update.message.reply(bot, "Aggiunto al diario!", parse_mode="Markdown")
+    # Answer on Telegram
+    await update.message.reply(bot, "✅ Aggiunto al diario!")
 
 
 async def leggi(bot, update, arguments):
@@ -66,16 +78,26 @@ Sintassi: `/leggi <random | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`", parse_mode="Markdown")
         return
+    # Open the file
     file = open("diario.txt", "r")
+    # Split the data in lines
     entries = file.read().split("\n")
     file.close()
+    # Choose an entry
     if arguments[0] == "random":
+        # either randomly...
         entry_number = random.randrange(len(entries))
     else:
+        # ...or a specific one
         entry_number = arguments[0]
+    # Split the timestamp from the text
     entry = entries[entry_number].split("|", 1)
+    # Parse the timestamp
     date = datetime.datetime.fromtimestamp(entry[0]).isoformat()
+    # Get the text
     text = entry[1]
+    # Sanitize the text to prevent TelegramErrors
+    text = text.replace("_", "\_").replace("*", "\*").replace("`", "\`").replace("[", "\[")
     await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}", parse_mode="Markdown")
 
 
@@ -110,6 +132,8 @@ Sintassi: `/markov [inizio]`"""
             await update.message.reply(bot, f"⚠ Non sono state trovate corrispondenze nel diario dell'inizio che hai specificato.", parse_mode="Markdown")
             return
     if text is not None:
+        # Sanitize the text to prevent TelegramErrors
+        text = text.replace("_", "\_").replace("*", "\*").replace("`", "\`").replace("[", "\[")
         await update.message.reply(bot, f"*Frase generata:*\n{text}", parse_mode="Markdown")
     else:
         await update.message.reply(bot, f"⚠ Il bot non è riuscito a generare una nuova frase.\nSe è la prima volta che vedi questo errore, riprova, altrimenti prova a cambiare configurazione.")
@@ -127,25 +151,41 @@ Sintassi: `/help [comando]`"""
         if arguments[0] in b.commands:
             await update.message.reply(bot, b.commands[arguments[0]].__doc__, parse_mode="Markdown")
         else:
-            await update.message.reply(bot, "⚠ Il comando specificato non esiste.", parse_mode="Markdown")
+            await update.message.reply(bot, "⚠ Il comando specificato non esiste.")
 
 
 async def discord(bot, update, arguments):
     """Manda un messaggio a #chat di Discord.
 
 Sintassi: `/discord <messaggio>`"""
-    # TODO: create a discord module
-    # Send a message through a Discord webhook
-    # Message to send
+    # Try to login
+    logged_user = currently_logged_in(update)
+    # Check if the user is logged in
+    if not logged_user:
+        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+        return
+    # Check if the currently logged in user is a Royal Games member
+    if not logged_user.royal:
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
+    # Check the command syntax
     if len(arguments) == 0:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`", parse_mode="Markdown")
         return
-    username = str(update.message.sent_from)
     message = " ".join(arguments)
+    # Find the message sender's Discord username
+    users = list(d.client.get_all_members())
+    for user in users:
+        if user.id == logged_user.discord_id:
+            username = user.name
+            break
+    else:
+        # Use the telegram username
+        username = f"{update.message.sent_from}"
     # Parameters to send
     params = {
-        # TODO: show the message sender's Discord username
-        "content": f"{username}: {message}"
+        "username": username,
+        "content": f"{message}"
     }
     # Headers to send
     headers = {
@@ -165,7 +205,7 @@ Sintassi: `/discord <messaggio>`"""
                     # TODO: handle Discord webhooks errors
                     raise Exception("Qualcosa è andato storto durante l'invio del messaggio a Discord.")
                 # Answer on Telegram
-                await update.message.reply(bot, "Richiesta inviata.", parse_mode="Markdown")
+                await update.message.reply(bot, "✅ Richiesta inviata.", parse_mode="Markdown")
 
 
 async def sync_telegram(bot, update, arguments):
