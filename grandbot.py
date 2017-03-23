@@ -9,6 +9,7 @@ import markovify
 import database
 import royalbotconfig
 import telegram
+import datetime
 
 loop = asyncio.get_event_loop()
 b = telegram.Bot(royalbotconfig.telegram_token)
@@ -354,29 +355,41 @@ Sintassi: `/cv`"""
     await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
 
 
-async def buy(bot, update, arguments):
+async def buycoins(bot, update, arguments):
     """Compra nuovi ℝ!
 
-Sintassi: /buy"""
-    # TODO: finiscimi
+Sintassi: /buycoins"""
+    # Check the day
+    if datetime.datetime.now().day != 1 or datetime.datetime.now().month != 4:
+        return
+    # Try to login
+    logged_user = currently_logged_in(update)
+    # Check if the user is logged in
+    if not logged_user:
+        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+        return
+    # Check if the currently logged in user is a Royal Games member
+    if not logged_user.royal:
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
     app = random.sample(["https://play.google.com/store/apps/details?id=com.mp.HorseRide",
                          "https://play.google.com/store/apps/details?id=com.kick.ultimate.rooftop.police.chase",
-                         "https://play.google.com/store/apps/details?id=com.do_apps.catalog_65",
+                         "https://play.google.com/store/apps/details?id=com.do_apps.catalog\_65",
                          "https://play.google.com/store/apps/details?id=com.pikpok.rua2",
                          "http://steffo.me/barbaxmas.htm"], 1)[0]
     await update.message.reply(bot, f"*Scegli un'operazione:*\n"
-                                    f"[Acquista 1 ℝ](https://royal.steffo.me/store/1) per € 0.99!\n"
-                                    f"[Acquista 3 ℝ](https://royal.steffo.me/store/3) per € 1.99 (Risparmi € 0.98!)!\n"
-                                    f"[Acquista 6 ℝ](https://royal.steffo.me/store/6) per € 2.49 (Risparmi € 3.45!)!\n"
-                                    f"[Acquista 25 ℝ](https://royal.steffo.me/store/25) per € 4.99 (Risparmi € 19.76!)\n"
-                                    f"[Acquista 69 ℝ](https://royal.steffo.me/store/69) per € 6.66 (Risparmi € 61.65!)\n"
+                                    f"[Acquista 1 ℝ](https://royal.steffo.me/store/1.htm) per € 0.99!\n"
+                                    f"[Acquista 3 ℝ](https://royal.steffo.me/store/3.htm) per € 1.99 (Risparmi € 0.98!)!\n"
+                                    f"[Acquista 6 ℝ](https://royal.steffo.me/store/6.htm) per € 2.49 (Risparmi € 3.45!)!\n"
+                                    f"[Acquista 25 ℝ](https://royal.steffo.me/store/25.htm) per € 4.99 (Risparmi € 19.76!)\n"
+                                    f"[Acquista 69 ℝ](https://royal.steffo.me/store/69.htm) per € 6.66 (Risparmi € 61.65!)\n"
                                     f"[OFFERTA FORTUNATA SOLO PER TE! Acquista 777 ℝ](https://royal.steffo.me/store/777) per € 17.77!\n"
                                     f"[Ottieni 322 ℝ](https://dotabuff.com/betting) scommettendo per la prima volta sul sito dei nostri sponsor!\n"
                                     f"[Ottieni 104 ℝ](https://royal.steffo.me/store/video) guardando un video sponsorizzato!\n"
-                                    f"**Ottieni 30 ℝ** per ogni amico che inviti alla Royal Games!\n"
+                                    f"*Ottieni 30 ℝ* per ogni amico che inviti alla Royal Games!\n"
                                     f"[Ottieni 1337 ℝ]({app}) installando l'app dei nostri partner!\n"
-                                    f"**Ottieni 1 ℝ** al giorno aggiungendo `steffo.me` alla fine del tuo username di Steam!\n\n"
-                                    f"NOTA LEGALE: @Steffo non si assume responsabilità per il contenuto delle app sponsorizzate. Fate attenzione!")
+                                    f"*Ottieni 1 ℝ* al giorno aggiungendo `steffo.me` alla fine del tuo username di Steam!\n\n"
+                                    f"NOTA LEGALE: @Steffo non si assume responsabilità per il contenuto delle app sponsorizzate. Fate attenzione!", parse_mode="Markdown")
 
 
 if __name__ == "__main__":
@@ -390,7 +403,7 @@ if __name__ == "__main__":
     b.commands["help"] = help_cmd
     b.commands["markov"] = markov
     b.commands["cv"] = cv
-    b.commands["buy"] = buy
+    b.commands["buycoins"] = buycoins
     # Init Discord bot commands
     d.commands["sync"] = sync_discord
     # Init Telegram bot
