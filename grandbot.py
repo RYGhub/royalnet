@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import json
 import random
 import aiohttp
@@ -361,6 +360,7 @@ async def buycoins(bot, update, arguments):
 Sintassi: /buycoins"""
     # Check the day
     if datetime.datetime.now().day != 1 or datetime.datetime.now().month != 4:
+        print("Qualcuno sa!")
         return
     # Try to login
     logged_user = currently_logged_in(update)
