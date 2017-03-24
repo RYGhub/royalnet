@@ -154,6 +154,21 @@ Sintassi: `/help [comando]`"""
             await update.message.reply(bot, "⚠ Il comando specificato non esiste.")
 
 
+async def help_discord(bot, message, arguments):
+    """Visualizza la descrizione di un comando.
+
+Sintassi: `!help [comando]`"""
+    if len(arguments) == 0:
+        bot.send_message(message.channel, help.__doc__)
+    elif len(arguments) > 1:
+        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/help [comando]`")
+    else:
+        if arguments[0] in b.commands:
+            bot.send_message(message.channel, b.commands[arguments[0]].__doc__)
+        else:
+            bot.send_message(message.channel, "⚠ Il comando specificato non esiste.")
+
+
 async def discord_telegram(bot, update, arguments):
     """Manda un messaggio a #chat di Discord.
 
@@ -377,6 +392,7 @@ Sintassi: `!roll <max>`"""
     # Roll the dice!
     await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, arguments[0]) + 1}")
 
+
 if __name__ == "__main__":
     # Init Telegram bot commands
     b.commands["start"] = start_telegram
@@ -392,6 +408,7 @@ if __name__ == "__main__":
     # Init Discord bot commands
     d.commands["sync"] = sync_discord
     d.commands["roll"] = roll_discord
+    d.commands["help"] = help_discord
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
