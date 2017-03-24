@@ -86,7 +86,7 @@ Devi essere un Royal per poter eseguire questo comando.
 Sintassi: `!diario <frase>`"""
     # Check if the user is logged in
     if not currently_logged_in(message):
-        bot.send_message(message.channel, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+        bot.send_message(message.channel, "⚠ Non hai ancora eseguito l'accesso! Usa `!sync`.")
         return
     # Check if the currently logged in user is a Royal Games member
     if not currently_logged_in(message).royal:
@@ -94,7 +94,7 @@ Sintassi: `!diario <frase>`"""
         return
     # Check the command syntax
     if len(arguments) == 0:
-        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/diario <random | markov | numerofrase>`", parse_mode="Markdown")
+        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!diario <random | markov | numerofrase>`")
         return
     # Check for non-ASCII characters
     entry = " ".join(arguments)
@@ -154,7 +154,7 @@ async def leggi_discord(bot, message, arguments):
 
     Sintassi: `!leggi <random | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
-        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`")
+        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!leggi <random | numerofrase>`")
         return
     # Open the file
     file = open("diario.txt", "r")
@@ -239,7 +239,7 @@ Sintassi: `!help [comando]`"""
     if len(arguments) == 0:
         bot.send_message(message.channel, help.__doc__)
     elif len(arguments) > 1:
-        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/help [comando]`")
+        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!help [comando]`")
     else:
         if arguments[0] in b.commands:
             bot.send_message(message.channel, b.commands[arguments[0]].__doc__)
@@ -464,7 +464,7 @@ async def roll_discord(bot, message, arguments):
 Sintassi: `!roll <max>`"""
     # Check the command syntax
     if len(arguments) != 0:
-        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/roll <max>`", parse_mode="Markdown")
+        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!roll <max>`")
         return
     # Roll the dice!
     await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, arguments[0]) + 1}")
