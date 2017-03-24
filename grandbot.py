@@ -135,11 +135,13 @@ Sintassi: `/leggi <random | numerofrase>`"""
         entry_number = random.randrange(len(entries))
     else:
         # ...or a specific one
-        entry_number = arguments[0]
+        # TODO: check if the entry actually exists
+        # TODO: check if the first argument is a number
+        entry_number = int(arguments[0])
     # Split the timestamp from the text
     entry = entries[entry_number].split("|", 1)
     # Parse the timestamp
-    date = datetime.datetime.fromtimestamp(entry[0]).isoformat()
+    date = datetime.datetime.fromtimestamp(int(entry[0])).isoformat()
     # Get the text
     text = entry[1]
     # Sanitize the text to prevent TelegramErrors
@@ -167,11 +169,13 @@ async def leggi_discord(bot, message, arguments):
         entry_number = random.randrange(len(entries))
     else:
         # ...or a specific one
-        entry_number = arguments[0]
+        # TODO: check if the entry actually exists
+        # TODO: check if the first argument is a number
+        entry_number = int(arguments[0])
     # Split the timestamp from the text
     entry = entries[entry_number].split("|", 1)
     # Parse the timestamp
-    date = datetime.datetime.fromtimestamp(entry[0]).isoformat()
+    date = datetime.datetime.fromtimestamp(int(entry[0])).isoformat()
     # Get the text
     text = entry[1]
     # Sanitize the text to prevent TelegramErrors
