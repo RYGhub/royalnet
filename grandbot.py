@@ -15,10 +15,19 @@ b = telegram.Bot(royalbotconfig.telegram_token)
 d = royaldiscord.ExtraClient(royalbotconfig.discord_token)
 
 
-def currently_logged_in(update):
+def currently_logged_in(thing):
     """Trova l'utente connesso all'account di Telegram che ha mandato l'update."""
+    # Create a new database session
     session = database.Session()
-    user = session.query(database.User).filter_by(telegram_id=update.message.sent_from.user_id).first()
+    # Check if thing is a Telegram update
+    if isinstance(thing, telegram.Update):
+        user = session.query(database.User).filter_by(telegram_id=thing.message.sent_from.user_id).first()
+    # Check if thing is a Discord message
+    elif isinstance(thing, royaldiscord.discord.Message):
+        user = session.query(database.User).filter_by(discord_id=thing.author.id).first()
+    # I don't know what thing is.
+    else:
+        raise TypeError("thing must be either a telegram.Update or a discord.Message")
     return user
 
 
@@ -67,6 +76,43 @@ Sintassi: `/diario <frase>`"""
     del file
     # Answer on Telegram
     await update.message.reply(bot, "✅ Aggiunto al diario!")
+
+
+async def diario_discord(bot, message, arguments):
+    """Aggiungi una frase al diario Royal Games.
+
+Devi essere un Royal per poter eseguire questo comando.
+
+Sintassi: `!diario <frase>`"""
+    # Check if the user is logged in
+    if not currently_logged_in(message):
+        bot.send_message(message.channel, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+        return
+    # Check if the currently logged in user is a Royal Games member
+    if not currently_logged_in(message).royal:
+        bot.send_message(message.channel, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
+    # Check the command syntax
+    if len(arguments) == 0:
+        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/diario <random | markov | numerofrase>`", parse_mode="Markdown")
+        return
+    # Check for non-ASCII characters
+    entry = " ".join(arguments)
+    if not entry.isprintable():
+        bot.send_message(message.channel, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!")
+        return
+    # Remove endlines
+    entry = entry.replace("\n", " ")
+    # TODO: check if a end-of-file character can be sent on Discord
+    # Generate a timestamp
+    time = message.timestamp
+    # Write on the diario file
+    file = open("diario.txt", "a", encoding="utf8")
+    file.write(f"{int(time)}|{entry}\n")
+    file.close()
+    del file
+    # Answer on Telegram
+    bot.send_message(message.channel, "✅ Aggiunto al diario!")
 
 
 async def leggi_telegram(bot, update, arguments):
@@ -418,8 +464,7 @@ async def roll_discord(bot, message, arguments):
 Sintassi: `!roll <max>`"""
     # Check the command syntax
     if len(arguments) != 0:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/roll <max>`",
-                                   parse_mode="Markdown")
+        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/roll <max>`", parse_mode="Markdown")
         return
     # Roll the dice!
     await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, arguments[0]) + 1}")
@@ -442,6 +487,7 @@ if __name__ == "__main__":
     d.commands["roll"] = roll_discord
     d.commands["help"] = help_discord
     d.commands["leggi"] = leggi_discord
+    d.commands["diario"] = diario_discord
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
