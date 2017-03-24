@@ -4,7 +4,7 @@ import json
 import random
 import aiohttp
 import async_timeout
-import extra_discord
+import royaldiscord
 import markovify
 import database
 import royalbotconfig
@@ -12,7 +12,7 @@ import telegram
 
 loop = asyncio.get_event_loop()
 b = telegram.Bot(royalbotconfig.telegram_token)
-d = extra_discord.ExtraClient(royalbotconfig.discord_token)
+d = royaldiscord.ExtraClient(royalbotconfig.discord_token)
 
 
 def currently_logged_in(update):
@@ -22,7 +22,7 @@ def currently_logged_in(update):
     return user
 
 
-async def start(bot, update, arguments):
+async def start_telegram(bot, update, arguments):
     user = currently_logged_in(update)
     if user is None:
         await update.message.reply(bot, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb._", parse_mode="Markdown")
@@ -32,7 +32,7 @@ async def start(bot, update, arguments):
         await update.message.reply(bot, f"Ciao!\nHai eseguito l'accesso come `{user}`.\n\n*Account collegati:*\n{telegram_status} Telegram\n{discord_status} Discord", parse_mode="Markdown")
 
 
-async def diario(bot, update, arguments):
+async def diario_telegram(bot, update, arguments):
     """Aggiungi una frase al diario Royal Games.
 
 Devi essere un Royal per poter eseguire questo comando.
@@ -69,7 +69,7 @@ Sintassi: `/diario <frase>`"""
     await update.message.reply(bot, "✅ Aggiunto al diario!")
 
 
-async def leggi(bot, update, arguments):
+async def leggi_telegram(bot, update, arguments):
     """Leggi una frase dal diario Royal Games.
 
 Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
@@ -101,7 +101,7 @@ Sintassi: `/leggi <random | numerofrase>`"""
     await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}", parse_mode="Markdown")
 
 
-async def markov(bot, update, arguments):
+async def markov_telegram(bot, update, arguments):
     """Genera una frase del diario utilizzando le catene di Markov.
 
 Puoi specificare con che parole (massimo 2) deve iniziare la frase generata.
@@ -139,7 +139,7 @@ Sintassi: `/markov [inizio]`"""
         await update.message.reply(bot, f"⚠ Il bot non è riuscito a generare una nuova frase.\nSe è la prima volta che vedi questo errore, riprova, altrimenti prova a cambiare configurazione.")
 
 
-async def help_cmd(bot, update, arguments):
+async def help_telegram(bot, update, arguments):
     """Visualizza la descrizione di un comando.
 
 Sintassi: `/help [comando]`"""
@@ -154,7 +154,7 @@ Sintassi: `/help [comando]`"""
             await update.message.reply(bot, "⚠ Il comando specificato non esiste.")
 
 
-async def discord(bot, update, arguments):
+async def discord_telegram(bot, update, arguments):
     """Manda un messaggio a #chat di Discord.
 
 Sintassi: `/discord <messaggio>`"""
@@ -254,7 +254,7 @@ Sintassi: `!sync <username> <password>`"""
         await bot.send_message(message.channel, "⚠ Username o password non validi.")
 
 
-async def changepassword(bot, update, arguments):
+async def changepassword_telegram(bot, update, arguments):
     """Cambia la tua password del Database Royal Games.
 
 Sintassi: `/changepassword <newpassword>`"""
@@ -272,7 +272,7 @@ Sintassi: `/changepassword <newpassword>`"""
         await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
 
 
-async def cv(bot, update, arguments):
+async def cv_telegram(bot, update, arguments):
     """Visualizza lo stato attuale della chat vocale Discord.
 
 Sintassi: `/cv`"""
@@ -352,19 +352,46 @@ Sintassi: `/cv`"""
     await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
 
 
+async def roll_telegram(bot, update, arguments):
+    """Lancia un dado a N facce.
+
+Sintassi: `/roll <max>`"""
+    # Check the command syntax
+    if len(arguments) != 0:
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/roll <max>`",
+                                   parse_mode="Markdown")
+        return
+    # Roll the dice!
+    await update.message.reply(bot, f"*Numero generato:* {random.randrange(0, arguments[0]) + 1}")
+
+
+async def roll_discord(bot, message, arguments):
+    """Lancia un dado a N facce.
+
+Sintassi: `!roll <max>`"""
+    # Check the command syntax
+    if len(arguments) != 0:
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/roll <max>`",
+                                   parse_mode="Markdown")
+        return
+    # Roll the dice!
+    await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, arguments[0]) + 1}")
+
 if __name__ == "__main__":
     # Init Telegram bot commands
-    b.commands["start"] = start
-    b.commands["leggi"] = leggi
-    b.commands["diario"] = diario
-    b.commands["discord"] = discord
+    b.commands["start"] = start_telegram
+    b.commands["leggi"] = leggi_telegram
+    b.commands["diario"] = diario_telegram
+    b.commands["discord"] = discord_telegram
     b.commands["sync"] = sync_telegram
-    b.commands["changepassword"] = changepassword
-    b.commands["help"] = help_cmd
-    b.commands["markov"] = markov
-    b.commands["cv"] = cv
+    b.commands["changepassword"] = changepassword_telegram
+    b.commands["help"] = help_telegram
+    b.commands["markov"] = markov_telegram
+    b.commands["cv"] = cv_telegram
+    b.commands["roll"] = roll_telegram
     # Init Discord bot commands
     d.commands["sync"] = sync_discord
+    d.commands["roll"] = roll_discord
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
