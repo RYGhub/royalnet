@@ -101,6 +101,38 @@ Sintassi: `/leggi <random | numerofrase>`"""
     await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}", parse_mode="Markdown")
 
 
+async def leggi_discord(bot, message, arguments):
+    """Leggi una frase dal diario Royal Games.
+
+    Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
+
+    Sintassi: `!leggi <random | numerofrase>`"""
+    if len(arguments) == 0 or len(arguments) > 1:
+        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`")
+        return
+    # Open the file
+    file = open("diario.txt", "r")
+    # Split the data in lines
+    entries = file.read().split("\n")
+    file.close()
+    # Choose an entry
+    if arguments[0] == "random":
+        # either randomly...
+        entry_number = random.randrange(len(entries))
+    else:
+        # ...or a specific one
+        entry_number = arguments[0]
+    # Split the timestamp from the text
+    entry = entries[entry_number].split("|", 1)
+    # Parse the timestamp
+    date = datetime.datetime.fromtimestamp(entry[0]).isoformat()
+    # Get the text
+    text = entry[1]
+    # Sanitize the text to prevent TelegramErrors
+    text = text.replace("_", "\_").replace("*", "\*").replace("`", "\`").replace("[", "\[")
+    await bot.send_message(message.channel, f"Frase #{entry_number} | {date}\n{text}")
+
+
 async def markov_telegram(bot, update, arguments):
     """Genera una frase del diario utilizzando le catene di Markov.
 
@@ -409,6 +441,7 @@ if __name__ == "__main__":
     d.commands["sync"] = sync_discord
     d.commands["roll"] = roll_discord
     d.commands["help"] = help_discord
+    d.commands["leggi"] = leggi_discord
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
