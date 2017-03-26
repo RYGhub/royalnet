@@ -459,7 +459,7 @@ Sintassi: `/roll <max>`"""
                                    parse_mode="Markdown")
         return
     # Roll the dice!
-    await update.message.reply(bot, f"*Numero generato:* {random.randrange(0, arguments[0]) + 1}")
+    await update.message.reply(bot, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
 
 
 async def roll_discord(bot, message, arguments):
@@ -471,7 +471,7 @@ Sintassi: `!roll <max>`"""
         await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!roll <max>`")
         return
     # Roll the dice!
-    await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, arguments[0]) + 1}")
+    await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
 
 
 if __name__ == "__main__":
