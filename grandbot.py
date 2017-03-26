@@ -125,7 +125,7 @@ Sintassi: `/leggi <random | numerofrase>`"""
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`", parse_mode="Markdown")
         return
     # Open the file
-    file = open("diario.txt", "r")
+    file = open("diario.txt", "r", encoding="utf8")
     # Split the data in lines
     entries = file.read().split("\n")
     file.close()
@@ -159,7 +159,7 @@ async def leggi_discord(bot, message, arguments):
         await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!leggi <random | numerofrase>`")
         return
     # Open the file
-    file = open("diario.txt", "r")
+    file = open("diario.txt", "r", encoding="utf8")
     # Split the data in lines
     entries = file.read().split("\n")
     file.close()
