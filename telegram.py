@@ -235,7 +235,7 @@ class Chat:
         try:
             await bot.api_request("sendMessage", text=text, chat_id=self.chat_id, **params)
         except TelegramAPIError as e:
-            print(f"[Telegram] sendMessage failed: {e.text}")
+            print(f"[Telegram] sendMessage failed: {e.args[0]}")
 
 
 class User:
