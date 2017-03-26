@@ -145,7 +145,7 @@ class Bot:
                 if "description" in data:
                     error = data["description"]
                 if response.status != 200:
-                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}\n{}")
+                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
                 # Check for errors in the response
                 if not data["ok"]:
                     error = data["description"]
