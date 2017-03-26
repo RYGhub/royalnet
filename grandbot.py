@@ -454,7 +454,7 @@ async def roll_telegram(bot, update, arguments):
 
 Sintassi: `/roll <max>`"""
     # Check the command syntax
-    if len(arguments) != 0:
+    if len(arguments) != 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/roll <max>`",
                                    parse_mode="Markdown")
         return
@@ -467,7 +467,7 @@ async def roll_discord(bot, message, arguments):
 
 Sintassi: `!roll <max>`"""
     # Check the command syntax
-    if len(arguments) != 0:
+    if len(arguments) != 1:
         await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!roll <max>`")
         return
     # Roll the dice!
