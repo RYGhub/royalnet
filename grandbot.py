@@ -231,7 +231,7 @@ Sintassi: `/help [comando]`"""
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/help [comando]`", parse_mode="Markdown")
     else:
         if arguments[0] in b.commands:
-            await update.message.reply(bot, b.commands[arguments[0]].__doc__, parse_mode="Markdown")
+            await update.message.reply(bot, b.commands[arguments[0] + "_telegram"].__doc__, parse_mode="Markdown")
         else:
             await update.message.reply(bot, "⚠ Il comando specificato non esiste.")
 
@@ -246,7 +246,7 @@ Sintassi: `!help [comando]`"""
         bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!help [comando]`")
     else:
         if arguments[0] in b.commands:
-            bot.send_message(message.channel, b.commands[arguments[0]].__doc__)
+            bot.send_message(message.channel, b.commands[arguments[0] + "_discord"].__doc__)
         else:
             bot.send_message(message.channel, "⚠ Il comando specificato non esiste.")
 
