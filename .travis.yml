@@ -4,4 +4,4 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - python python -m py_compile grandbot.py
+  - python3.6 -m py_compile grandbot.py
