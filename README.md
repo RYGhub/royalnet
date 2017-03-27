@@ -1,5 +1,7 @@
 # Royal Bot the Third
 
+[![Build Status](https://travis-ci.org/Steffo99/royal-bot-the-third.svg?branch=master)](https://travis-ci.org/Steffo99/royal-bot-the-third)
+
 A _(not yet)_ modular multiservice bot written in **Python 3.6**!
 
 Development has just started, so it isn't ready yet for use.
