@@ -32,6 +32,8 @@ def currently_logged_in(thing):
 
 
 async def start_telegram(bot, update, arguments):
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     user = currently_logged_in(update)
     if user is None:
         await update.message.reply(bot, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb._", parse_mode="Markdown")
@@ -47,6 +49,8 @@ async def diario_telegram(bot, update, arguments):
 Devi essere un Royal per poter eseguire questo comando.
 
 Sintassi: `/diario <frase>`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     # Check if the user is logged in
     if not currently_logged_in(update):
         await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
@@ -121,6 +125,8 @@ async def leggi_telegram(bot, update, arguments):
 Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
 
 Sintassi: `/leggi <random | numerofrase>`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     if len(arguments) == 0 or len(arguments) > 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`", parse_mode="Markdown")
         return
@@ -190,6 +196,8 @@ Puoi specificare con che parole (massimo 2) deve iniziare la frase generata.
 Se non vengono specificate, verrà scelta una parola a caso.
 
 Sintassi: `/markov [inizio]`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     if len(arguments) > 2:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/markov [inizio]`")
     file = open("diario.txt", "r", encoding="utf8")
@@ -225,6 +233,8 @@ async def help_telegram(bot, update, arguments):
     """Visualizza la descrizione di un comando.
 
 Sintassi: `/help [comando]`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     if len(arguments) == 0:
         await update.message.reply(bot, help.__doc__, parse_mode="Markdown")
     elif len(arguments) > 1:
@@ -255,6 +265,8 @@ async def discord_telegram(bot, update, arguments):
     """Manda un messaggio a #chat di Discord.
 
 Sintassi: `/discord <messaggio>`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     # Try to login
     logged_user = currently_logged_in(update)
     # Check if the user is logged in
@@ -309,6 +321,8 @@ async def sync_telegram(bot, update, arguments):
     """Connetti il tuo account Telegram al Database Royal Games.
 
 Sintassi: `/sync <username> <password>`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     if len(arguments) != 2:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`", parse_mode="Markdown")
         return
@@ -355,6 +369,8 @@ async def changepassword_telegram(bot, update, arguments):
     """Cambia la tua password del Database Royal Games.
 
 Sintassi: `/changepassword <newpassword>`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     if len(arguments) != 2:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`", parse_mode="Markdown")
         return
@@ -373,6 +389,8 @@ async def cv_telegram(bot, update, arguments):
     """Visualizza lo stato attuale della chat vocale Discord.
 
 Sintassi: `/cv`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     if len(arguments) != 0:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/cv`", parse_mode="Markdown")
         return
@@ -453,6 +471,8 @@ async def roll_telegram(bot, update, arguments):
     """Lancia un dado a N facce.
 
 Sintassi: `/roll <max>`"""
+    # Set status to typing
+    await update.message.chat.set_chat_action("typing")
     # Check the command syntax
     if len(arguments) != 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/roll <max>`",
