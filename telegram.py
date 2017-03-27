@@ -234,6 +234,28 @@ class Chat:
         await bot.api_request("sendMessage", text=text, chat_id=self.chat_id, **params)
 
 
+    async def set_chat_action(self, bot, action):
+        """Set a status for the chat.
+
+Valid actions are:
+typing
+upload_photo
+record_video
+upload_video
+record_audio
+upload_audio
+upload_document
+find_location"""
+        # TODO: This could give problems if a class inherits Bot
+        if not isinstance(bot, Bot):
+            raise TypeError("bot is not an instance of Bot.")
+        # Check if the action is valid
+        if action not in ["typing", "upload_photo", "record_video", "upload_video", "record_audio", "upload_audio", "upload_document", "find_location"]:
+            raise ValueError("Invalid action")
+        # Send the request
+        await bot.api_request("sendChatAction", chat_id=self.chat_id, action=action)
+
+
 class User:
     def __init__(self, user_dict):
         self.user_id = user_dict["id"]
