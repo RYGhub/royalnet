@@ -50,7 +50,7 @@ Devi essere un Royal per poter eseguire questo comando.
 
 Sintassi: `/diario <frase>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     # Check if the user is logged in
     if not currently_logged_in(update):
         await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
@@ -126,7 +126,7 @@ Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere u
 
 Sintassi: `/leggi <random | numerofrase>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     if len(arguments) == 0 or len(arguments) > 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`", parse_mode="Markdown")
         return
@@ -197,7 +197,7 @@ Se non vengono specificate, verrà scelta una parola a caso.
 
 Sintassi: `/markov [inizio]`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     if len(arguments) > 2:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/markov [inizio]`")
     file = open("diario.txt", "r", encoding="utf8")
@@ -234,7 +234,7 @@ async def help_telegram(bot, update, arguments):
 
 Sintassi: `/help [comando]`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     if len(arguments) == 0:
         await update.message.reply(bot, help.__doc__, parse_mode="Markdown")
     elif len(arguments) > 1:
@@ -266,7 +266,7 @@ async def discord_telegram(bot, update, arguments):
 
 Sintassi: `/discord <messaggio>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     # Try to login
     logged_user = currently_logged_in(update)
     # Check if the user is logged in
@@ -322,7 +322,7 @@ async def sync_telegram(bot, update, arguments):
 
 Sintassi: `/sync <username> <password>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     if len(arguments) != 2:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`", parse_mode="Markdown")
         return
@@ -370,7 +370,7 @@ async def changepassword_telegram(bot, update, arguments):
 
 Sintassi: `/changepassword <newpassword>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     if len(arguments) != 2:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`", parse_mode="Markdown")
         return
@@ -390,7 +390,7 @@ async def cv_telegram(bot, update, arguments):
 
 Sintassi: `/cv`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     if len(arguments) != 0:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/cv`", parse_mode="Markdown")
         return
@@ -472,7 +472,7 @@ async def roll_telegram(bot, update, arguments):
 
 Sintassi: `/roll <max>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     # Check the command syntax
     if len(arguments) != 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/roll <max>`",
