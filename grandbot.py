@@ -33,7 +33,7 @@ def currently_logged_in(thing):
 
 async def start_telegram(bot, update, arguments):
     # Set status to typing
-    await update.message.chat.set_chat_action("typing")
+    await update.message.chat.set_chat_action(bot, "typing")
     user = currently_logged_in(update)
     if user is None:
         await update.message.reply(bot, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb._", parse_mode="Markdown")
