@@ -139,11 +139,13 @@ class Bot:
             # Send the request to the Telegram API
             token = self.token
             async with session.request("GET", f"https://api.telegram.org/bot{token}/{endpoint}", params=params) as response:
-                # Check for errors in the request
-                if response.status != 200:
-                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}\n{response.text()}")
                 # Parse the json data as soon it's ready
                 data = await response.json()
+                # Check for errors in the request
+                if "description" in data:
+                    error = data["description"]
+                if response.status != 200:
+                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
                 # Check for errors in the response
                 if not data["ok"]:
                     error = data["description"]
@@ -229,7 +231,11 @@ class Chat:
         # TODO: This could give problems if a class inherits Bot
         if not isinstance(bot, Bot):
             raise TypeError("bot is not an instance of Bot.")
-        await bot.api_request("sendMessage", text=text, chat_id=self.chat_id, **params)
+        # Catch TelegramAPI exceptions
+        try:
+            await bot.api_request("sendMessage", text=text, chat_id=self.chat_id, **params)
+        except TelegramAPIError as e:
+            print(f"[Telegram] sendMessage failed: {e.args[0]}")
 
 
 class User:
