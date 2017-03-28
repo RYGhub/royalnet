@@ -158,9 +158,9 @@ Sintassi: `/leggi <random | numerofrase>`"""
 async def leggi_discord(bot, message, arguments):
     """Leggi una frase dal diario Royal Games.
 
-    Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
+Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
 
-    Sintassi: `!leggi <random | numerofrase>`"""
+Sintassi: `!leggi <random | numerofrase>`"""
     if len(arguments) == 0 or len(arguments) > 1:
         await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!leggi <random | numerofrase>`")
         return
@@ -479,7 +479,7 @@ Sintassi: `/roll <max>`"""
                                    parse_mode="Markdown")
         return
     # Roll the dice!
-    await update.message.reply(bot, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
+    await update.message.reply(bot, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}", parse_mode="Markdown")
 
 
 async def roll_discord(bot, message, arguments):
@@ -494,6 +494,70 @@ Sintassi: `!roll <max>`"""
     await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
 
 
+async def adduser_telegram(bot, update, arguments):
+    """Aggiungi un utente al database Royal Games!
+    
+Devi essere un Royal per poter eseguire questo comando.
+
+Sintassi: `/adduser <username> <password>`"""
+    # Check if the user is logged in
+    if not currently_logged_in(update):
+        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+        return
+    # Check if the currently logged in user is a Royal Games member
+    if not currently_logged_in(update).royal:
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
+    # Check the command syntax
+    if len(arguments) != 2:
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/adduser <username> <password>`", parse_mode="Markdown")
+        return
+    # Try to create a new user
+    try:
+        database.create_user(arguments[0], arguments[1], False)
+    except database.sqlalchemy.exc.DBAPIError:
+        await update.message.reply(bot, "⚠ Qualcosa è andato storto nella creazione dell'utente. Per altre info, guarda i log del bot.")
+        raise
+    else:
+        await update.message.reply(bot, "✅ Creazione riuscita!")
+
+
+async def toggleroyal_telegram(bot, update, arguments):
+    """Inverti lo stato di Royal di un utente.
+    
+Devi essere un Royal per poter eseguire questo comando.
+
+Sintassi: `/toggleroyal <username>`"""
+    # Check if the user is logged in
+    if not currently_logged_in(update):
+        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+        return
+    # Check if the currently logged in user is a Royal Games member
+    if not currently_logged_in(update).royal:
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
+    # Check the command syntax
+    if len(arguments) != 1:
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/toggleroyal <username>`", parse_mode="Markdown")
+        return
+    # Create a new database session
+    session = database.Session()
+    # Find the user
+    user = session.query(database.User).filter_by(username=arguments[0]).first()
+    # Check if the user exists
+    if user is None:
+        await update.message.reply(bot, "⚠ L'utente specificato non esiste.")
+        return
+    # Toggle his Royal status
+    user.royal = not user.royal
+    # Save the change
+    session.commit()
+    # Answer on Telegram
+    if user.royal:
+        await update.message.reply(bot, f"✅ L'utente `{user.username}` ora è un Royal.", parse_mode="Markdown")
+    else:
+        await update.message.reply(bot, f"✅ L'utente `{user.username}` non è più un Royal.", parse_mode="Markdown")
+
 if __name__ == "__main__":
     # Init Telegram bot commands
     b.commands["start"] = start_telegram
@@ -506,6 +570,8 @@ if __name__ == "__main__":
     b.commands["markov"] = markov_telegram
     b.commands["cv"] = cv_telegram
     b.commands["roll"] = roll_telegram
+    b.commands["adduser"] = adduser_telegram
+    b.commands["toggleroyal"] = toggleroyal_telegram
     # Init Discord bot commands
     d.commands["sync"] = sync_discord
     d.commands["roll"] = roll_discord

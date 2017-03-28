@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -90,7 +91,7 @@ def login(username, password, enable_exceptions=False):
 
 
 def init_royal_db():
-    create_user("test", "test", False)
+    create_user("test", "test", True)
 
 session = Session()
 # Generate the database if it's empty
