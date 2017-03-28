@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -91,30 +92,7 @@ def login(username, password, enable_exceptions=False):
 
 
 def init_royal_db():
-    create_user("steffo", "uno", True)
-    create_user("adry", "due", True)
-    create_user("cate", "tre", True)
-    create_user("protoh", "quattro", True)
-    create_user("infopz", "cinque", True)
-    create_user("kappa", "sei", True)
-    create_user("manu", "sette", True)
-    create_user("frank", "otto", True)
-    create_user("paltri", "nove", True)
-    create_user("mestakes", "dieci", True)
-    create_user("tauei", "undici", True)
-    create_user("sensei", "dodici", True)
-    create_user("gattopardo", "tredici", True)
-    create_user("dima", "quattordici", True)
-    create_user("spaggia", "quindici", True)
-    create_user("igor", "sedici", True)
-    create_user("nemesis", "diciassette", True)
-    create_user("comiso", "diciotto", True)
-    create_user("fulz", "diciannove", True)
-    create_user("dailir", "venti", True)
-    create_user("fedececco", "ventuno", True)
-    create_user("albertwerk", "ventidue", True)
-    create_user("voltaggio", "ventitre", True)
-    create_user("doc", "ventiquattro", True)
+    create_user("test", "test", True)
 
 session = Session()
 # Generate the database if it's empty

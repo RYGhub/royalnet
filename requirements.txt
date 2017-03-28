@@ -1,0 +1,6 @@
+aiohttp
+async_timeout
+markovify
+discord.py[voice]
+sqlalchemy
+bcrypt
