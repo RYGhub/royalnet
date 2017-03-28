@@ -469,7 +469,7 @@ Sintassi: `/cv`"""
     await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
 
 
-async def buycoins(bot, update, arguments):
+async def buycoins_telegram(bot, update, arguments):
     """Compra nuovi ℝ!
 
 Sintassi: /buycoins"""
@@ -505,6 +505,40 @@ Sintassi: /buycoins"""
                                     f"[Ottieni 1337 ℝ]({app}) installando l'app dei nostri partner!\n"
                                     f"*Ottieni 1 ℝ* al giorno aggiungendo `steffo.me` alla fine del tuo username di Steam!\n\n"
                                     f"NOTA LEGALE: @Steffo non si assume responsabilità per il contenuto delle app sponsorizzate. Fate attenzione!", parse_mode="Markdown")
+
+
+async def addcoins_telegram(bot, update, arguments):
+    """Aggiungi ℝ a un utente!
+    
+Devi essere un Royal per eseguire questo comando.
+
+Sintassi: `/addcoins <username> <coins>`"""
+    # Check if the user is logged in
+    if not currently_logged_in(update):
+        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+        return
+    # Check if the currently logged in user is a Royal Games member
+    if not currently_logged_in(update).royal:
+        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+        return
+    # Check the command syntax
+    if len(arguments) != 2:
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/addcoins <username> <coins>`", parse_mode="Markdown")
+        return
+    # Create a new database session
+    session = database.Session()
+    # Find the user
+    user = session.query(database.User).filter_by(username=arguments[0]).first()
+    # Check if the user exists
+    if user is None:
+        await update.message.reply(bot, "⚠ L'utente specificato non esiste.")
+        return
+    # Add coins
+    user.coins += int(arguments[1])
+    # Save the change
+    session.commit()
+    # Answer on Telegram
+    await update.message.reply(bot, f"✅ Hai aggiunto {arguments[1]} ℝ a {user.username}.", parse_mode="Markdown")
 
 
 async def roll_telegram(bot, update, arguments):
@@ -612,13 +646,22 @@ if __name__ == "__main__":
     b.commands["roll"] = roll_telegram
     b.commands["adduser"] = adduser_telegram
     b.commands["toggleroyal"] = toggleroyal_telegram
-    b.commands["buycoins"] = buycoins
+    b.commands["buycoins"] = buycoins_telegram
+    b.commands["addcoins"] = addcoins_telegram
     # Init Discord bot commands
     d.commands["sync"] = sync_discord
     d.commands["roll"] = roll_discord
     d.commands["help"] = help_discord
     d.commands["leggi"] = leggi_discord
     d.commands["diario"] = diario_discord
+    # Set coins to 0 if None in inventory
+    session = database.Session()
+    users = session.query(database.User).all()
+    for user in users:
+        if user.coins is None:
+            user.coins = 0
+    session.commit()
+    del session
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
