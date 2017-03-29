@@ -71,17 +71,12 @@ def login(username, password, enable_exceptions=False):
     # Create a new session
     session = Session()
     # Find the matching user
-    users = session.query(User).filter_by(username=username).all()
-    # No user with a matching username found
-    if len(users) == 0:
-        if enable_exceptions:
-            raise NoUsersMatchingError("No users with the specified username found.")
-        else:
-            return session, None
-    db_user = users[0]
+    db_user = session.query(User).filter_by(username=username).first()
+    # Verify that the user exists
+    if db_user is not None:
+        return session, None
     # Test the password and return the session and the user if successful
     if bcrypt.hashpw(password.encode("utf8"), db_user.password) == db_user.password:
-        # TODO: Maybe there's a better way to do this?
         return session, db_user
     else:
         if enable_exceptions:
@@ -92,6 +87,16 @@ def login(username, password, enable_exceptions=False):
 
 def init_royal_db():
     create_user("test", "test", True)
+
+
+def find_user(username):
+    """Find the user with the specified username and return the session and the user object."""
+    # Create a new session
+    session = Session()
+    # Find the matching user
+    db_user = session.query(User).filter_by(username=username).first()
+    # Return the session and the user
+    return session, db_user
 
 session = Session()
 # Generate the database if it's empty
