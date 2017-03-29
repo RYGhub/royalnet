@@ -469,13 +469,13 @@ Sintassi: `/cv`"""
     await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
 
 
-async def buycoins_telegram(bot, update, arguments):
+async def buycoins_telegram(bot, update, _):
     """Compra nuovi ℝ!
 
 Sintassi: /buycoins"""
     # Check the day
     if datetime.datetime.now().day != 1 or datetime.datetime.now().month != 4:
-        print("Qualcuno sa!")
+        await update.message.reply(bot, "⚠ Non è ancora giunto il momento.")
         return
     # Try to login
     logged_user = currently_logged_in(update)
@@ -525,10 +525,8 @@ Sintassi: `/addcoins <username> <coins>`"""
     if len(arguments) != 2:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/addcoins <username> <coins>`", parse_mode="Markdown")
         return
-    # Create a new database session
-    session = database.Session()
     # Find the user
-    user = session.query(database.User).filter_by(username=arguments[0]).first()
+    session, user = database.find_user(arguments[0])
     # Check if the user exists
     if user is None:
         await update.message.reply(bot, "⚠ L'utente specificato non esiste.")
@@ -653,13 +651,13 @@ if __name__ == "__main__":
     d.commands["leggi"] = leggi_discord
     d.commands["diario"] = diario_discord
     # Set coins to 0 if None in inventory
-    session = database.Session()
-    users = session.query(database.User).all()
-    for user in users:
-        if user.coins is None:
-            user.coins = 0
-    session.commit()
-    del session
+    gen_session = database.Session()
+    gen_users = gen_session.query(database.User).all()
+    for gen_user in gen_users:
+        if gen_user.coins is None:
+            gen_user.coins = 0
+    gen_session.commit()
+    del gen_session
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
