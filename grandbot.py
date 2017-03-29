@@ -380,7 +380,7 @@ Sintassi: `/changepassword <newpassword>`"""
     if logged_user is not None:
         # Change the password
         database.change_password(logged_user.username, arguments[1])
-        await update.message.reply(bot, f"Il cambio password è riuscito!\n\n_Info per smanettoni: la tua password è hashata nel database come_ `{logged_user.password}`.", parse_mode="Markdown")
+        await update.message.reply(bot, f"Il cambio password è riuscito!\n\nLa tua password è hashata nel database come_ `{logged_user.password}`_, io non la posso vedere in nessun modo!_", parse_mode="Markdown")
     else:
         await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
 
