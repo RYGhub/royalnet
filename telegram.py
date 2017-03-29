@@ -5,7 +5,11 @@ import datetime
 
 
 class TelegramAPIError(Exception):
-    pass
+    def __init__(self, code, description):
+        # Error code
+        self.code = code
+        # Error description
+        self.description = description
 
 
 class UpdateError(Exception):
@@ -59,7 +63,7 @@ class Bot:
                 self.updates.append(Update(update))
             except NotImplementedError:
                 pass
-        if len(data) > 0:
+        if len(self.updates) > 0:
             self.offset = self.updates[-1].update_id + 1
 
     async def parse_update(self, update):
@@ -142,14 +146,8 @@ class Bot:
                 # Parse the json data as soon it's ready
                 data = await response.json()
                 # Check for errors in the request
-                if "description" in data:
-                    error = data["description"]
-                if response.status != 200:
-                    raise TelegramAPIError(f"Request returned {response.status} {response.reason}")
-                # Check for errors in the response
-                if not data["ok"]:
-                    error = data["description"]
-                    raise TelegramAPIError(f"Response returned an error: {error}")
+                if response.status != 200 or not data["ok"]:
+                    raise TelegramAPIError(data["error_code"], data["description"])
                 # Return a dictionary containing the data
                 return data["result"]
 
