@@ -4,7 +4,7 @@ import json
 import random
 import aiohttp
 import async_timeout
-import royaldiscord
+import extradiscord
 import markovify
 import database
 import royalbotconfig
@@ -12,7 +12,7 @@ import telegram
 
 loop = asyncio.get_event_loop()
 b = telegram.Bot(royalbotconfig.telegram_token)
-d = royaldiscord.ExtraClient(royalbotconfig.discord_token)
+d = extradiscord.ExtraClient(royalbotconfig.discord_token)
 
 
 def currently_logged_in(thing):
@@ -23,7 +23,7 @@ def currently_logged_in(thing):
     if isinstance(thing, telegram.Update):
         user = session.query(database.User).filter_by(telegram_id=thing.message.sent_from.user_id).first()
     # Check if thing is a Discord message
-    elif isinstance(thing, royaldiscord.discord.Message):
+    elif isinstance(thing, extradiscord.discord.Message):
         user = session.query(database.User).filter_by(discord_id=thing.author.id).first()
     # I don't know what thing is.
     else:
