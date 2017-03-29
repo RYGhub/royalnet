@@ -31,7 +31,7 @@ def currently_logged_in(thing):
     return user
 
 
-async def start_telegram(bot, update, arguments):
+async def start_telegram(bot, update, _):
     # Set status to typing
     await update.message.chat.set_chat_action(bot, "typing")
     user = currently_logged_in(update)
@@ -614,10 +614,8 @@ Sintassi: `/toggleroyal <username>`"""
     if len(arguments) != 1:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/toggleroyal <username>`", parse_mode="Markdown")
         return
-    # Create a new database session
-    session = database.Session()
-    # Find the user
-    user = session.query(database.User).filter_by(username=arguments[0]).first()
+    # Find the specified user
+    session, user = database.find_user(arguments[0])
     # Check if the user exists
     if user is None:
         await update.message.reply(bot, "⚠ L'utente specificato non esiste.")

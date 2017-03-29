@@ -63,7 +63,7 @@ class Bot:
                 self.updates.append(Update(update))
             except NotImplementedError:
                 pass
-        if len(data) > 0:
+        if len(self.updates) > 0:
             self.offset = self.updates[-1].update_id + 1
 
     async def parse_update(self, update):
