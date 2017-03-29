@@ -31,7 +31,7 @@ def currently_logged_in(thing):
     return user
 
 
-async def start_telegram(bot, update, arguments):
+async def start_telegram(bot, update, _):
     # Set status to typing
     await update.message.chat.set_chat_action(bot, "typing")
     user = currently_logged_in(update)
