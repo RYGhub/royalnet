@@ -92,9 +92,6 @@ ENV/
 
 .idea/
 
-# config file
-royalbotconfig.py
-
 # grandbot.py files
 diario.txt
 
