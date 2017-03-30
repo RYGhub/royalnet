@@ -1,6 +1,6 @@
 import sqlalchemy.exc
-from sqlalchemy import create_engine, Column, Integer, String, Boolean
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 import bcrypt
 
@@ -18,6 +18,7 @@ engine = create_engine("sqlite:///db.sqlite")
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 
+
 class User(Base):
     __tablename__ = "members"
 
@@ -27,6 +28,7 @@ class User(Base):
     royal = Column(Boolean, nullable=False)
     telegram_id = Column(Integer, unique=True)
     discord_id = Column(Integer, unique=True)
+    diario_entries = relationship("Diario")
 
     def __str__(self):
         return self.username
@@ -34,7 +36,20 @@ class User(Base):
     def __repr__(self):
         return f"<User {self.id}: {self.username}>"
 
+
+class Diario(Base):
+    __tablename__ = "diario"
+
+    id = Column(Integer, primary_key=True)
+    text = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False)
+    author = Column(Integer, ForeignKey("members.id"))
+
+    def __repr__(self):
+        return f"<Diario {self.date} {self.text}>"
+
 Base.metadata.create_all(engine)
+
 
 def create_user(username, password, royal=False):
     """Create a new user and add it to the database."""
@@ -67,7 +82,8 @@ def change_password(username, newpassword):
 
 
 def login(username, password, enable_exceptions=False):
-    """Try to login using the database password. The session is always returned, while the user object is returned if the login is successful."""
+    """Try to login using the database password.
+    The session is always returned, while the user object is returned if the login is successful."""
     # Create a new session
     session = Session()
     # Find the matching user
@@ -98,8 +114,29 @@ def find_user(username):
     # Return the session and the user
     return session, db_user
 
-session = Session()
-# Generate the database if it's empty
-if session.query(User).first() is None:
-    init_royal_db()
-del session
+
+def migrate_diario():
+    import datetime
+    session = Session()
+    file = open("diario.txt", encoding="utf8")
+    for row in file:
+        entry = row.split("|", 1)
+        new = Diario()
+        new.date = datetime.datetime.fromtimestamp(int(entry[0]))
+        new.text = entry[1]
+        session.add(new)
+    session.commit()
+
+
+def new_diario_entry(dt, text, author):
+    # Create a new session
+    session = Session()
+    # Create a new diario entry
+    entry = Diario()
+    entry.date = dt
+    entry.text = text
+    entry.author = author.id
+    # Add the entry to the database
+    session.add(entry)
+    # Commit the change
+    session.commit()

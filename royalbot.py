@@ -63,21 +63,12 @@ Sintassi: `/diario <frase>`"""
     if len(arguments) == 0:
         await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | markov | numerofrase>`", parse_mode="Markdown")
         return
-    # Check for non-ASCII characters
-    entry = " ".join(arguments)
-    if not entry.isprintable():
-        await update.message.reply(bot, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!")
-        return
-    # Remove endlines
-    entry = entry.replace("\n", " ")
-    # TODO: check if a end-of-file character can be sent on Telegram
-    # Generate a timestamp
-    time = update.message.date.timestamp()
-    # Write on the diario file
-    file = open("diario.txt", "a", encoding="utf8")
-    file.write(f"{int(time)}|{entry}\n")
-    file.close()
-    del file
+    # Find the user
+    user = currently_logged_in(update)
+    # Prepare the text
+    text = " ".join(arguments).strip()
+    # Add the new entry
+    database.new_diario_entry(update.message.date, text, user)
     # Answer on Telegram
     await update.message.reply(bot, "✅ Aggiunto al diario!")
 
@@ -494,23 +485,17 @@ Sintassi: `!roll <max>`"""
     await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
 
 
-async def adduser_telegram(bot, update, arguments):
-    """Aggiungi un utente al database Royal Games!
-    
-Devi essere un Royal per poter eseguire questo comando.
+async def register_telegram(bot, update, arguments):
+    """Registrati al database Royal Games!
 
-Sintassi: `/adduser <username> <password>`"""
-    # Check if the user is logged in
-    if not currently_logged_in(update):
-        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+Sintassi: `/register <username> <password>`"""
+    # One account per user only!
+    if currently_logged_in(update) is not None:
+        await update.message.reply(bot, "⚠ Sei già registrato!")
         return
-    # Check if the currently logged in user is a Royal Games member
-    if not currently_logged_in(update).royal:
-        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
-        return
-    # Check the command syntax
-    if len(arguments) != 2:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/adduser <username> <password>`", parse_mode="Markdown")
+    # Check if the username is printable
+    if not arguments[0].isprintable():
+        await update.message.reply(bot, "⚠ Username non valido.")
         return
     # Try to create a new user
     try:
@@ -519,8 +504,11 @@ Sintassi: `/adduser <username> <password>`"""
         await update.message.reply(bot, "⚠ Qualcosa è andato storto nella creazione dell'utente. Per altre info, guarda i log del bot.")
         raise
     else:
-        await update.message.reply(bot, "✅ Creazione riuscita!")
-
+        session, logged_user = database.login(arguments[0], arguments[1])
+        logged_user.telegram_id = update.message.sent_from.user_id
+        session.commit()
+        print(f"{logged_user} ha sincronizzato l'account di Telegram.")
+        await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.", parse_mode="Markdown")
 
 async def toggleroyal_telegram(bot, update, arguments):
     """Inverti lo stato di Royal di un utente.
@@ -568,7 +556,7 @@ if __name__ == "__main__":
     b.commands["markov"] = markov_telegram
     b.commands["cv"] = cv_telegram
     b.commands["roll"] = roll_telegram
-    b.commands["adduser"] = adduser_telegram
+    b.commands["register"] = register_telegram
     b.commands["toggleroyal"] = toggleroyal_telegram
     # Init Discord bot commands
     d.commands["sync"] = sync_discord
