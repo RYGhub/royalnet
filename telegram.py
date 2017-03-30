@@ -98,7 +98,7 @@ class Bot:
             command = split_msg[0].lstrip("/").split("@")[0]
             if command in self.commands:
                 arguments = split_msg[1:]
-                loop.create_task(self.commands[command](bot=self, update=update, arguments=arguments))
+                loop.create_task(self.commands[command](self, update, arguments))
         # Update message status if a service message is received
         if isinstance(update.message.content, ServiceMessage):
             # New user in chat

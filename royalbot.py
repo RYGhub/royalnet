@@ -31,84 +31,127 @@ def currently_logged_in(thing):
     return user
 
 
-async def start_telegram(bot, update, _):
-    # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
-    user = currently_logged_in(update)
-    if user is None:
-        await update.message.reply(bot, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb._", parse_mode="Markdown")
+async def answer(bot, thing, text):
+    """Rispondi al messaggio con il canale corretto."""
+    # Answer on Telegram
+    if isinstance(thing, telegram.Update):
+        await thing.message.reply(bot, text, parse_mode="Markdown")
+    # Answer on Discord
+    elif isinstance(thing, extradiscord.discord.Message):
+        await bot.send_message(thing.channel, text)
     else:
+        raise TypeError("thing must be either a telegram.Update or a discord.Message")
+
+
+async def status_typing(bot, thing):
+    """Imposta lo stato a Bot sta scrivendo..."""
+    # Set typing status on Telegram
+    if isinstance(thing, telegram.Update):
+        await thing.message.chat.set_chat_action(bot, "typing")
+    # Set typing status on Discord
+    elif isinstance(thing, extradiscord.discord.Message):
+        await bot.send_typing(thing.channel)
+    else:
+        raise TypeError("thing must be either a telegram.Update or a discord.Message")
+
+
+async def display_help(bot, thing, function):
+    """Display the help command of a function"""
+    # Telegram bot commands start with /
+    if isinstance(thing, telegram.Update):
+        symbol = "/"
+    # Discord bot commands start with !
+    elif isinstance(thing, extradiscord.discord.Message):
+        symbol = "!"
+    # Unknown service
+    else:
+        raise TypeError("thing must be either a telegram.Update or a discord.Message")
+    # Display the help message
+    await answer(bot, thing, function.__doc__.format(symbol=symbol))
+
+
+def find_date(thing):
+    """Find the date of a message."""
+    if isinstance(thing, telegram.Update):
+        date = thing.message.date
+    elif isinstance(thing, extradiscord.discord.Message):
+        date = thing.timestamp
+    else:
+        raise TypeError("thing must be either a telegram.Update or a discord.Message")
+    return date
+
+
+async def start(bot, thing, _):
+    """Saluta l'utente e visualizza lo stato account sincronizzati.
+
+Sintassi: `{symbol}start`"""
+    # Set status to typing
+    await status_typing(bot, thing)
+    # Find the currently logged in user
+    user = currently_logged_in(thing)
+    # Answer appropriately
+    if user is None:
+        await answer(bot, thing, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb._")
+    else:
+        # Check the user's connected accounts
         telegram_status = "🔵" if user.telegram_id is not None else "⚪"
         discord_status = "🔵" if user.discord_id is not None else "⚪"
-        await update.message.reply(bot, f"Ciao!\nHai eseguito l'accesso come `{user}`.\n\n*Account collegati:*\n{telegram_status} Telegram\n{discord_status} Discord", parse_mode="Markdown")
+        await answer(bot, thing, f"Ciao!\n"
+                                 f"Hai eseguito l'accesso come `{user}`.\n"
+                                 f"\n"
+                                 f"*Account collegati:*\n"
+                                 f"{telegram_status} Telegram\n"
+                                 f"{discord_status} Discord")
 
 
-async def diario_telegram(bot, update, arguments):
+async def diario(bot, thing, arguments):
     """Aggiungi una frase al diario Royal Games.
 
 Devi essere un Royal per poter eseguire questo comando.
 
-Sintassi: `/diario <frase>`"""
+Sintassi: `{symbol}diario <frase>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
+    await status_typing(bot, thing)
     # Check if the user is logged in
-    if not currently_logged_in(update):
-        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
+    if not currently_logged_in(thing):
+        await answer(bot, thing, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.")
         return
     # Check if the currently logged in user is a Royal Games member
-    if not currently_logged_in(update).royal:
-        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
+    if not currently_logged_in(thing).royal:
+        await answer(bot, thing, "⚠ Non sei autorizzato a eseguire questo comando.")
         return
     # Check the command syntax
     if len(arguments) == 0:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/diario <random | markov | numerofrase>`", parse_mode="Markdown")
+        await display_help(bot, thing, diario)
         return
     # Find the user
-    user = currently_logged_in(update)
+    user = currently_logged_in(thing)
     # Prepare the text
     text = " ".join(arguments).strip()
     # Add the new entry
-    database.new_diario_entry(update.message.date, text, user)
+    database.new_diario_entry(find_date(thing), text, user)
     # Answer on Telegram
-    await update.message.reply(bot, "✅ Aggiunto al diario!")
+    await answer(bot, thing, "✅ Aggiunto al diario!")
 
 
-async def diario_discord(bot, message, arguments):
-    """Aggiungi una frase al diario Royal Games.
+async def leggi(bot, thing, arguments):
+    """Leggi una frase con un id specifico dal diario Royal Games.
 
-Devi essere un Royal per poter eseguire questo comando.
-
-Sintassi: `!diario <frase>`"""
-    # Check if the user is logged in
-    if not currently_logged_in(message):
-        bot.send_message(message.channel, "⚠ Non hai ancora eseguito l'accesso! Usa `!sync`.")
+Sintassi: {symbol}leggi <numero>"""
+    # Set status to typing
+    await status_typing(bot, thing)
+    # Create a new database session
+    session = database.Session()
+    # Cast the number to an int
+    try:
+        n = int(arguments[0])
+    except ValueError:
+        await answer(bot, thing, "⚠ Il numero specificato non è valido.")
         return
-    # Check if the currently logged in user is a Royal Games member
-    if not currently_logged_in(message).royal:
-        bot.send_message(message.channel, "⚠ Non sei autorizzato a eseguire questo comando.")
-        return
-    # Check the command syntax
-    if len(arguments) == 0:
-        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!diario <random | markov | numerofrase>`")
-        return
-    # Check for non-ASCII characters
-    entry = " ".join(arguments)
-    if not entry.isprintable():
-        bot.send_message(message.channel, "⚠ La frase che stai provando ad aggiungere contiene caratteri non ASCII, quindi non è stata aggiunta.\nToglili e riprova!")
-        return
-    # Remove endlines
-    entry = entry.replace("\n", " ")
-    # TODO: check if a end-of-file character can be sent on Discord
-    # Generate a timestamp
-    time = message.timestamp
-    # Write on the diario file
-    file = open("diario.txt", "a", encoding="utf8")
-    file.write(f"{int(time)}|{entry}\n")
-    file.close()
-    del file
-    # Answer on Telegram
-    bot.send_message(message.channel, "✅ Aggiunto al diario!")
-
+    # Query the diario table for the entry with the specified id
+    entry = session.query(database.Diario).filter_by(id=n).first()
+    # Display the entry
+    # TODO: FINISH THIS
 
 async def leggi_telegram(bot, update, arguments):
     """Leggi una frase dal diario Royal Games.
@@ -119,7 +162,8 @@ Sintassi: `/leggi <random | numerofrase>`"""
     # Set status to typing
     await update.message.chat.set_chat_action(bot, "typing")
     if len(arguments) == 0 or len(arguments) > 1:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/leggi <random | numerofrase>`", parse_mode="Markdown")
+        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n"
+                                        "`/leggi <random | numerofrase>`", parse_mode="Markdown")
         return
     # Open the file
     file = open("diario.txt", "r", encoding="utf8")
@@ -545,10 +589,13 @@ Sintassi: `/toggleroyal <username>`"""
         await update.message.reply(bot, f"✅ L'utente `{user.username}` non è più un Royal.", parse_mode="Markdown")
 
 if __name__ == "__main__":
+    # Init universal bot commands
+    b.commands["start"] = start
+    d.commands["start"] = start
+    b.commands["diario"] = diario
+    d.commands["diario"] = diario
     # Init Telegram bot commands
-    b.commands["start"] = start_telegram
     b.commands["leggi"] = leggi_telegram
-    b.commands["diario"] = diario_telegram
     b.commands["discord"] = discord_telegram
     b.commands["sync"] = sync_telegram
     b.commands["changepassword"] = changepassword_telegram
@@ -563,7 +610,6 @@ if __name__ == "__main__":
     d.commands["roll"] = roll_discord
     d.commands["help"] = help_discord
     d.commands["leggi"] = leggi_discord
-    d.commands["diario"] = diario_discord
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
