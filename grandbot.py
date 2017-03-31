@@ -473,10 +473,6 @@ async def buycoins_telegram(bot, update, _):
     """Compra nuovi ℝ!
 
 Sintassi: /buycoins"""
-    # Check the day
-    if datetime.datetime.now().day != 1 or datetime.datetime.now().month != 4:
-        await update.message.reply(bot, "⚠ Non è ancora giunto il momento.")
-        return
     # Try to login
     logged_user = currently_logged_in(update)
     # Check if the user is logged in
@@ -504,7 +500,7 @@ Sintassi: /buycoins"""
                                     f"*Ottieni 30 ℝ* per ogni amico che inviti alla Royal Games!\n"
                                     f"[Ottieni 1337 ℝ]({app}) installando l'app dei nostri partner!\n"
                                     f"*Ottieni 1 ℝ* al giorno aggiungendo `steffo.me` alla fine del tuo username di Steam!\n\n"
-                                    f"NOTA LEGALE: @Steffo non si assume responsabilità per il contenuto delle app sponsorizzate. Fate attenzione!", parse_mode="Markdown")
+                                    f"NOTA LEGALE: La Royal Games non si assume responsabilità per il contenuto delle app sponsorizzate. Fate attenzione!", parse_mode="Markdown")
 
 
 async def addcoins_telegram(bot, update, arguments):
