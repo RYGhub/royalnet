@@ -55,7 +55,7 @@ async def status_typing(bot, thing):
         raise TypeError("thing must be either a telegram.Update or a discord.Message")
 
 
-async def display_help(bot, thing, function):
+async def display_help(bot, thing, specified_function):
     """Display the help command of a function"""
     # Telegram bot commands start with /
     if isinstance(thing, telegram.Update):
@@ -67,7 +67,7 @@ async def display_help(bot, thing, function):
     else:
         raise TypeError("thing must be either a telegram.Update or a discord.Message")
     # Display the help message
-    await answer(bot, thing, function.__doc__.format(symbol=symbol))
+    await answer(bot, thing, specified_function.__doc__.format(symbol=symbol))
 
 
 def find_date(thing):
@@ -150,78 +150,13 @@ Sintassi: {symbol}leggi <numero>"""
         return
     # Query the diario table for the entry with the specified id
     entry = session.query(database.Diario).filter_by(id=n).first()
+    # Check if the entry exists
+    if entry is None:
+        await answer(bot, thing, "⚠ Non esiste una frase del diario con quel numero.")
+        return
     # Display the entry
-    # TODO: FINISH THIS
-
-async def leggi_telegram(bot, update, arguments):
-    """Leggi una frase dal diario Royal Games.
-
-Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
-
-Sintassi: `/leggi <random | numerofrase>`"""
-    # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
-    if len(arguments) == 0 or len(arguments) > 1:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n"
-                                        "`/leggi <random | numerofrase>`", parse_mode="Markdown")
-        return
-    # Open the file
-    file = open("diario.txt", "r", encoding="utf8")
-    # Split the data in lines
-    entries = file.read().split("\n")
-    file.close()
-    # Choose an entry
-    if arguments[0] == "random":
-        # either randomly...
-        entry_number = random.randrange(len(entries))
-    else:
-        # ...or a specific one
-        # TODO: check if the entry actually exists
-        # TODO: check if the first argument is a number
-        entry_number = int(arguments[0])
-    # Split the timestamp from the text
-    entry = entries[entry_number].split("|", 1)
-    # Parse the timestamp
-    date = datetime.datetime.fromtimestamp(int(entry[0])).isoformat()
-    # Get the text
-    text = entry[1]
-    # Sanitize the text to prevent TelegramErrors
-    text = text.replace("_", "\_").replace("*", "\*").replace("`", "\`").replace("[", "\[")
-    await update.message.reply(bot, f"Frase #{entry_number} | {date}\n{text}", parse_mode="Markdown")
-
-
-async def leggi_discord(bot, message, arguments):
-    """Leggi una frase dal diario Royal Games.
-
-Puoi visualizzare il diario [qui](https://royal.steffo.me/diario.htm), leggere una frase casuale scrivendo `/leggi random` o leggere una frase specifica scrivendo `/leggi <numero>`.
-
-Sintassi: `!leggi <random | numerofrase>`"""
-    if len(arguments) == 0 or len(arguments) > 1:
-        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!leggi <random | numerofrase>`")
-        return
-    # Open the file
-    file = open("diario.txt", "r", encoding="utf8")
-    # Split the data in lines
-    entries = file.read().split("\n")
-    file.close()
-    # Choose an entry
-    if arguments[0] == "random":
-        # either randomly...
-        entry_number = random.randrange(len(entries))
-    else:
-        # ...or a specific one
-        # TODO: check if the entry actually exists
-        # TODO: check if the first argument is a number
-        entry_number = int(arguments[0])
-    # Split the timestamp from the text
-    entry = entries[entry_number].split("|", 1)
-    # Parse the timestamp
-    date = datetime.datetime.fromtimestamp(int(entry[0])).isoformat()
-    # Get the text
-    text = entry[1]
-    # Sanitize the text to prevent TelegramErrors
-    text = text.replace("_", "\_").replace("*", "\*").replace("`", "\`").replace("[", "\[")
-    await bot.send_message(message.channel, f"Frase #{entry_number} | {date}\n{text}")
+    await answer(bot, thing, f"*Dal diario Royal Games, il {entry.date}*:\n"
+                             f"{entry.text}")
 
 
 async def markov_telegram(bot, update, arguments):
@@ -594,22 +529,8 @@ if __name__ == "__main__":
     d.commands["start"] = start
     b.commands["diario"] = diario
     d.commands["diario"] = diario
-    # Init Telegram bot commands
-    b.commands["leggi"] = leggi_telegram
-    b.commands["discord"] = discord_telegram
-    b.commands["sync"] = sync_telegram
-    b.commands["changepassword"] = changepassword_telegram
-    b.commands["help"] = help_telegram
-    b.commands["markov"] = markov_telegram
-    b.commands["cv"] = cv_telegram
-    b.commands["roll"] = roll_telegram
-    b.commands["register"] = register_telegram
-    b.commands["toggleroyal"] = toggleroyal_telegram
-    # Init Discord bot commands
-    d.commands["sync"] = sync_discord
-    d.commands["roll"] = roll_discord
-    d.commands["help"] = help_discord
-    d.commands["leggi"] = leggi_discord
+    b.commands["leggi"] = leggi
+    d.commands["leggi"] = leggi
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
