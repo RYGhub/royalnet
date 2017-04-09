@@ -55,7 +55,7 @@ async def status_typing(bot, thing):
         raise TypeError("thing must be either a telegram.Update or a discord.Message")
 
 
-async def display_help(bot, thing, specified_function):
+async def display_help(bot, thing, function):
     """Display the help command of a function"""
     # Telegram bot commands start with /
     if isinstance(thing, telegram.Update):
@@ -67,7 +67,7 @@ async def display_help(bot, thing, specified_function):
     else:
         raise TypeError("thing must be either a telegram.Update or a discord.Message")
     # Display the help message
-    await answer(bot, thing, specified_function.__doc__.format(symbol=symbol))
+    await answer(bot, thing, function.__doc__.format(symbol=symbol))
 
 
 def find_date(thing):
@@ -159,210 +159,39 @@ Sintassi: {symbol}leggi <numero>"""
                              f"{entry.text}")
 
 
-async def markov_telegram(bot, update, arguments):
-    """Genera una frase del diario utilizzando le catene di Markov.
+async def helpme(bot, thing, arguments):
+    """Visualizza il messaggio di aiuto di un comando.
 
-Puoi specificare con che parole (massimo 2) deve iniziare la frase generata.
-Se non vengono specificate, verrà scelta una parola a caso.
-
-Sintassi: `/markov [inizio]`"""
+Sintassi: `/helpme [comando]`"""
     # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
-    if len(arguments) > 2:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/markov [inizio]`")
-    file = open("diario.txt", "r", encoding="utf8")
-    # Clean the diario
-    clean_diario = str()
-    # Remove the timestamps in each row
-    for row in file:
-        clean_diario += row.split("|", 1)[1].lower()
-    # The text is split by newlines
-    generator = markovify.NewlineText(clean_diario)
-    file.close()
-    if len(arguments) == 0:
-        # Generate a sentence with a random start
-        text = generator.make_sentence(tries=50)
-    else:
-        # Generate a sentence with a specific start
-        start_with = " ".join(arguments)
-        try:
-            text = generator.make_sentence_with_start(start_with, tries=100)
-        # No entry can start in that word.
-        except KeyError:
-            await update.message.reply(bot, f"⚠ Non sono state trovate corrispondenze nel diario dell'inizio che hai specificato.", parse_mode="Markdown")
-            return
-    if text is not None:
-        # Sanitize the text to prevent TelegramErrors
-        text = text.replace("_", "\_").replace("*", "\*").replace("`", "\`").replace("[", "\[")
-        await update.message.reply(bot, f"*Frase generata:*\n{text}", parse_mode="Markdown")
-    else:
-        await update.message.reply(bot, f"⚠ Il bot non è riuscito a generare una nuova frase.\nSe è la prima volta che vedi questo errore, riprova, altrimenti prova a cambiare configurazione.")
-
-
-async def help_telegram(bot, update, arguments):
-    """Visualizza la descrizione di un comando.
-
-Sintassi: `/help [comando]`"""
-    # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
-    if len(arguments) == 0:
-        await update.message.reply(bot, help.__doc__, parse_mode="Markdown")
-    elif len(arguments) > 1:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/help [comando]`", parse_mode="Markdown")
-    else:
+    await status_typing(bot, thing)
+    # If no command is specified, show the help message for this command.
+    if len(arguments) == 0 or len(arguments) > 1:
+        await answer(bot, thing, helpme.__doc__)
+        return
+    # Check the list of telegram commands if the message was sent from Telegram
+    if isinstance(thing, telegram.Update):
         if arguments[0] in b.commands:
-            await update.message.reply(bot, b.commands[arguments[0] + "_telegram"].__doc__, parse_mode="Markdown")
+            await answer(bot, thing, b.commands[arguments[0]].__doc__)
         else:
-            await update.message.reply(bot, "⚠ Il comando specificato non esiste.")
-
-
-async def help_discord(bot, message, arguments):
-    """Visualizza la descrizione di un comando.
-
-Sintassi: `!help [comando]`"""
-    if len(arguments) == 0:
-        bot.send_message(message.channel, help.__doc__)
-    elif len(arguments) > 1:
-        bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!help [comando]`")
-    else:
-        if arguments[0] in b.commands:
-            bot.send_message(message.channel, b.commands[arguments[0] + "_discord"].__doc__)
+            await answer(bot, thing, "⚠ Il comando specificato non esiste.")
+    # Check the list of discord commands if the message was sent from Discord
+    if isinstance(thing, extradiscord.discord.Message):
+        if arguments[0] in d.commands:
+            await answer(bot, thing, d.commands[arguments[0]].__doc__)
         else:
-            bot.send_message(message.channel, "⚠ Il comando specificato non esiste.")
+            await answer(bot, thing, "⚠ Il comando specificato non esiste.")
 
 
-async def discord_telegram(bot, update, arguments):
-    """Manda un messaggio a #chat di Discord.
-
-Sintassi: `/discord <messaggio>`"""
-    # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
-    # Try to login
-    logged_user = currently_logged_in(update)
-    # Check if the user is logged in
-    if not logged_user:
-        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
-        return
-    # Check if the currently logged in user is a Royal Games member
-    if not logged_user.royal:
-        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
-        return
-    # Check the command syntax
-    if len(arguments) == 0:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/discord <messaggio>`", parse_mode="Markdown")
-        return
-    message = " ".join(arguments)
-    # Find the message sender's Discord username
-    users = list(d.client.get_all_members())
-    for user in users:
-        if user.id == logged_user.discord_id:
-            username = user.name
-            break
-    else:
-        # Use the telegram username
-        username = f"{update.message.sent_from}"
-    # Parameters to send
-    params = {
-        "username": username,
-        "content": f"{message}"
-    }
-    # Headers to send
-    headers = {
-        "Content-Type": "application/json"
-    }
-    # Request timeout is 10 seconds.
-    with async_timeout.timeout(10):
-        # Create a new session for each request.
-        async with aiohttp.ClientSession() as session:
-            # Send the request to the Discord webhook
-            async with session.request("POST", royalbotconfig.discord_webhook, data=json.dumps(params), headers=headers) as response:
-                # Check if the request was successful
-                if response.status != 204:
-                    # Request failed
-                    # Answer on Telegram
-                    await update.message.reply(bot, "⚠ L'invio del messaggio è fallito. Oops!", parse_mode="Markdown")
-                    # TODO: handle Discord webhooks errors
-                    raise Exception("Qualcosa è andato storto durante l'invio del messaggio a Discord.")
-                # Answer on Telegram
-                await update.message.reply(bot, "✅ Richiesta inviata.", parse_mode="Markdown")
-
-
-async def sync_telegram(bot, update, arguments):
-    """Connetti il tuo account Telegram al Database Royal Games.
-
-Sintassi: `/sync <username> <password>`"""
-    # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
-    if len(arguments) != 2:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/sync <username> <password>`", parse_mode="Markdown")
-        return
-    # Try to login
-    session, logged_user = database.login(arguments[0], arguments[1])
-    # Check if the login is successful
-    if logged_user is not None:
-        # Add the telegram_id to the user if it's missing
-        if logged_user.telegram_id is None:
-            logged_user.telegram_id = update.message.sent_from.user_id
-            session.commit()
-            print(f"{logged_user} ha sincronizzato l'account di Telegram.")
-            await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.", parse_mode="Markdown")
-        else:
-            await update.message.reply(bot, "⚠ L'account è già stato sincronizzato.", parse_mode="Markdown")
-    else:
-        await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
-
-
-async def sync_discord(bot, message, arguments):
-    """Connetti il tuo account Discord al Database Royal Games.
-
-Sintassi: `!sync <username> <password>`"""
-    if len(arguments) != 2:
-        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!sync <username> <password>`")
-        return
-    # Try to login
-    session, logged_user = database.login(arguments[0], arguments[1])
-    # Check if the login is successful
-    if logged_user is not None:
-        # Add the discord_id to the user if it's missing
-        if logged_user.discord_id is None:
-            logged_user.discord_id = int(message.author.id)
-            session.commit()
-            print(f"{logged_user} ha sincronizzato l'account di Discord.")
-            await bot.send_message(message.channel, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.")
-        else:
-            await bot.send_message(message.channel, "⚠ L'account è già stato sincronizzato.")
-    else:
-        await bot.send_message(message.channel, "⚠ Username o password non validi.")
-
-
-async def changepassword_telegram(bot, update, arguments):
-    """Cambia la tua password del Database Royal Games.
-
-Sintassi: `/changepassword <newpassword>`"""
-    # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
-    if len(arguments) != 2:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/changepassword <oldpassword> <newpassword>`", parse_mode="Markdown")
-        return
-    # TODO: this can be improved, maybe?
-    logged_user = currently_logged_in(update)
-    # Check if the login is successful
-    if logged_user is not None:
-        # Change the password
-        database.change_password(logged_user.username, arguments[1])
-        await update.message.reply(bot, f"Il cambio password è riuscito!\n\nLa tua password è hashata nel database come_ `{logged_user.password}`_, io non la posso vedere in nessun modo!_", parse_mode="Markdown")
-    else:
-        await update.message.reply(bot, "⚠ Username o password non validi.", parse_mode="Markdown")
-
-
-async def cv_telegram(bot, update, arguments):
+async def cv(bot, thing, arguments):
     """Visualizza lo stato attuale della chat vocale Discord.
 
-Sintassi: `/cv`"""
+Sintassi: `{symbol}cv`"""
     # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
+    await status_typing(bot, thing)
+    # Check command syntax
     if len(arguments) != 0:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/cv`", parse_mode="Markdown")
+        await answer(bot, thing, cv.__doc__)
         return
     # Wait for the Discord bot to login
     while not d.client.is_logged_in:
@@ -434,94 +263,22 @@ Sintassi: `/cv`"""
             to_send += f"{volume} {status} {name} {game}\n"
         # Channel footer
         to_send += "\n"
-    await update.message.reply(bot, to_send, parse_mode="Markdown", disable_web_page_preview=1)
+    await answer(bot, thing, to_send)
 
 
-async def roll_telegram(bot, update, arguments):
+async def roll(bot, thing, arguments):
     """Lancia un dado a N facce.
 
-Sintassi: `/roll <max>`"""
+Sintassi: `{symbol}roll <max>`"""
     # Set status to typing
-    await update.message.chat.set_chat_action(bot, "typing")
+    await status_typing(bot, thing)
     # Check the command syntax
     if len(arguments) != 1:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/roll <max>`",
-                                   parse_mode="Markdown")
+        await answer(bot, thing, "⚠ Sintassi del comando non valida.\n`/roll <max>`",)
         return
     # Roll the dice!
-    await update.message.reply(bot, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}", parse_mode="Markdown")
+    await answer(bot, thing, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
 
-
-async def roll_discord(bot, message, arguments):
-    """Lancia un dado a N facce.
-
-Sintassi: `!roll <max>`"""
-    # Check the command syntax
-    if len(arguments) != 1:
-        await bot.send_message(message.channel, "⚠ Sintassi del comando non valida.\n`!roll <max>`")
-        return
-    # Roll the dice!
-    await bot.send_message(message.channel, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
-
-
-async def register_telegram(bot, update, arguments):
-    """Registrati al database Royal Games!
-
-Sintassi: `/register <username> <password>`"""
-    # One account per user only!
-    if currently_logged_in(update) is not None:
-        await update.message.reply(bot, "⚠ Sei già registrato!")
-        return
-    # Check if the username is printable
-    if not arguments[0].isprintable():
-        await update.message.reply(bot, "⚠ Username non valido.")
-        return
-    # Try to create a new user
-    try:
-        database.create_user(arguments[0], arguments[1], False)
-    except database.sqlalchemy.exc.DBAPIError:
-        await update.message.reply(bot, "⚠ Qualcosa è andato storto nella creazione dell'utente. Per altre info, guarda i log del bot.")
-        raise
-    else:
-        session, logged_user = database.login(arguments[0], arguments[1])
-        logged_user.telegram_id = update.message.sent_from.user_id
-        session.commit()
-        print(f"{logged_user} ha sincronizzato l'account di Telegram.")
-        await update.message.reply(bot, f"Sincronizzazione riuscita!\nSei loggato come `{logged_user}`.", parse_mode="Markdown")
-
-async def toggleroyal_telegram(bot, update, arguments):
-    """Inverti lo stato di Royal di un utente.
-    
-Devi essere un Royal per poter eseguire questo comando.
-
-Sintassi: `/toggleroyal <username>`"""
-    # Check if the user is logged in
-    if not currently_logged_in(update):
-        await update.message.reply(bot, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.", parse_mode="Markdown")
-        return
-    # Check if the currently logged in user is a Royal Games member
-    if not currently_logged_in(update).royal:
-        await update.message.reply(bot, "⚠ Non sei autorizzato a eseguire questo comando.")
-        return
-    # Check the command syntax
-    if len(arguments) != 1:
-        await update.message.reply(bot, "⚠ Sintassi del comando non valida.\n`/toggleroyal <username>`", parse_mode="Markdown")
-        return
-    # Find the specified user
-    session, user = database.find_user(arguments[0])
-    # Check if the user exists
-    if user is None:
-        await update.message.reply(bot, "⚠ L'utente specificato non esiste.")
-        return
-    # Toggle his Royal status
-    user.royal = not user.royal
-    # Save the change
-    session.commit()
-    # Answer on Telegram
-    if user.royal:
-        await update.message.reply(bot, f"✅ L'utente `{user.username}` ora è un Royal.", parse_mode="Markdown")
-    else:
-        await update.message.reply(bot, f"✅ L'utente `{user.username}` non è più un Royal.", parse_mode="Markdown")
 
 if __name__ == "__main__":
     # Init universal bot commands
@@ -529,8 +286,12 @@ if __name__ == "__main__":
     d.commands["start"] = start
     b.commands["diario"] = diario
     d.commands["diario"] = diario
-    b.commands["leggi"] = leggi
-    d.commands["leggi"] = leggi
+    b.commands["d"] = diario
+    b.commands["help"] = helpme
+    b.commands["helpme"] = helpme
+    d.commands["help"] = helpme
+    d.commands["helpme"] = helpme
+    b.commands["cv"] = cv
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")
