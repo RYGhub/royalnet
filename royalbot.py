@@ -81,29 +81,6 @@ def find_date(thing):
     return date
 
 
-async def start(bot, thing, _):
-    """Saluta l'utente e visualizza lo stato account sincronizzati.
-
-Sintassi: `{symbol}start`"""
-    # Set status to typing
-    await status_typing(bot, thing)
-    # Find the currently logged in user
-    user = currently_logged_in(thing)
-    # Answer appropriately
-    if user is None:
-        await answer(bot, thing, f"Ciao!\n_Non hai eseguito l'accesso al RYGdb._")
-    else:
-        # Check the user's connected accounts
-        telegram_status = "🔵" if user.telegram_id is not None else "⚪"
-        discord_status = "🔵" if user.discord_id is not None else "⚪"
-        await answer(bot, thing, f"Ciao!\n"
-                                 f"Hai eseguito l'accesso come `{user}`.\n"
-                                 f"\n"
-                                 f"*Account collegati:*\n"
-                                 f"{telegram_status} Telegram\n"
-                                 f"{discord_status} Discord")
-
-
 async def diario(bot, thing, arguments):
     """Aggiungi una frase al diario Royal Games.
 
@@ -112,14 +89,6 @@ Devi essere un Royal per poter eseguire questo comando.
 Sintassi: `{symbol}diario <frase>`"""
     # Set status to typing
     await status_typing(bot, thing)
-    # Check if the user is logged in
-    if not currently_logged_in(thing):
-        await answer(bot, thing, "⚠ Non hai ancora eseguito l'accesso! Usa `/sync`.")
-        return
-    # Check if the currently logged in user is a Royal Games member
-    if not currently_logged_in(thing).royal:
-        await answer(bot, thing, "⚠ Non sei autorizzato a eseguire questo comando.")
-        return
     # Check the command syntax
     if len(arguments) == 0:
         await display_help(bot, thing, diario)
@@ -282,8 +251,6 @@ Sintassi: `{symbol}roll <max>`"""
 
 if __name__ == "__main__":
     # Init universal bot commands
-    b.commands["start"] = start
-    d.commands["start"] = start
     b.commands["diario"] = diario
     d.commands["diario"] = diario
     b.commands["d"] = diario
