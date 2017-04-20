@@ -304,6 +304,9 @@ async def osu_pp(timeout):
                         r = await osu.get_user(db[player]["osu"]["id"], mode)
                     except KeyError:
                         continue
+                    except Exception:
+                        print("[Osu!] Something is wrong...")
+                        continue
                     else:
                         if r["pp_raw"] is not None:
                             pp = float(r["pp_raw"])
