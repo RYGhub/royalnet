@@ -98,7 +98,7 @@ Sintassi: `{symbol}diario <frase>`"""
     # Prepare the text
     text = " ".join(arguments).strip()
     # Add the new entry
-    database.new_diario_entry(find_date(thing), text, user)
+    database.new_diario_entry(find_date(thing), text)
     # Answer on Telegram
     await answer(bot, thing, "✅ Aggiunto al diario!")
 

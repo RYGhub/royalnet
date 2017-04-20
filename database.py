@@ -25,10 +25,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    royal = Column(Boolean, nullable=False)
     telegram_id = Column(Integer, unique=True)
     discord_id = Column(Integer, unique=True)
-    diario_entries = relationship("Diario")
 
     def __str__(self):
         return self.username
@@ -43,7 +41,6 @@ class Diario(Base):
     id = Column(Integer, primary_key=True)
     text = Column(String, nullable=False)
     date = Column(DateTime, nullable=False)
-    author = Column(Integer, ForeignKey("members.id"))
 
     def __repr__(self):
         return f"<Diario {self.date} {self.text}>"
@@ -51,14 +48,14 @@ class Diario(Base):
 Base.metadata.create_all(engine)
 
 
-def create_user(username, password, royal=False):
+def create_user(username, password):
     """Create a new user and add it to the database."""
     # Create a new session
     session = Session()
     # Hash the password with bcrypt
     hashed_password = bcrypt.hashpw(password.encode("utf8"), bcrypt.gensalt())
     # Create a new user
-    new_member = User(username=username, password=hashed_password, royal=royal)
+    new_member = User(username=username, password=hashed_password)
     # Add the newly created member to the session
     session.add(new_member)
     # Commit the changes
@@ -101,10 +98,6 @@ def login(username, password, enable_exceptions=False):
             return session, None
 
 
-def init_royal_db():
-    create_user("test", "test", True)
-
-
 def find_user(username):
     """Find the user with the specified username and return the session and the user object."""
     # Create a new session
@@ -128,15 +121,19 @@ def migrate_diario():
     session.commit()
 
 
-def new_diario_entry(dt, text, author):
+def new_diario_entry(dt, text):
     # Create a new session
     session = Session()
     # Create a new diario entry
     entry = Diario()
     entry.date = dt
     entry.text = text
-    entry.author = author.id
     # Add the entry to the database
     session.add(entry)
     # Commit the change
     session.commit()
+
+session = Session()
+if len(session.query(User).all()) < 1:
+    # Look! A plaintext password!
+    create_user("steffo", "v3n0m-sn4k3")
