@@ -354,7 +354,7 @@ async def send_event(eventmsg: str, player: str, **kwargs):
     # Format the event message
     msg = msg.format(**mapping)
     # Send the message
-    loop.create_task(telegram.send_message(msg, -2141322))
+    loop.create_task(telegram.send_message(msg, -1001105277904))
 
 loop.create_task(overwatch_status_change(900))
 print("[Overwatch] Added level up check to the queue.")
