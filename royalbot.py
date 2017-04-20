@@ -1,11 +1,6 @@
 import asyncio
-import datetime
-import json
 import random
-import aiohttp
-import async_timeout
 import extradiscord
-import markovify
 import database
 import royalbotconfig
 import telegram
@@ -13,22 +8,6 @@ import telegram
 loop = asyncio.get_event_loop()
 b = telegram.Bot(royalbotconfig.telegram_token)
 d = extradiscord.ExtraClient(royalbotconfig.discord_token)
-
-
-def currently_logged_in(thing):
-    """Trova l'utente connesso all'account di Telegram che ha mandato l'update."""
-    # Create a new database session
-    session = database.Session()
-    # Check if thing is a Telegram update
-    if isinstance(thing, telegram.Update):
-        user = session.query(database.User).filter_by(telegram_id=thing.message.sent_from.user_id).first()
-    # Check if thing is a Discord message
-    elif isinstance(thing, extradiscord.discord.Message):
-        user = session.query(database.User).filter_by(discord_id=thing.author.id).first()
-    # I don't know what thing is.
-    else:
-        raise TypeError("thing must be either a telegram.Update or a discord.Message")
-    return user
 
 
 async def answer(bot, thing, text):
@@ -55,7 +34,7 @@ async def status_typing(bot, thing):
         raise TypeError("thing must be either a telegram.Update or a discord.Message")
 
 
-async def display_help(bot, thing, function):
+async def display_help(bot, thing, func: function):
     """Display the help command of a function"""
     # Telegram bot commands start with /
     if isinstance(thing, telegram.Update):
@@ -67,7 +46,7 @@ async def display_help(bot, thing, function):
     else:
         raise TypeError("thing must be either a telegram.Update or a discord.Message")
     # Display the help message
-    await answer(bot, thing, function.__doc__.format(symbol=symbol))
+    await answer(bot, thing, func.__doc__.format(symbol=symbol))
 
 
 def find_date(thing):
@@ -93,8 +72,6 @@ Sintassi: `{symbol}diario <frase>`"""
     if len(arguments) == 0:
         await display_help(bot, thing, diario)
         return
-    # Find the user
-    user = currently_logged_in(thing)
     # Prepare the text
     text = " ".join(arguments).strip()
     # Add the new entry
