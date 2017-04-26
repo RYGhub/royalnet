@@ -137,7 +137,7 @@ Sintassi: `{symbol}cv`"""
     await status_typing(bot, thing)
     # Check command syntax
     if len(arguments) != 0:
-        await answer(bot, thing, cv.__doc__)
+        await display_help(bot, thing, cv)
         return
     # Wait for the Discord bot to login
     while not d.client.is_logged_in:
@@ -220,11 +220,49 @@ Sintassi: `{symbol}roll <max>`"""
     await status_typing(bot, thing)
     # Check the command syntax
     if len(arguments) != 1:
-        await answer(bot, thing, "⚠ Sintassi del comando non valida.\n`/roll <max>`",)
+        await display_help(bot, thing, roll)
         return
     # Roll the dice!
     await answer(bot, thing, f"*Numero generato:* {random.randrange(0, int(arguments[0])) + 1}")
 
+
+# DISCORD ONLY!
+async def syncdiscord(bot, thing: extradiscord.discord.Message, arguments):
+    """Crea un nuovo account usando il tuo ID di Discord.
+    
+Sintassi: `{symbol}syncdiscord`"""
+    # Set status to typing
+    await status_typing(bot, thing)
+    # Check the command syntax
+    if len(arguments) != 0:
+        await display_help(bot, thing, syncdiscord)
+        return
+    # Open a new database session
+    session = database.Session()
+    # Check if the user already exists
+    user = session.query(database.Account).filter_by(id=thing.author.id).first()
+    if user is not None:
+        await answer(bot, thing, "⚠ L'account è già stato registrato.")
+        return
+    # Create a new user
+    user = database.Account(id=thing.author.id)
+    session.add(user)
+    session.commit()
+    # Notify the sender
+    await answer(bot, thing, "✅ Account registrato con successo!")
+
+
+async def synclol(bot, thing, arguments):
+    """Connetti il tuo account di LoL all'account Royal Games!
+    
+Sintassi: `{symbol}synclol <nome evocatore>`"""
+    # Set status to typing
+    await status_typing(bot, thing)
+    # Check the command syntax
+    if len(arguments) != 0:
+        await display_help(bot, thing, synclol)
+        return
+    # Create a new lol account and connect it to the user
 
 if __name__ == "__main__":
     # Init universal bot commands
@@ -236,6 +274,7 @@ if __name__ == "__main__":
     d.commands["help"] = helpme
     d.commands["helpme"] = helpme
     b.commands["cv"] = cv
+    d.commands["syncdiscord"] = syncdiscord
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")

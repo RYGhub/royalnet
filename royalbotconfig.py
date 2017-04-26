@@ -13,7 +13,7 @@ if "discord_token" in os.environ:
 else:
     raise MissingTokenError("discord_token")
 
-if "discord_webhook" in os.environ:
-    discord_webhook = os.environ["discord_webhook"]
+if "lol_token" in os.environ:
+    lol_token = os.environ["lol_token"]
 else:
-    raise MissingTokenError("discord_webhook")
+    raise MissingTokenError("lol_token")
