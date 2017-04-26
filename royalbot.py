@@ -2,6 +2,7 @@ import asyncio
 import random
 import extradiscord
 import database
+import lol
 import royalbotconfig
 import telegram
 
@@ -252,6 +253,7 @@ Sintassi: `{symbol}syncdiscord`"""
     await answer(bot, thing, "✅ Account registrato con successo!")
 
 
+# DISCORD ONLY!
 async def synclol(bot, thing, arguments):
     """Connetti il tuo account di LoL all'account Royal Games!
     
@@ -259,10 +261,25 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     # Set status to typing
     await status_typing(bot, thing)
     # Check the command syntax
-    if len(arguments) != 0:
+    if len(arguments) != 1:
         await display_help(bot, thing, synclol)
         return
+    # Open a new database session
+    session = database.Session()
     # Create a new lol account and connect it to the user
+    user = session.query(database.Account).filter_by(id=thing.author.id).first()
+    if user is None:
+        await answer(bot, thing, "⚠ Fai il login prima di sincronizzare l'account di LoL.")
+        return
+    # Create a new LoL account and link it to the user
+    # TODO: IMPROVE THIS
+    summoner_name = " ".join(arguments)
+    data = await lol.get_summoner_data("euw", summoner_name=summoner_name)
+    lolaccount = database.LoL(data["id"])
+    lolaccount.parentid = user.id
+    session.add(lolaccount)
+    session.commit()
+    database.update_lol(data["id"])
 
 if __name__ == "__main__":
     # Init universal bot commands
@@ -275,6 +292,7 @@ if __name__ == "__main__":
     d.commands["helpme"] = helpme
     b.commands["cv"] = cv
     d.commands["syncdiscord"] = syncdiscord
+    d.commands["synclol"] = synclol
     # Init Telegram bot
     loop.create_task(b.run())
     print("Telegram bot start scheduled!")

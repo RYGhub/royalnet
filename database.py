@@ -89,6 +89,7 @@ def new_diario_entry(dt, text):
     session.commit()
 
 
+# TODO: improve this
 async def update_lol(lid):
     # Create a new database session
     session = Session()
@@ -122,3 +123,5 @@ async def update_lol(lid):
         user.lol.ttq_division = None
     # Mark the user as updated
     user.lol.last_updated = datetime.datetime.now()
+    # Commit the changes
+    session.commit()

@@ -31,7 +31,7 @@ divisions = {
 async def get_json(url, **kwargs):
     async with aiohttp.ClientSession() as session:
         async with session.get(url, **kwargs) as response:
-            json = await session.json()
+            json = await response.json()
             if response.status != 200:
                 raise LoLAPIError(f"Riot API returned {response.status}")
             return json
