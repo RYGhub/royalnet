@@ -34,7 +34,7 @@ async def status_typing(bot, thing):
         raise TypeError("thing must be either a telegram.Update or a discord.Message")
 
 
-async def display_help(bot, thing, func: function):
+async def display_help(bot, thing, func):
     """Display the help command of a function"""
     # Telegram bot commands start with /
     if isinstance(thing, telegram.Update):
@@ -108,23 +108,23 @@ Sintassi: {symbol}leggi <numero>"""
 async def helpme(bot, thing, arguments):
     """Visualizza il messaggio di aiuto di un comando.
 
-Sintassi: `/helpme [comando]`"""
+Sintassi: `{symbol}helpme [comando]`"""
     # Set status to typing
     await status_typing(bot, thing)
     # If no command is specified, show the help message for this command.
     if len(arguments) == 0 or len(arguments) > 1:
-        await answer(bot, thing, helpme.__doc__)
+        await display_help(bot, thing, helpme)
         return
     # Check the list of telegram commands if the message was sent from Telegram
     if isinstance(thing, telegram.Update):
         if arguments[0] in b.commands:
-            await answer(bot, thing, b.commands[arguments[0]].__doc__)
+            await display_help(bot, thing, b.commands[arguments[0]])
         else:
             await answer(bot, thing, "⚠ Il comando specificato non esiste.")
     # Check the list of discord commands if the message was sent from Discord
     if isinstance(thing, extradiscord.discord.Message):
         if arguments[0] in d.commands:
-            await answer(bot, thing, d.commands[arguments[0]].__doc__)
+            await display_help(bot, thing, d.commands[arguments[0]])
         else:
             await answer(bot, thing, "⚠ Il comando specificato non esiste.")
 
