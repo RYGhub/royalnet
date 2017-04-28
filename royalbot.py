@@ -287,7 +287,23 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     # Update the newly added user
     await database.update_lol(thing.author.id)
     # Send some info to Discord
-    await d.client.send_message(thing.channel, embed=lolaccount.generate_discord_embed())
+    await d.client.send_message(thing.channel, "Successfully connected: ", embed=lolaccount.generate_discord_embed())
+
+
+async def job_updatelol(singletimeout=1, alltimeout=300):
+    await d.client.wait_until_ready()
+    while True:
+        # Open a new database session
+        session = database.Session()
+        # Query all the LoL accounts
+        users = session.query(database.LoL).all()
+        # Update all the users' stats
+        for user in users:
+            await database.update_lol(user.parent_id)
+            await asyncio.sleep(singletimeout)
+        await asyncio.sleep(alltimeout)
+
+
 
 if __name__ == "__main__":
     # Init universal bot commands
@@ -307,5 +323,8 @@ if __name__ == "__main__":
     # Init Discord bot
     loop.create_task(d.run())
     print("Discord bot start scheduled!")
+    # Init LoL stats updater
+    loop.create_task(job_updatelol())
+    print("LoL database updater scheduled!")
     # Run everything!
     loop.run_forever()

@@ -106,16 +106,20 @@ def new_diario_entry(dt, text):
     session.commit()
 
 
+# TODO: this can be moved to a method of the LoL class
 async def update_lol(discord_id):
     # Create a new database session
     session = Session()
     # Find the user
     user = session.query(Account).filter_by(id=discord_id).join(LoL).first()
+    # TODO: ewww
     for account in user.lol:
         # Find the League of Legends ID
         lid = account.id
         # Poll the League API for more information
         data = await lol.get_summoner_data("euw", summoner_id=lid)
+        # Change tracker: if anything meaningful changes, set this to True
+        changes = False
         # Update the user data
         account.summoner_name = data["name"]
         account.level = data["summonerLevel"]
