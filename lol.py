@@ -8,23 +8,10 @@ class LoLAPIError(Exception):
     pass
 
 
-tiers = {
-    "BRONZE": 0,
-    "SILVER": 1,
-    "GOLD": 2,
-    "PLATINUM": 3,
-    "DIAMOND": 4,
-    "MASTER": 5,
-    "CHALLENGER": 6
-}
+tiers = ["BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "MASTER", "CHALLENGER"]
 
-divisions = {
-    "I": 0,
-    "II": 1,
-    "III": 2,
-    "IV": 3,
-    "V": 4
-}
+
+divisions = ["I", "II", "III", "IV", "V"]
 
 
 async def get_json(url, **kwargs):

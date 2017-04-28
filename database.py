@@ -1,5 +1,6 @@
 import datetime
 import sqlalchemy.exc
+import discord
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -44,7 +45,7 @@ class LoL(Base):
     __tablename__ = "lol"
 
     id = Column(Integer, primary_key=True)
-    parentid = Column(Integer, ForeignKey("account.id"))
+    parent_id = Column(Integer, ForeignKey("account.id"))
 
     last_updated = Column(DateTime)
     summoner_name = Column(String, nullable=False)
@@ -59,6 +60,22 @@ class LoL(Base):
     def __repr__(self):
         return f"<LoL {self.id} {self.summoner_name}>"
 
+
+    def generate_discord_embed(self):
+        embed = discord.Embed(type="rich")
+        # TODO: change the icon
+        embed.set_author(name="League of Legends", url="http://euw.leagueoflegends.com/", icon_url="https://cdn.discordapp.com/attachments/152150752523976704/307558194824216578/icon.png")
+        embed.add_field(name="Summoner", value=str(self.summoner_name))
+        embed.add_field(name="Level", value=str(self.level))
+        if self.soloq_tier is not None:
+            embed.add_field(name="Solo/duo SR", value=f"{lol.tiers[self.soloq_tier].capitalize()} {lol.divisions[self.soloq_division]}", inline=False)
+            embed.set_thumbnail(url=f"https://royal.steffo.me/loltiers/{lol.tiers[self.soloq_tier].lower()}_{lol.divisions[self.soloq_division].lower()}.png")
+        if self.flexq_tier is not None:
+            embed.add_field(name="Flex SR", value=f"{lol.tiers[self.flexq_tier].capitalize()} {lol.divisions[self.flexq_division]}", inline=False)
+        if self.ttq_tier is not None:
+            embed.add_field(name="Twisted Treeline", value=f"{lol.tiers[self.ttq_tier].capitalize()} {lol.divisions[self.ttq_division]}", inline=False)
+        embed.colour = discord.Colour(0x09AEBB)
+        return embed
 
 Base.metadata.create_all(engine)
 
@@ -106,20 +123,20 @@ async def update_lol(discord_id):
         soloq, flexq, ttq = await lol.get_rank_data("euw", lid)
         # Update the user data
         if soloq is not None:
-            account.soloq_tier = lol.tiers[soloq["tier"]]
-            account.soloq_division = lol.divisions[soloq["entries"][0]["division"]]
+            account.soloq_tier = lol.tiers.index(soloq["tier"])
+            account.soloq_division = lol.divisions.index(soloq["entries"][0]["division"])
         else:
             account.soloq_tier = None
             account.soloq_division = None
         if flexq is not None:
-            account.flexq_tier = lol.tiers[flexq["tier"]]
-            account.flexq_division = lol.divisions[flexq["entries"][0]["division"]]
+            account.flexq_tier = lol.tiers.index(flexq["tier"])
+            account.flexq_division = lol.divisions.index(flexq["entries"][0]["division"])
         else:
             account.flexq_tier = None
             account.flexq_division = None
         if ttq is not None:
-            account.ttq_tier = lol.tiers[ttq["tier"]]
-            account.ttq_division = lol.divisions[ttq["entries"][0]["division"]]
+            account.ttq_tier = lol.tiers.index(ttq["tier"])
+            account.ttq_division = lol.divisions.index(ttq["entries"][0]["division"])
         else:
             account.ttq_tier = None
             account.ttq_division = None

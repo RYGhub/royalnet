@@ -254,7 +254,7 @@ Sintassi: `{symbol}syncdiscord`"""
 
 
 # DISCORD ONLY!
-async def synclol(bot, thing, arguments):
+async def synclol(bot, thing: extradiscord.discord.Message, arguments):
     """Connetti il tuo account di LoL all'account Royal Games!
     
 Sintassi: `{symbol}synclol <nome evocatore>`"""
@@ -271,20 +271,23 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     if user is None:
         await answer(bot, thing, "⚠ Fai il login prima di sincronizzare l'account di LoL.")
         return
-    # Create a new LoL account and link it to the user
-    # TODO: IMPROVE THIS
+    # Check if there are other LoL account registered with the user
+    user = session.query(database.Account).filter_by(id=thing.author.id).join(database.LoL).all()
+    if len(user) > 0:
+        await answer(bot, thing, "⚠ Hai già un account connesso.\n_Se stai cercando di registrare uno smurf, chiedi a Steffo._")
+    # Get data about the user
     summoner_name = " ".join(arguments)
     data = await lol.get_summoner_data("euw", summoner_name=summoner_name)
+    # Create a new database entry for the account
     lolaccount = database.LoL(id=data["id"], summoner_name=summoner_name)
-    lolaccount.parentid = user.id
+    lolaccount.parent_id = thing.author.id
     session.add(lolaccount)
+    # Commit the changes to the database
     session.commit()
-    await database.update_lol(user.id)
-
-
-async def update_stats(timeout):
-    await asyncio.sleep(timeout)
-    loop.create_task()
+    # Update the newly added user
+    await database.update_lol(thing.author.id)
+    # Send some info to Discord
+    await d.client.send_message(thing.channel, embed=lolaccount.generate_discord_embed())
 
 if __name__ == "__main__":
     # Init universal bot commands
