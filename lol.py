@@ -5,7 +5,9 @@ import royalbotconfig
 # https://euw.api.riotgames.com/api/lol/EUW/v1.4/summoner/52348350?api_key=RGAPI-1008c33d-b0a4-4091-8600-27022d570964
 
 class LoLAPIError(Exception):
-    pass
+    def __init__(self, status_code, text):
+        self.status_code = status_code
+        self.text = text
 
 
 tiers = ["BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "MASTER", "CHALLENGER"]
@@ -19,7 +21,7 @@ async def get_json(url, **kwargs):
         async with session.get(url, **kwargs) as response:
             json = await response.json()
             if response.status != 200:
-                raise LoLAPIError(f"Riot API returned {response.status}")
+                raise LoLAPIError(response.status, f"Riot API returned {response.status}")
             return json
 
 

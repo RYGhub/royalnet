@@ -124,7 +124,16 @@ async def update_lol(discord_id):
         account.summoner_name = data["name"]
         account.level = data["summonerLevel"]
         # Poll the League API for ranked data
-        soloq, flexq, ttq = await lol.get_rank_data("euw", lid)
+        try:
+            soloq, flexq, ttq = await lol.get_rank_data("euw", lid)
+        except lol.LoLAPIError as e:
+            if e.status_code == 404:
+                account.soloq_tier = None
+                account.soloq_division = None
+                account.flexq_tier = None
+                account.flexq_division = None
+                account.ttq_tier = None
+                account.ttq_division = None
         # Update the user data
         if soloq is not None:
             account.soloq_tier = lol.tiers.index(soloq["tier"])
