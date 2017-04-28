@@ -134,25 +134,26 @@ async def update_lol(discord_id):
                 account.flexq_division = None
                 account.ttq_tier = None
                 account.ttq_division = None
-        # Update the user data
-        if soloq is not None:
-            account.soloq_tier = lol.tiers.index(soloq["tier"])
-            account.soloq_division = lol.divisions.index(soloq["entries"][0]["division"])
         else:
-            account.soloq_tier = None
-            account.soloq_division = None
-        if flexq is not None:
-            account.flexq_tier = lol.tiers.index(flexq["tier"])
-            account.flexq_division = lol.divisions.index(flexq["entries"][0]["division"])
-        else:
-            account.flexq_tier = None
-            account.flexq_division = None
-        if ttq is not None:
-            account.ttq_tier = lol.tiers.index(ttq["tier"])
-            account.ttq_division = lol.divisions.index(ttq["entries"][0]["division"])
-        else:
-            account.ttq_tier = None
-            account.ttq_division = None
+            # Update the user data
+            if soloq is not None:
+                account.soloq_tier = lol.tiers.index(soloq["tier"])
+                account.soloq_division = lol.divisions.index(soloq["entries"][0]["division"])
+            else:
+                account.soloq_tier = None
+                account.soloq_division = None
+            if flexq is not None:
+                account.flexq_tier = lol.tiers.index(flexq["tier"])
+                account.flexq_division = lol.divisions.index(flexq["entries"][0]["division"])
+            else:
+                account.flexq_tier = None
+                account.flexq_division = None
+            if ttq is not None:
+                account.ttq_tier = lol.tiers.index(ttq["tier"])
+                account.ttq_division = lol.divisions.index(ttq["entries"][0]["division"])
+            else:
+                account.ttq_tier = None
+                account.ttq_division = None
         # Mark the user as updated
         account.last_updated = datetime.datetime.now()
     # Commit the changes
