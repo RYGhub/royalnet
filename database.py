@@ -89,39 +89,41 @@ def new_diario_entry(dt, text):
     session.commit()
 
 
-# TODO: improve this
-async def update_lol(lid):
+async def update_lol(discord_id):
     # Create a new database session
     session = Session()
     # Find the user
-    user = session.query(Account).join(LoL).filter_by(id=lid).first()
-    # Poll the League API for more information
-    data = await lol.get_summoner_data("euw", summoner_id=user.lol.id)
-    # Update the user data
-    user.lol.summoner_name = data["name"]
-    user.lol.level = data["level"]
-    # Poll the League API for ranked data
-    soloq, flexq, ttq = await lol.get_rank_data("euw", lid)
-    # Update the user data
-    if soloq is not None:
-        user.lol.soloq_tier = lol.tiers[soloq["tier"]]
-        user.lol.soloq_division = lol.divisions[soloq["entries"][0]["division"]]
-    else:
-        user.lol.soloq_tier = None
-        user.lol.soloq_division = None
-    if flexq is not None:
-        user.lol.flexq_tier = lol.tiers[flexq["tier"]]
-        user.lol.flexq_division = lol.divisions[flexq["entries"][0]["division"]]
-    else:
-        user.lol.flexq_tier = None
-        user.lol.flexq_division = None
-    if ttq is not None:
-        user.lol.ttq_tier = lol.tiers[ttq["tier"]]
-        user.lol.ttq_division = lol.divisions[ttq["entries"][0]["division"]]
-    else:
-        user.lol.ttq_tier = None
-        user.lol.ttq_division = None
-    # Mark the user as updated
-    user.lol.last_updated = datetime.datetime.now()
+    user = session.query(Account).filter_by(id=discord_id).join(LoL).first()
+    for account in user.lol:
+        # Find the League of Legends ID
+        lid = account.id
+        # Poll the League API for more information
+        data = await lol.get_summoner_data("euw", summoner_id=lid)
+        # Update the user data
+        account.summoner_name = data["name"]
+        account.level = data["summonerLevel"]
+        # Poll the League API for ranked data
+        soloq, flexq, ttq = await lol.get_rank_data("euw", lid)
+        # Update the user data
+        if soloq is not None:
+            account.soloq_tier = lol.tiers[soloq["tier"]]
+            account.soloq_division = lol.divisions[soloq["entries"][0]["division"]]
+        else:
+            account.soloq_tier = None
+            account.soloq_division = None
+        if flexq is not None:
+            account.flexq_tier = lol.tiers[flexq["tier"]]
+            account.flexq_division = lol.divisions[flexq["entries"][0]["division"]]
+        else:
+            account.flexq_tier = None
+            account.flexq_division = None
+        if ttq is not None:
+            account.ttq_tier = lol.tiers[ttq["tier"]]
+            account.ttq_division = lol.divisions[ttq["entries"][0]["division"]]
+        else:
+            account.ttq_tier = None
+            account.ttq_division = None
+        # Mark the user as updated
+        account.last_updated = datetime.datetime.now()
     # Commit the changes
     session.commit()

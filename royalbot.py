@@ -261,7 +261,7 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     # Set status to typing
     await status_typing(bot, thing)
     # Check the command syntax
-    if len(arguments) != 1:
+    if len(arguments) < 1:
         await display_help(bot, thing, synclol)
         return
     # Open a new database session
@@ -275,11 +275,16 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     # TODO: IMPROVE THIS
     summoner_name = " ".join(arguments)
     data = await lol.get_summoner_data("euw", summoner_name=summoner_name)
-    lolaccount = database.LoL(data["id"])
+    lolaccount = database.LoL(id=data["id"], summoner_name=summoner_name)
     lolaccount.parentid = user.id
     session.add(lolaccount)
     session.commit()
-    database.update_lol(data["id"])
+    await database.update_lol(user.id)
+
+
+async def update_stats(timeout):
+    await asyncio.sleep(timeout)
+    loop.create_task()
 
 if __name__ == "__main__":
     # Init universal bot commands
