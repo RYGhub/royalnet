@@ -61,6 +61,42 @@ class LoL(Base):
         return f"<LoL {self.id} {self.summoner_name}>"
 
 
+    async def update_data(self):
+        try:
+            soloq, flexq, ttq = await lol.get_rank_data("euw", self.id)
+        except lol.LoLAPIError as e:
+            # LoL returns 404 if the account is unranked
+            if e.status_code == 404:
+                self.soloq_tier = None
+                self.soloq_division = None
+                self.flexq_tier = None
+                self.flexq_division = None
+                self.ttq_tier = None
+                self.ttq_division = None
+        else:
+            # Update the user data
+            if soloq is not None:
+                self.soloq_tier = lol.tiers.index(soloq["tier"])
+                self.soloq_division = lol.divisions.index(soloq["entries"][0]["division"])
+            else:
+                self.soloq_tier = None
+                self.soloq_division = None
+            if flexq is not None:
+                self.flexq_tier = lol.tiers.index(flexq["tier"])
+                self.flexq_division = lol.divisions.index(flexq["entries"][0]["division"])
+            else:
+                self.flexq_tier = None
+                self.flexq_division = None
+            if ttq is not None:
+                self.ttq_tier = lol.tiers.index(ttq["tier"])
+                self.ttq_division = lol.divisions.index(ttq["entries"][0]["division"])
+            else:
+                self.ttq_tier = None
+                self.ttq_division = None
+        # Mark the user as updated
+        self.last_updated = datetime.datetime.now()
+
+
     def generate_discord_embed(self):
         embed = discord.Embed(type="rich")
         # TODO: change the icon
@@ -76,6 +112,7 @@ class LoL(Base):
             embed.add_field(name="Twisted Treeline", value=f"{lol.tiers[self.ttq_tier].capitalize()} {lol.divisions[self.ttq_division]}", inline=False)
         embed.colour = discord.Colour(0x09AEBB)
         return embed
+
 
 Base.metadata.create_all(engine)
 
@@ -103,58 +140,4 @@ def new_diario_entry(dt, text):
     # Add the entry to the database
     session.add(entry)
     # Commit the change
-    session.commit()
-
-
-# TODO: this can be moved to a method of the LoL class
-async def update_lol(discord_id):
-    # Create a new database session
-    session = Session()
-    # Find the user
-    user = session.query(Account).filter_by(id=discord_id).join(LoL).first()
-    # TODO: ewww
-    for account in user.lol:
-        # Find the League of Legends ID
-        lid = account.id
-        # Poll the League API for more information
-        data = await lol.get_summoner_data("euw", summoner_id=lid)
-        # Change tracker: if anything meaningful changes, set this to True
-        changes = False
-        # Update the user data
-        account.summoner_name = data["name"]
-        account.level = data["summonerLevel"]
-        # Poll the League API for ranked data
-        try:
-            soloq, flexq, ttq = await lol.get_rank_data("euw", lid)
-        except lol.LoLAPIError as e:
-            if e.status_code == 404:
-                account.soloq_tier = None
-                account.soloq_division = None
-                account.flexq_tier = None
-                account.flexq_division = None
-                account.ttq_tier = None
-                account.ttq_division = None
-        else:
-            # Update the user data
-            if soloq is not None:
-                account.soloq_tier = lol.tiers.index(soloq["tier"])
-                account.soloq_division = lol.divisions.index(soloq["entries"][0]["division"])
-            else:
-                account.soloq_tier = None
-                account.soloq_division = None
-            if flexq is not None:
-                account.flexq_tier = lol.tiers.index(flexq["tier"])
-                account.flexq_division = lol.divisions.index(flexq["entries"][0]["division"])
-            else:
-                account.flexq_tier = None
-                account.flexq_division = None
-            if ttq is not None:
-                account.ttq_tier = lol.tiers.index(ttq["tier"])
-                account.ttq_division = lol.divisions.index(ttq["entries"][0]["division"])
-            else:
-                account.ttq_tier = None
-                account.ttq_division = None
-        # Mark the user as updated
-        account.last_updated = datetime.datetime.now()
-    # Commit the changes
     session.commit()

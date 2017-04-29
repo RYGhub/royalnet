@@ -285,9 +285,9 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     # Commit the changes to the database
     session.commit()
     # Update the newly added user
-    await database.update_lol(thing.author.id)
+    lolaccount.update_data()
     # Send some info to Discord
-    await d.client.send_message(thing.channel, "Successfully connected: ", embed=lolaccount.generate_discord_embed())
+    await d.client.send_message(thing.channel, "Connessione riuscita!", embed=lolaccount.generate_discord_embed())
 
 
 async def job_updatelol(singletimeout=1, alltimeout=300):
@@ -299,10 +299,9 @@ async def job_updatelol(singletimeout=1, alltimeout=300):
         users = session.query(database.LoL).all()
         # Update all the users' stats
         for user in users:
-            await database.update_lol(user.parent_id)
+            await user.update_data()
             await asyncio.sleep(singletimeout)
         await asyncio.sleep(alltimeout)
-
 
 
 if __name__ == "__main__":
