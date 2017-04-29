@@ -282,15 +282,15 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     lolaccount = database.LoL(id=data["id"], summoner_name=summoner_name)
     lolaccount.parent_id = thing.author.id
     session.add(lolaccount)
-    # Commit the changes to the database
-    session.commit()
     # Update the newly added user
-    lolaccount.update_data()
+    updates = lolaccount.update_data()
     # Send some info to Discord
     await d.client.send_message(thing.channel, "Connessione riuscita!", embed=lolaccount.generate_discord_embed())
+    # Commit the changes to the database
+    session.commit()
 
 
-async def job_updatelol(singletimeout=1, alltimeout=300):
+async def job_updatelol(singletimeout=1, alltimeout=900):
     await d.client.wait_until_ready()
     while True:
         # Open a new database session
@@ -299,8 +299,12 @@ async def job_updatelol(singletimeout=1, alltimeout=300):
         users = session.query(database.LoL).all()
         # Update all the users' stats
         for user in users:
-            await user.update_data()
+            updates = await user.update_data()
+            if updates:
+                # Send some info to Discord
+                await d.client.send_message(d.client.get_channel(247426005537390592), "Account aggiornato!", embed=user.generate_discord_embed())
             await asyncio.sleep(singletimeout)
+            session.commit()
         await asyncio.sleep(alltimeout)
 
 
