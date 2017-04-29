@@ -62,6 +62,14 @@ class LoL(Base):
 
 
     async def update_data(self):
+        # Copy the old stats
+        soloq_tier = self.soloq_tier
+        soloq_division = self.soloq_division
+        flexq_tier = self.flexq_tier
+        flexq_division = self.flexq_division
+        ttq_tier = self.ttq_tier
+        ttq_division = self.ttq_division
+        # Get and apply the new data
         try:
             soloq, flexq, ttq = await lol.get_rank_data("euw", self.id)
         except lol.LoLAPIError as e:
@@ -95,6 +103,8 @@ class LoL(Base):
                 self.ttq_division = None
         # Mark the user as updated
         self.last_updated = datetime.datetime.now()
+        # Return if any stat has changed
+        return (soloq_tier != self.soloq_tier) or (soloq_division != self.soloq_division) or (flexq_tier != self.flexq_tier) or (flexq_division != self.flexq_division) or (ttq_tier != self.ttq_tier) or (ttq_division != self.ttq_division)
 
 
     def generate_discord_embed(self):
