@@ -283,14 +283,14 @@ Sintassi: `{symbol}synclol <nome evocatore>`"""
     lolaccount.parent_id = thing.author.id
     session.add(lolaccount)
     # Update the newly added user
-    updates = lolaccount.update_data()
+    lolaccount.update_data()
     # Send some info to Discord
     await d.client.send_message(thing.channel, "Connessione riuscita!", embed=lolaccount.generate_discord_embed())
     # Commit the changes to the database
     session.commit()
 
 
-async def job_updatelol(singletimeout=1, alltimeout=900):
+async def job_updatelol(singletimeout=1, alltimeout=1800):
     await d.client.wait_until_ready()
     while True:
         # Open a new database session
