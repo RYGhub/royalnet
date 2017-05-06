@@ -16,9 +16,9 @@ tiers = ["BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "MASTER", "CHALLENGE
 divisions = ["I", "II", "III", "IV", "V"]
 
 
-async def get_json(url, **kwargs):
+async def get_json(region, endpoint, **kwargs):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, **kwargs) as response:
+        async with session.get(f"https://{region.lower()}.api.riotgames.com/api/lol/{region.upper()}{endpoint}", **kwargs) as response:
             json = await response.json()
             if response.status != 200:
                 raise LoLAPIError(response.status, f"Riot API returned {response.status}")
@@ -34,10 +34,10 @@ async def get_summoner_data(region: str, summoner_id=None, summoner_name=None):
         "api_key": royalbotconfig.lol_token
     }
     if summoner_id is not None:
-        data = await get_json(f"https://{region.lower()}.api.riotgames.com/api/lol/{region.upper()}/v1.4/summoner/{summoner_id}", params=params)
+        data = await get_json("euw", f"/v1.4/summoner/{summoner_id}", params=params)
         return data[str(summoner_id)]
     elif summoner_name is not None:
-        data = await get_json(f"https://{region.lower()}.api.riotgames.com/api/lol/{region.upper()}/v1.4/summoner/by-name/{summoner_name}", params=params)
+        data = await get_json("euw", f"/v1.4/summoner/by-name/{summoner_name}", params=params)
         return data[summoner_name.lower().replace(" ", "")]
 
 
@@ -45,7 +45,7 @@ async def get_rank_data(region: str, summoner_id: int):
     params = {
         "api_key": royalbotconfig.lol_token
     }
-    data = await get_json(f"https://{region.lower()}.api.riotgames.com/api/lol/{region.upper()}/v2.5/league/by-summoner/{summoner_id}/entry", params=params)
+    data = await get_json("euw", f"/v2.5/league/by-summoner/{summoner_id}/entry", params=params)
     soloq = None
     flexq = None
     ttq = None
