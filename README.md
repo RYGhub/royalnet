@@ -1,4 +1,4 @@
-# Royal Bot the Third
+# royalbot-3
 
 A failed experiment to merge a Telegram bot with a Discord bot.
 
