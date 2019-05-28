@@ -1,5 +1,5 @@
-# royalbot
-A Telegram bot for the Royal Games community.
+# royalbot-2
+The secondo Telegram bot of the Royal Games community.
 
 ## Features
 * Fun messages for the chat!
