@@ -1,3 +1,5 @@
 # Royal Bot the Third
 
-This shouldn't work, yet it does. How is that even possible?
+A failed experiment to merge a Telegram bot with a Discord bot.
+
+It probably is full of race conditions and other bugs.
