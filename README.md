@@ -1,7 +1,5 @@
 # royalbot
-A Telegram bot for our private gaming community.
-
-Also, the worst code I've ever written.
+A Telegram bot for the Royal Games community.
 
 ## Features
 * Fun messages for the chat!
