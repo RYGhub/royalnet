@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="royalherald",
-    version="5.0b1",
+    version="5.0b2",
     author="Stefano Pigozzi",
     author_email="ste.pigozzi@gmail.com",
     description="A websocket communication protocol",
@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Steffo99/royalherald",
     packages=setuptools.find_packages(),
-    install_requires=[],
+    install_requires=["websockets>=8.0"],
     python_requires=">=3.7",
     classifiers=[
         "Development Status :: 4 - Beta",
