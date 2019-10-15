@@ -1,0 +1,13 @@
+config.ini
+.idea/
+.vscode/
+__pycache__
+downloads/
+ignored/
+markovmodels/
+logs/
+royalnet.egg-info/
+.pytest_cache/
+dist/
+build/
+venv/
