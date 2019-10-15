@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="royalherald",
-    version="5.0b3",
+    version="5.0b4",
     author="Stefano Pigozzi",
     author_email="ste.pigozzi@gmail.com",
     description="A websocket communication protocol",

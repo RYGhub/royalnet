@@ -3,7 +3,7 @@ from .errors import HeraldError, ConnectionClosedError, LinkError, InvalidServer
 from .link import Link
 from .package import Package
 from .request import Request
-from .response import ResponseSuccess, ResponseError
+from .response import ResponseSuccess, ResponseFailure
 from .server import Server
 
 
@@ -18,6 +18,6 @@ __all__ = [
     "Package",
     "Request",
     "ResponseSuccess",
-    "ResponseError",
+    "ResponseFailure",
     "Server",
 ]
