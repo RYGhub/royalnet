@@ -6,7 +6,7 @@ downloads/
 ignored/
 markovmodels/
 logs/
-royalnet.egg-info/
+*.egg-info/
 .pytest_cache/
 dist/
 build/
