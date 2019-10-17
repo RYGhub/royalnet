@@ -52,7 +52,7 @@ class Server:
             matching = [client for client in self.identified_clients if client.link_type == link_type]
             return matching or []
 
-    async def listener(self, websocket: websockets.server.WebSocketServerProtocol):
+    async def listener(self, websocket: websockets.server.WebSocketServerProtocol, path):
         log.info(f"{websocket.remote_address} connected to the server.")
         connected_client = ConnectedClient(websocket)
         # Wait for identification
