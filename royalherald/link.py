@@ -2,11 +2,11 @@ import asyncio
 import websockets
 import uuid
 import functools
-import math
-import numbers
 import logging as _logging
 import typing
 from .package import Package
+from .request import Request
+from .response import Response, ResponseSuccess, ResponseFailure
 from .errors import ConnectionClosedError, InvalidServerResponseError
 
 
@@ -58,7 +58,8 @@ class Link:
         self.nid: str = str(uuid.uuid4())
         self.secret: str = secret
         self.websocket: typing.Optional[websockets.WebSocketClientProtocol] = None
-        self.request_handler = request_handler
+        # Not sure on the type annotation here
+        self.request_handler: typing.Callable[[Request], typing.Awaitable[Response]] = request_handler
         self._pending_requests: typing.Dict[str, PendingRequest] = {}
         if loop is None:
             self._loop = asyncio.get_event_loop()
@@ -127,15 +128,20 @@ class Link:
         log.debug(f"Sent package: {package}")
 
     @requires_identification
-    async def request(self, message, destination):
-        package = Package(message, source=self.nid, destination=destination)
+    async def request(self, destination: str, request: Request) -> Response:
+        package = Package(request.to_dict(), source=self.nid, destination=destination)
         request = PendingRequest(loop=self._loop)
         self._pending_requests[package.source_conv_id] = request
         await self.send(package)
-        log.debug(f"Sent request: {message} -> {destination}")
+        log.debug(f"Sent to {destination}: {request}")
         await request.event.wait()
-        response: dict = request.data
-        log.debug(f"Received response: {request} -> {response}")
+        if request.data["type"] == "ResponseSuccess":
+            response: Response = ResponseSuccess.from_dict(request.data)
+        elif request.data["type"] == "ResponseFailure":
+            response: Response = ResponseFailure.from_dict(request.data)
+        else:
+            raise TypeError("Unknown response type")
+        log.debug(f"Received from {destination}: {request} -> {response}")
         return response
 
     async def run(self):
@@ -157,7 +163,7 @@ class Link:
             # Package is a request
             assert isinstance(package, Package)
             log.debug(f"Received request {package.source_conv_id}: {package}")
-            response = await self.request_handler(package.data)
-            response_package: Package = package.reply(response)
+            response: Response = await self.request_handler(Request.from_dict(package.data))
+            response_package: Package = package.reply(response.to_dict())
             await self.send(response_package)
             log.debug(f"Replied to request {response_package.source_conv_id}: {response_package}")

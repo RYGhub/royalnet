@@ -103,6 +103,9 @@ class Server:
         # Is it nothing?
         if package.destination == "<none>":
             return []
+        # Is it all possible destinations?
+        if package.destination == "<all>":
+            return self.identified_clients
         # Is it a valid nid?
         try:
             destination = str(uuid.UUID(package.destination))

@@ -16,7 +16,3 @@ class ConnectionClosedError(LinkError):
 
 class InvalidServerResponseError(LinkError):
     """The :py:class:`Server` sent invalid data to the :py:class:`Link`."""
-
-
-class ResponseError(LinkError):
-    """The :py:class:`Response` was an error, and raise_on_error is :py:const:`True`."""

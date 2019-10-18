@@ -25,10 +25,6 @@ class Response:
         # noinspection PyArgumentList
         return cls(**d)
 
-    def raise_on_error(self):
-        """Raise an :py:exc:`ResponseError` if the Response is an error, do nothing otherwise."""
-        raise NotImplementedError("Please override Response.raise_on_error()")
-
 
 class ResponseSuccess(Response):
     """A response to a successful :py:class:`Request`."""
@@ -42,9 +38,6 @@ class ResponseSuccess(Response):
     def __repr__(self):
         return f"{self.__class__.__qualname__}(data={self.data})"
 
-    def raise_on_error(self):
-        pass
-
 
 class ResponseFailure(Response):
     """A response to a invalid :py:class:`Request`."""
@@ -56,6 +49,3 @@ class ResponseFailure(Response):
 
     def __repr__(self):
         return f"{self.__class__.__qualname__}(name={self.name}, description={self.description}, extra_info={self.extra_info})"
-
-    def raise_on_error(self):
-        raise ResponseError(self)
