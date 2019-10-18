@@ -1,5 +1,4 @@
 import typing
-from .errors import ResponseError
 
 
 class Response:
