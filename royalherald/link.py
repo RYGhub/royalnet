@@ -59,8 +59,8 @@ class Link:
         self.nid: str = str(uuid.uuid4())
         self.secret: str = secret
         self.websocket: typing.Optional[websockets.WebSocketClientProtocol] = None
-        # Not sure on the type annotation here
-        self.request_handler: typing.Callable[[Request], typing.Awaitable[Response]] = request_handler
+        self.request_handler: typing.Callable[[typing.Union[Request, Broadcast]],
+                                              typing.Awaitable[Response]] = request_handler
         self._pending_requests: typing.Dict[str, PendingRequest] = {}
         if loop is None:
             self._loop = asyncio.get_event_loop()
@@ -170,9 +170,13 @@ class Link:
                 request.set(package.data)
                 continue
             # Package is a request
-            assert isinstance(package, Package)
-            log.debug(f"Received request {package.source_conv_id}: {package}")
-            response: Response = await self.request_handler(Request.from_dict(package.data))
-            response_package: Package = package.reply(response.to_dict())
-            await self.send(response_package)
-            log.debug(f"Replied to request {response_package.source_conv_id}: {response_package}")
+            elif package.data["msg_type"] == "Request":
+                log.debug(f"Received request {package.source_conv_id}: {package}")
+                response: Response = await self.request_handler(Request.from_dict(package.data))
+                response_package: Package = package.reply(response.to_dict())
+                await self.send(response_package)
+                log.debug(f"Replied to request {response_package.source_conv_id}: {response_package}")
+            # Package is a broadcast
+            elif package.data["msg_type"] == "Broadcast":
+                log.debug(f"Received broadcast {package.source_conv_id}: {package}")
+                await self.request_handler(Broadcast.from_dict(package.data))

@@ -1,10 +1,16 @@
+import typing
+
+
 class Request:
     """A request sent from a :py:class:`Link` to another.
 
      It contains the name of the requested handler, in addition to the data."""
 
-    def __init__(self, handler: str, data: dict):
+    def __init__(self, handler: str, data: dict, msg_type: typing.Optional[str] = None):
         super().__init__()
+        if msg_type is not None:
+            assert msg_type == self.__class__.__name__
+        self.msg_type = self.__class__.__name__
         self.handler: str = handler
         self.data: dict = data
 
