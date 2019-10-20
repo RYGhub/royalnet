@@ -1,8 +1,4 @@
-class Request:
-    """A request sent from a :py:class:`Link` to another.
-
-     It contains the name of the requested handler, in addition to the data."""
-
+class Broadcast:
     def __init__(self, handler: str, data: dict):
         super().__init__()
         self.handler: str = handler

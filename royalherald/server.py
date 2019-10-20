@@ -104,7 +104,7 @@ class Server:
         if package.destination == "<none>":
             return []
         # Is it all possible destinations?
-        if package.destination == "<all>":
+        if package.destination == "*":
             return self.identified_clients
         # Is it a valid nid?
         try:

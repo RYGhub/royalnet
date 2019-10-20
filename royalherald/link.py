@@ -7,6 +7,7 @@ import typing
 from .package import Package
 from .request import Request
 from .response import Response, ResponseSuccess, ResponseFailure
+from .broadcast import Broadcast
 from .errors import ConnectionClosedError, InvalidServerResponseError
 
 
@@ -128,12 +129,20 @@ class Link:
         log.debug(f"Sent package: {package}")
 
     @requires_identification
+    async def broadcast(self, destination: str, broadcast: Broadcast) -> None:
+        package = Package(broadcast.to_dict(), source=self.nid, destination=destination)
+        await self.send(package)
+        log.debug(f"Sent broadcast: {broadcast}")
+
+    @requires_identification
     async def request(self, destination: str, request: Request) -> Response:
+        if destination.startswith("*"):
+            raise ValueError("requests cannot have multiple destinations")
         package = Package(request.to_dict(), source=self.nid, destination=destination)
         request = PendingRequest(loop=self._loop)
         self._pending_requests[package.source_conv_id] = request
         await self.send(package)
-        log.debug(f"Sent to {destination}: {request}")
+        log.debug(f"Sent request to {destination}: {request}")
         await request.event.wait()
         if request.data["type"] == "ResponseSuccess":
             response: Response = ResponseSuccess.from_dict(request.data)
