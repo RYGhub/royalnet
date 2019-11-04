@@ -1,5 +1,5 @@
-# `{packname}` [![PyPI](https://img.shields.io/pypi/v/{packname}.svg)](https://pypi.org/project/{packname}/)
+# `examplepack`
 
-{Replace everything surrounded by braces with your own data, including this description!}
+This is an example Pack for [Royalnet](https://github.com/Steffo99/royalnet)!
 
-{Files to be changed are the package folder, setup.py and this README!}
+> To be updated with more info on how to create your own pack.
