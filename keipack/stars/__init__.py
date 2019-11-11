@@ -1,9 +1,9 @@
 # Imports go here!
-
+from .api_kei import ApiKei
 
 # Enter the PageStars of your Pack here!
 available_page_stars = [
-
+    ApiKei
 ]
 
 # Enter the ExceptionStars of your Pack here!

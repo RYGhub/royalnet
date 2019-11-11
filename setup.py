@@ -7,14 +7,14 @@ with open("requirements.txt", "r") as f:
     install_requires = f.readlines()
 
 setuptools.setup(
-    name="{packname}",
+    name="keipack",
     version="0.1",
-    author="{packauthorname}",
-    author_email="{packauthoremail}",
-    description="{packdescription}",
+    author="Stefano Pigozzi",
+    author_email="ste.pigozzi@gmail.com",
+    description="A mysterious AI assistant",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="{packgithublink}",
+    url="https://github.com/Steffo99/keipack",
     packages=setuptools.find_packages(),
     install_requires=install_requires,
     python_requires=">=3.7",
