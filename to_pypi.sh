@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Royalnet must be installed with `develop`
-VERSION=$(python3.7 -m royalpack.version)
+VERSION=$(python3.7 -m rpgpack.version)
 
 rm -rf dist
 python setup.py sdist bdist_wheel
-twine upload "dist/{packname}-$VERSION"*
+twine upload "dist/rpgpack-$VERSION"*
 git add *
 git commit -m "$VERSION"
 git push
