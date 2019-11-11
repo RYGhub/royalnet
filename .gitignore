@@ -1,0 +1,9 @@
+config.ini
+.idea/
+.vscode/
+__pycache__
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+venv/
