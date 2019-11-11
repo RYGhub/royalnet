@@ -1,5 +1,5 @@
-# `{packname}` [![PyPI](https://img.shields.io/pypi/v/{packname}.svg)](https://pypi.org/project/{packname}/)
+# `rpgpack` [![PyPI](https://img.shields.io/pypi/v/rpgpack.svg)](https://pypi.org/project/rpgpack/)
 
-{Replace everything surrounded by braces with your own data, including this description!}
+## Commands
 
-{Files to be changed are the package folder, setup.py, to_pypi.sh and this README!}
+## Stars
