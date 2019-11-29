@@ -17,7 +17,6 @@ class ApiKei(PageStar):
                 ("question", "Come va?"),
                 ("happy", "Sono al tuo servizio!"),
                 ("happy", "Attendo ordini!"),
-                ("happy", "Attendo ordini!"),
                 ("cat", "Mandami un messaggio :3"),
             ], 1)[0]
         return "x", "MISSINGNO."
