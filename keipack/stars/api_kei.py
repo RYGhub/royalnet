@@ -1,18 +1,26 @@
+import random
+import datetime
+from typing import *
 from starlette.requests import Request
 from starlette.responses import *
-from royalnet.web import *
+from royalnet.constellation import *
 from royalnet.utils import *
-import royalnet.packs.common.tables as cpt
-import royalpack.tables as rpt
 
 
 class ApiKei(PageStar):
     path = "/api/kei"
 
-    tables = {}
-
-    async def _generate(self, request: Request, session) -> typing.Tuple[str, str]:
-        return "happy", "Ciao!"
+    async def _generate(self, request, session) -> Tuple[str, str]:
+        if request.query_params.get("first", "false") == "true":
+            return random.sample([
+                ("happy", "Ciao!"),
+                ("question", "Come va?"),
+                ("happy", "Sono al tuo servizio!"),
+                ("happy", "Attendo ordini!"),
+                ("happy", "Attendo ordini!"),
+                ("cat", "Mandami un messaggio :3"),
+            ], 1)[0]
+        return "x", "MISSINGNO."
 
     async def page(self, request: Request) -> JSONResponse:
         async with self.session_acm() as session:
