@@ -21,10 +21,10 @@
     python = "^3.8"
     dice = "^2.4.2"
     sortedcontainers = "^2.1.0"
-    aiohttp = "^3.6.2"
+    aiohttp = "^3.5"
 
     [tool.poetry.dependencies.royalnet]
-        git = "https://github.com/Steffo99/royalnet/"
+        version = "^5.1.2"
         # Require these until https://github.com/Steffo99/royalnet/issues/105 is done
         extras = [
             "telegram",
