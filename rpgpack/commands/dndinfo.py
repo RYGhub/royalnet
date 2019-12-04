@@ -1,5 +1,4 @@
 from royalnet.commands import *
-from royalnet.utils import asyncify
 from ..tables import DndCharacter, DndActiveCharacter
 
 

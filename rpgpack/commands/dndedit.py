@@ -1,7 +1,7 @@
 import re
 from royalnet.commands import *
 from .dndnew import DndnewCommand
-from ..tables import DndCharacter, DndActiveCharacter
+from ..tables import DndCharacter
 
 
 class DndeditCommand(DndnewCommand):
@@ -10,8 +10,6 @@ class DndeditCommand(DndnewCommand):
     description: str = "Edit the active DnD character."
 
     aliases = ["de", "dnde", "edit", "dedit"]
-
-    tables = {DndCharacter, DndActiveCharacter}
 
     async def run(self, args: CommandArgs, data: CommandData) -> None:
         character_sheet = args.joined()

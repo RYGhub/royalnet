@@ -60,7 +60,8 @@ class DndspellCommand(Command):
             elif spell["range"]["distance"]["type"] == "self":
                 string += "Range: 👤 [b]Self[/b]\n"
             else:
-                string += f'Range: 🏹 [b]{spell["range"]["distance"]["amount"]} {spell["range"]["distance"]["type"]}[/b] ({spell["range"]["type"]})\n'
+                string += f'Range: 🏹 [b]{spell["range"]["distance"]["amount"]}' \
+                          f' {spell["range"]["distance"]["type"]}[/b] ({spell["range"]["type"]})\n'
         if "components" in spell:
             string += f'Components: '
             if spell["components"].get("v", False):
