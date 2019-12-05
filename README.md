@@ -1,6 +1,8 @@
 # `keipack` [![PyPI](https://img.shields.io/pypi/v/keipack.svg)](https://pypi.org/project/keipack/)
 
-## Emotions
+A mysterious Royalnet module
+
+## Available emotions
 
 - ![](./media/cat.png) cat
 - ![](./media/cry.png) cry
