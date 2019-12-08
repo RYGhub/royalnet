@@ -2,7 +2,7 @@
 
 [tool.poetry]
     name = "keipack"
-    version = "5.1a1"
+    version = "0.1"
     description = "A mysterious AI assistant"
     authors = ["Stefano Pigozzi <ste.pigozzi@gmail.com>"]
     license = "AGPL-3.0+"
@@ -22,7 +22,7 @@
     riotwatcher = "^2.7.1"
 
     [tool.poetry.dependencies.royalnet]
-        git = "https://github.com/Steffo99/royalnet/"
+        version = "^5.1.4"
         # Maybe... there is a way to make these selectable?
         extras = [
             "telegram",
