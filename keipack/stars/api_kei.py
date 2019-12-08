@@ -15,7 +15,7 @@ class ApiKei(PageStar):
     methods = ["POST"]
 
     async def _generate(self, person, form, session) -> Tuple[Emotion, str]:
-        return Emotion.HAPPY, f'Prova'
+        return Emotion.NEUTRAL, "..."
 
     async def page(self, request: Request) -> JSONResponse:
         async with self.session_acm() as session:
