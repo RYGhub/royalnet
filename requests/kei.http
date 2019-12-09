@@ -8,13 +8,8 @@
 
 POST http://localhost:44445/api/kei
 Accept: application/json
-
-###
-
-POST http://localhost:44445/api/kei
-Accept: application/json
 Content-Type: application/x-www-form-urlencoded
 
-first=true
+kpid=test&convid=1&first=true&message=lul
 
 ###
