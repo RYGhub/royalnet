@@ -1,12 +1,17 @@
 import random
 import datetime
+import logging
 from typing import *
 from starlette.requests import Request
 from starlette.responses import *
 from royalnet.constellation import *
 from royalnet.utils import *
+from royalnet.commands import CommandInterface
 from ..tables import *
 from ..utils import *
+
+
+log = logging.getLogger(__name__)
 
 
 class ApiKei(PageStar):
@@ -14,9 +19,10 @@ class ApiKei(PageStar):
 
     methods = ["POST"]
 
-    def __init__(self, config: Dict[str, Any], constellation: "Constellation"):
-        super().__init__(config, constellation)
+    def __init__(self, interface: CommandInterface):
+        super().__init__(interface)
         self._conversations: Dict[str, Conversation] = {}
+        log.debug("Kei initialized.")
 
     async def page(self, request: Request) -> JSONResponse:
         async with self.session_acm() as session:
@@ -38,18 +44,34 @@ class ApiKei(PageStar):
             while True:
                 if convid not in self._conversations:
                     # Create a new conversation
-                    self._conversations[convid] = await ExampleConversation.create()
+                    self._conversations[convid] = await ExampleConversation.create(self.interface)
+                    log.info(f"[{convid}] SYSTEM: New conversation created - {self._conversations[convid]}")
                 conv: Conversation = self._conversations[convid]
+
                 try:
-                    emotion, text = await conv.next(session=session, person=person, message=message)
+                    log.info(f"[{convid}] {person}: '{message}'")
+                except Exception:
+                    pass
+                try:
+                    result = await conv.next(session=session,
+                                             person=person,
+                                             message=message)
                 except StopAsyncIteration:
                     del self._conversations[convid]
                     continue
                 except Exception as e:
-                    print(e)
+                    log.error(f"[{convid}] ERROR: {e}")
                     emotion, text = Emotion.NEUTRAL, "...?"
-                else:
+                    del self._conversations[convid]
                     break
+                else:
+                    if isinstance(result, Conversation):
+                        self._conversations[convid] = result
+                        log.info(f"[{convid}] SYSTEM: Switched conversation - {self._conversations[convid]}")
+                    else:
+                        emotion, text = result
+                        break
+        log.info(f"[{convid}] Kei ({emotion.value}): '{text}'")
         return JSONResponse({
             "emotion": str(emotion),
             "text": text,

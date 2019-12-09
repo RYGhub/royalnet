@@ -291,7 +291,7 @@ description = "Alternative regular expression module, to replace re."
 name = "regex"
 optional = false
 python-versions = "*"
-version = "2019.11.1"
+version = "2019.12.9"
 
 [[package]]
 category = "main"
@@ -331,7 +331,7 @@ description = "A multipurpose bot and web framework"
 name = "royalnet"
 optional = false
 python-versions = ">=3.8,<4.0"
-version = "5.1.4"
+version = "5.1.5"
 
 [package.dependencies]
 dateparser = ">=0.7.2,<0.8.0"
@@ -399,6 +399,30 @@ discord = ["temp_discordpy_without_websockets_requirement (0.1)", "pynacl (>=1.3
 herald = ["websockets (>=8.1,<9.0)"]
 sentry = ["sentry_sdk (>=0.13.2,<0.14.0)"]
 telegram = ["python_telegram_bot (>=12.2.0,<13.0.0)"]
+
+[[package]]
+category = "main"
+description = "A Royalnet command pack for the Royal Games community"
+name = "royalpack"
+optional = false
+python-versions = ">=3.8,<4.0"
+version = "5.1.6"
+
+[package.dependencies]
+riotwatcher = ">=2.7.1,<3.0.0"
+royalspells = ">=3.2,<4.0"
+
+[package.dependencies.royalnet]
+extras = ["sentry", "coloredlogs", "alchemy_easy", "discord", "constellation", "herald", "telegram", "bard"]
+version = ">=5.1.4,<6.0.0"
+
+[[package]]
+category = "main"
+description = "A package to procedurally generate useless spells!"
+name = "royalspells"
+optional = false
+python-versions = "~=3.6"
+version = "3.2"
 
 [[package]]
 category = "main"
@@ -574,7 +598,7 @@ python-versions = "*"
 version = "2019.11.28"
 
 [metadata]
-content-hash = "7f30fe6e329457ef7d6a8b6dea1067131a22df3b35197fe0834d27ef3b5535d5"
+content-hash = "7b99fc704733ab0bc30b37829a5124f6d04a37e1d945b93abe0c231cae553a30"
     python-versions = "^3.8"
 
 [metadata.files]
@@ -814,19 +838,17 @@ pytz = [
     {file = "pytz-2019.3.tar.gz", hash = "sha256:b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"},
 ]
 regex = [
-    {file = "regex-2019.11.1-cp27-none-win32.whl", hash = "sha256:604dc563a02a74d70ae1f55208ddc9bfb6d9f470f6d1a5054c4bd5ae58744ab1"},
-    {file = "regex-2019.11.1-cp27-none-win_amd64.whl", hash = "sha256:5e00f65cc507d13ab4dfa92c1232d004fa202c1d43a32a13940ab8a5afe2fb96"},
-    {file = "regex-2019.11.1-cp35-none-win32.whl", hash = "sha256:15454b37c5a278f46f7aa2d9339bda450c300617ca2fca6558d05d870245edc7"},
-    {file = "regex-2019.11.1-cp35-none-win_amd64.whl", hash = "sha256:d2b302f8cdd82c8f48e9de749d1d17f85ce9a0f082880b9a4859f66b07037dc6"},
-    {file = "regex-2019.11.1-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:b4e0406d822aa4993ac45072a584d57aa4931cf8288b5455bbf30c1d59dbad59"},
-    {file = "regex-2019.11.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:7faf534c1841c09d8fefa60ccde7b9903c9b528853ecf41628689793290ca143"},
-    {file = "regex-2019.11.1-cp36-none-win32.whl", hash = "sha256:7caf47e4a9ac6ef08cabd3442cc4ca3386db141fb3c8b2a7e202d0470028e910"},
-    {file = "regex-2019.11.1-cp36-none-win_amd64.whl", hash = "sha256:e3d8dd0ec0ea280cf89026b0898971f5750a7bd92cb62c51af5a52abd020054a"},
-    {file = "regex-2019.11.1-cp37-none-win32.whl", hash = "sha256:c31eaf28c6fe75ea329add0022efeed249e37861c19681960f99bbc7db981fb2"},
-    {file = "regex-2019.11.1-cp37-none-win_amd64.whl", hash = "sha256:1ad40708c255943a227e778b022c6497c129ad614bb7a2a2f916e12e8a359ee7"},
-    {file = "regex-2019.11.1-cp38-none-win32.whl", hash = "sha256:ec032cbfed59bd5a4b8eab943c310acfaaa81394e14f44454ad5c9eba4f24a74"},
-    {file = "regex-2019.11.1-cp38-none-win_amd64.whl", hash = "sha256:c7393597191fc2043c744db021643549061e12abe0b3ff5c429d806de7b93b66"},
-    {file = "regex-2019.11.1.tar.gz", hash = "sha256:720e34a539a76a1fedcebe4397290604cc2bdf6f81eca44adb9fb2ea071c0c69"},
+    {file = "regex-2019.12.9-cp27-none-win32.whl", hash = "sha256:40b7d1291a56897927e08bb973f8c186c2feb14c7f708bfe7aaee09483e85a20"},
+    {file = "regex-2019.12.9-cp27-none-win_amd64.whl", hash = "sha256:c203c9ee755e9656d0af8fab82754d5a664ebaf707b3f883c7eff6a3dd5151cf"},
+    {file = "regex-2019.12.9-cp35-none-win32.whl", hash = "sha256:719978a9145d59fc78509ea1d1bb74243f93583ef2a34dcc5623cf8118ae9726"},
+    {file = "regex-2019.12.9-cp35-none-win_amd64.whl", hash = "sha256:75cf3796f89f75f83207a5c6a6e14eaf57e0369ef0ffff8e22bf36bbcfa0f1de"},
+    {file = "regex-2019.12.9-cp36-none-win32.whl", hash = "sha256:3dbd8333fd2ebd50977ac8747385a73aa1f546eb6b16fcd83d274470fe11f243"},
+    {file = "regex-2019.12.9-cp36-none-win_amd64.whl", hash = "sha256:ad9e3c7260809c0d1ded100269f78ea0217c0704f1eaaf40a382008461848b45"},
+    {file = "regex-2019.12.9-cp37-none-win32.whl", hash = "sha256:91235c98283d2bddf1a588f0fbc2da8afa37959294bbd18b76297bdf316ba4d6"},
+    {file = "regex-2019.12.9-cp37-none-win_amd64.whl", hash = "sha256:aaffd68c4c1ed891366d5c390081f4bf6337595e76a157baf453603d8e53fbcb"},
+    {file = "regex-2019.12.9-cp38-none-win32.whl", hash = "sha256:e865bc508e316a3a09d36c8621596e6599a203bc54f1cd41020a127ccdac468a"},
+    {file = "regex-2019.12.9-cp38-none-win_amd64.whl", hash = "sha256:77396cf80be8b2a35db863cca4c1a902d88ceeb183adab328b81184e71a5eafe"},
+    {file = "regex-2019.12.9.tar.gz", hash = "sha256:77a3799152951d6d14ae5720ca162c97c64f85d4755da585418eac216b736cad"},
 ]
 requests = [
     {file = "requests-2.22.0-py2.py3-none-any.whl", hash = "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"},
@@ -837,8 +859,15 @@ riotwatcher = [
     {file = "riotwatcher-2.7.1.tar.gz", hash = "sha256:5349271c7e00637b7619491a6070e66603705db60558ea2a690e7016f6e6d9a4"},
 ]
 royalnet = [
-    {file = "royalnet-5.1.4-py3-none-any.whl", hash = "sha256:6d2a9d244b9ac3f907a7f4b63e2aa192c560bb63f9abb1426647ddbabb2498a0"},
-    {file = "royalnet-5.1.4.tar.gz", hash = "sha256:439f80b1efc12b6d7c38286d544c04aefb0d43b05a8fe7c7e17c84f7237382f4"},
+    {file = "royalnet-5.1.5-py3-none-any.whl", hash = "sha256:2673c195566b6f65c45cd9feb3a6512c8de2cd07557f1434e9345cd345cc361c"},
+    {file = "royalnet-5.1.5.tar.gz", hash = "sha256:d25603b39065a1af7e5e4e05ffccb85eb1fbd1bc3f8ab3873d723dd9ac51fe1f"},
+]
+royalpack = [
+    {file = "royalpack-5.1.6-py3-none-any.whl", hash = "sha256:322aed877a634c60b7216b438ecd3bf0057a8a9b5d113ae390e975e1b6f46653"},
+    {file = "royalpack-5.1.6.tar.gz", hash = "sha256:489e19c6ae66f25197abaaac2654d79a9c6496799b1c9aa741140a6517130c54"},
+]
+royalspells = [
+    {file = "royalspells-3.2.tar.gz", hash = "sha256:2bd4a9a66514532e35c02c3907425af48c7cb292364c4843c795719a82b25dfe"},
 ]
 sentry-sdk = [
     {file = "sentry-sdk-0.13.5.tar.gz", hash = "sha256:c6b919623e488134a728f16326c6f0bcdab7e3f59e7f4c472a90eea4d6d8fe82"},

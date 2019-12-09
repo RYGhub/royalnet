@@ -6,6 +6,12 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
+### Is the server up?
+
+GET http://localhost:44445/api/royalnet/version
+
+### Basic conversation
+
 POST http://localhost:44445/api/kei
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
@@ -13,3 +19,4 @@ Content-Type: application/x-www-form-urlencoded
 kpid=test&convid=1&first=true&message=lul
 
 ###
+
