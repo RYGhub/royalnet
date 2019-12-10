@@ -19,6 +19,10 @@ class KeiMessage:
         return relationship("KeiPerson", foreign_keys=self.kei_person_id, backref="kei_messages")
 
     @declared_attr
+    def previous(self):
+        return Column(String)
+
+    @declared_attr
     def message(self):
         return Column(String, nullable=False)
 

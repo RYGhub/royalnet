@@ -31,13 +31,14 @@ class ApiKei(PageStar):
             kpid = form["kpid"]
             convid = form["convid"]
             message = form.get("message")
+            previous = form.get("previous")
             first = form.get("first", False)
 
             person = await asyncify(session.query(self.alchemy.get(KeiPerson)).filter_by(kpid=kpid).one_or_none)
             if person is None:
                 person = self.alchemy.get(KeiPerson)(kpid=kpid)
                 session.add(person)
-            message = self.alchemy.get(KeiMessage)(kei_person=person, message=message)
+            message = self.alchemy.get(KeiMessage)(kei_person=person, message=message, previous=previous)
             session.add(message)
             await asyncify(session.commit)
             # Find conversation
@@ -55,7 +56,8 @@ class ApiKei(PageStar):
                 try:
                     result = await conv.next(session=session,
                                              person=person,
-                                             message=message)
+                                             message=message,
+                                             previous=previous)
                 except StopAsyncIteration:
                     del self._conversations[convid]
                     continue

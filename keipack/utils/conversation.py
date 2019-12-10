@@ -10,6 +10,7 @@ class Conversation:
         self._person = None
         self._session = None
         self._message = None
+        self._previous = None
 
     async def _generator(self):
         yield
@@ -21,10 +22,11 @@ class Conversation:
         await conv.generator.asend(None)
         return conv
 
-    async def next(self, session, person, message):
+    async def next(self, session, person, message, previous):
         self._session = session
         self._person = person
         self._message = message
+        self._previous = previous
         reply = await self.generator.asend(None)
         return reply
 
