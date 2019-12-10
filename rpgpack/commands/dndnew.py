@@ -17,7 +17,7 @@ class DndnewCommand(Command):
     tables = {DndCharacter}
 
     def _search_value(self, name: str, string: str):
-        return re.search(r"\s*" + name + r"\s*([0-9]+)\s*", string, re.IGNORECASE)
+        return re.search(r"\s*" + name + r"\s*([0-9.]+)\s*", string, re.IGNORECASE)
 
     def _parse(self, character_sheet: str) -> dict:
         columns = list(self.alchemy.DndCharacter.__table__.columns)
