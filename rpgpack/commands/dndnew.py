@@ -14,13 +14,11 @@ class DndnewCommand(Command):
 
     syntax = "{name}\n{character_sheet}"
 
-    tables = {DndCharacter}
-
     def _search_value(self, name: str, string: str):
         return re.search(r"\s*" + name + r"\s*([0-9.]+)\s*", string, re.IGNORECASE)
 
     def _parse(self, character_sheet: str) -> dict:
-        columns = list(self.alchemy.DndCharacter.__table__.columns)
+        columns = list(self.alchemy.get(DndCharacter).__table__.columns)
         column_names = [column.name for column in columns if (not column.primary_key and
                                                               not column.foreign_keys and
                                                               column.name != "name")]
@@ -35,7 +33,7 @@ class DndnewCommand(Command):
         return arguments
 
     def _syntax(self) -> str:
-        columns = list(self.alchemy.DndCharacter.__table__.columns)
+        columns = list(self.alchemy.get(DndCharacter).__table__.columns)
         column_names = [column.name for column in columns if (not column.primary_key and
                                                               not column.foreign_keys and
                                                               column.name != "name")]
@@ -56,7 +54,7 @@ class DndnewCommand(Command):
 
         name, rest = character_sheet.split("\n", 1)
 
-        character = self.alchemy.DndCharacter(name=name, creator=creator, **self._parse(rest))
+        character = self.alchemy.get(DndCharacter)(name=name, creator=creator, **self._parse(rest))
         data.session.add(character)
 
         try:

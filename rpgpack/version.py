@@ -1,4 +1,2 @@
-semantic = "5.0a94"
+semantic = "5.1.3"
 
-if __name__ == "__main__":
-    print(semantic)

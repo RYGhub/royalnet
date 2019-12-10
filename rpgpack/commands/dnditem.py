@@ -17,7 +17,7 @@ class DnditemCommand(Command):
 
     def __init__(self, interface: CommandInterface):
         super().__init__(interface)
-        interface.loop.create_task(self._fetch_dnddata())
+        self.loop.create_task(self._fetch_dnddata())
 
     async def _fetch_dnddata(self):
         self._dnddata = self._dnddata = sortedcontainers.SortedKeyList([], key=lambda i: i["name"].lower())

@@ -1,8 +1,7 @@
-import re
 import random
+import math
 from royalnet.commands import *
-from ..tables import DndCharacter, DndActiveCharacter
-from royalnet.utils import plusformat
+from ..tables import DndCharacter
 
 
 class DndrollCommand(Command):
@@ -11,8 +10,6 @@ class DndrollCommand(Command):
     description: str = "Roll dice as the active DnD character."
 
     aliases = ["dr", "dndr", "roll", "droll"]
-
-    tables = {DndCharacter, DndActiveCharacter}
 
     _skill_names = {
         "str": "strength",
@@ -124,9 +121,9 @@ class DndrollCommand(Command):
         else:
             raise CommandError("Invalid skill name (first parameter).")
 
-        skill_modifier = char.__getattribute__(skill_name)
+        skill_modifier = int(char.__getattribute__(skill_name))
         modifier = skill_modifier + extra_modifier
-        modifier_str = plusformat(modifier, empty_if_zero=True)
+        modifier_str = f"{modifier:+d}" if modifier != 0 else ""
 
         if advantage:
             roll_a = random.randrange(1, 21)
