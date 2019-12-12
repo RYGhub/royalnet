@@ -30,7 +30,7 @@ class ApiKei(PageStar):
 
             kpid = form["kpid"]
             convid = form["convid"]
-            message = form.get("message")
+            msg = form.get("message")
             previous = form.get("previous")
             first = form.get("first", False)
 
@@ -38,7 +38,7 @@ class ApiKei(PageStar):
             if person is None:
                 person = self.alchemy.get(KeiPerson)(kpid=kpid)
                 session.add(person)
-            message = self.alchemy.get(KeiMessage)(kei_person=person, message=message, previous=previous)
+            message = self.alchemy.get(KeiMessage)(kei_person=person, message=msg, previous=previous)
             session.add(message)
             await asyncify(session.commit)
             # Find conversation

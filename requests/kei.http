@@ -16,7 +16,7 @@ POST http://localhost:44445/api/kei
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
 
-kpid=test&convid=1&first=true&message=lul
+kpid=TEST&convid=TEST&message=Hi!&previous=Hoy!
 
 ###
 
