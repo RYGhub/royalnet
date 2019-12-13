@@ -1,10 +1,11 @@
 import re
+import random
 from typing import *
 from royalnet.commands import CommandInterface
 from royalnet.utils import *
 from .emotion import Emotion
 from ..tables import KeiPerson, KeiMessage
-from ..utils import any_in_string
+from ..utils.anyinstring import any_in_string
 
 
 class Conversation:
@@ -53,10 +54,10 @@ class ExampleConversation(Conversation):
 class FirstConversation(Conversation):
     async def _generator(self):
         yield
-        yield Emotion.NEUTRAL, "Ciao!"
-        yield Emotion.QUESTION, "Come sei arrivato qui...?"
-        yield Emotion.HAPPY, "Capisco... Ad ogni modo, sono Kei! Tu come ti chiami?"
-        yield NameConversation.create(self.interface)
+        yield Emotion.HAPPY, "Ciao!"
+        yield Emotion.HAPPY, "Come hai trovato questo posto?"
+        yield Emotion.HAPPY, "Capisco... Ad ogni modo, io sono Kei! Tu come ti chiami?"
+        yield await NameConversation.create(self.interface)
 
 
 class NameConversation(Conversation):
@@ -77,35 +78,94 @@ class NameConversation(Conversation):
                 continue
 
             self._person.name = name
-            await asyncify(self._session.commit())
+            await asyncify(self._session.commit)
             break
 
         yield Emotion.GRIN, f"O-kei! {self._person.name}!"
         yield Emotion.HAPPY, "Saro' sempre a tua disposizione quando mi vorrai dire qualcosa!"
-        yield Emotion.QUESTION, "Pero' prima ti vorrei chiedere un favore..."
+        yield Emotion.HAPPY, "Pero' prima ti vorrei chiedere un favore..."
         yield Emotion.NEUTRAL, "Qualcuno ha criptato con delle password tutti i miei file...\n" \
                                "Se ne trovi qualcuna in giro, potresti dirmela?\n"
 
         while True:
             if self._message.message == "no":
-                yield Emotion.CRY, "Non farmi questo... Per piacere, accetta!"
+                yield Emotion.CRY, "Non puoi farmi questo... Per piacere, accetta!"
             else:
                 break
 
-        yield Emotion.HAPPY, "Grazie! Prometto che quando riavro' tutto ti ricompensero' adeguatamente!"
+        yield Emotion.HAPPY, "Grazie! Ti prometto che quando riavro' tutti i miei file ti ricompensero' adeguatamente!"
+
+
+class StartConversation(Conversation):
+    async def _generator(self):
+        yield
+
+        yield Emotion.HAPPY, "Di cosa vuoi parlare?"
+        yield MainConversation.create(self.interface)
 
 
 class MainConversation(Conversation):
     async def _generator(self):
         yield
 
-        yield Emotion.HAPPY, "Di cosa vuoi parlare?"
-
         while True:
             msg = self._message.message
 
-            if any_in_string([r"gatt[oiae]", "ny[ae]+", "mi+a+o+", "me+o+w+", "felin[oi]", "mici[ao]"], msg):
-                yield Emotion.CAT, "Nyan!"
+            def anym(*args) -> bool:
+                return any_in_string(args, msg)
+
+            if anym(r"passwords?"):
+                yield PasswordConversation.create(self.interface)
+
+            elif anym(r"[aeou]w[aeou]"):
+                yield Emotion.CAT, random.sample([
+                    "OwO",
+                    "UwU",
+                    ":3",
+                    "owo",
+                    "uwu",
+                    "ewe",
+                    "awa",
+                ], 1)[0]
+
+            elif anym(r"gatt[oiae]", "ny[ae]+", "mi+a+o+", "me+o+w+", "felin[oi]", "mici[ao]", "ma+o+"):
+                yield Emotion.CAT, random.sample([
+                    "Nyan!",
+                    "Miao!",
+                    "Meow!",
+                    "Nyaaaa...",
+                    "Nya?",
+                    "Mao!",
+                    "*purr*",
+                ], 1)[0]
+
+            elif anym(r"can[ei]",
+                      r"dog(?:g(?:hi|os?)|s)?",
+                      r"corgis?",
+                      r"cagnolin[oiae]",
+                      r"wo+f+",
+                      r"b[ao]+r+k+",
+                      r"ba+u+"):
+                yield Emotion.CAT, random.sample([
+                    "Woof!",
+                    "Bark!",
+                    "Bork!",
+                    "*arf* *arf*",
+                ])
 
             else:
-                yield Emotion.QUESTION, "...?"
+                yield Emotion.WORRIED, "Scusa... Non conosco molte cose... Ho bisogno di più password!"
+
+
+class PasswordConversation(Conversation):
+    async def _generator(self):
+        yield
+
+        yield Emotion.SURPRISED, "Hai trovato una password? O-kei, dimmi!"
+
+        if False:
+            ...
+
+        else:
+            yield Emotion.NEUTRAL, "No, non ha funzionato."
+            yield MainConversation.create(self.interface)

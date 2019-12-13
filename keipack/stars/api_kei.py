@@ -32,12 +32,14 @@ class ApiKei(PageStar):
             convid = form["convid"]
             msg = form.get("message")
             previous = form.get("previous")
-            first = form.get("first", False)
 
             person = await asyncify(session.query(self.alchemy.get(KeiPerson)).filter_by(kpid=kpid).one_or_none)
             if person is None:
                 person = self.alchemy.get(KeiPerson)(kpid=kpid)
                 session.add(person)
+                first = True
+            else:
+                first = False
             message = self.alchemy.get(KeiMessage)(kei_person=person, message=msg, previous=previous)
             session.add(message)
             await asyncify(session.commit)
@@ -45,12 +47,15 @@ class ApiKei(PageStar):
             while True:
                 if convid not in self._conversations:
                     # Create a new conversation
-                    self._conversations[convid] = await ExampleConversation.create(self.interface)
+                    if first:
+                        self._conversations[convid] = await FirstConversation.create(self.interface)
+                    else:
+                        self._conversations[convid] = await MainConversation.create(self.interface)
                     log.info(f"[{convid}] SYSTEM: New conversation created - {self._conversations[convid]}")
                 conv: Conversation = self._conversations[convid]
 
                 try:
-                    log.info(f"[{convid}] {person}: '{message}'")
+                    log.info(f"[{convid}] {person}: '{message.message}'")
                 except Exception:
                     pass
                 try:
@@ -63,7 +68,7 @@ class ApiKei(PageStar):
                     continue
                 except Exception as e:
                     log.error(f"[{convid}] ERROR: {e}")
-                    emotion, text = Emotion.NEUTRAL, "...?"
+                    emotion, text = Emotion.QUESTION, "...?"
                     del self._conversations[convid]
                     break
                 else:

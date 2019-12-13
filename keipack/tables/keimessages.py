@@ -1,6 +1,6 @@
 from typing import *
 from sqlalchemy import *
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declared_attr
 
 
@@ -21,7 +21,8 @@ class KeiMessage:
 
     @declared_attr
     def kei_person(self) -> "KeiPerson":
-        return relationship("KeiPerson", foreign_keys=self.kei_person_id, backref="kei_messages")
+        return relationship("KeiPerson", foreign_keys=self.kei_person_id, backref=backref("kei_messages",
+                                                                                          cascade="all, delete-orphan"))
 
     @declared_attr
     def previous(self) -> Optional[str]:

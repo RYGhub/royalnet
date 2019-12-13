@@ -19,7 +19,7 @@ class KeiPerson:
         return Column(Integer, ForeignKey("users.uid"))
 
     @declared_attr
-    def user(self) -> Optional[User]:
+    def user(self) -> Optional["User"]:
         return relationship("User", foreign_keys=self.user_id, backref="kei_people")
 
     @declared_attr
