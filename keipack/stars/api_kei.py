@@ -50,7 +50,7 @@ class ApiKei(PageStar):
                     if first:
                         self._conversations[convid] = await FirstConversation.create(self.interface)
                     else:
-                        self._conversations[convid] = await MainConversation.create(self.interface)
+                        self._conversations[convid] = await StartConversation.create(self.interface)
                     log.info(f"[{convid}] SYSTEM: New conversation created - {self._conversations[convid]}")
                 conv: Conversation = self._conversations[convid]
 
