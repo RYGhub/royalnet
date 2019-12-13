@@ -101,7 +101,7 @@ class StartConversation(Conversation):
         yield
 
         yield Emotion.HAPPY, "Di cosa vuoi parlare?"
-        yield MainConversation.create(self.interface)
+        yield await MainConversation.create(self.interface)
 
 
 class MainConversation(Conversation):
@@ -115,7 +115,7 @@ class MainConversation(Conversation):
                 return any_in_string(args, msg)
 
             if anym(r"passwords?"):
-                yield PasswordConversation.create(self.interface)
+                yield await PasswordConversation.create(self.interface)
 
             elif anym(r"[aeou]w[aeou]"):
                 yield Emotion.CAT, random.sample([
@@ -168,4 +168,4 @@ class PasswordConversation(Conversation):
 
         else:
             yield Emotion.NEUTRAL, "No, non ha funzionato."
-            yield MainConversation.create(self.interface)
+            yield await MainConversation.create(self.interface)
