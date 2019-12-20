@@ -43,6 +43,7 @@ class ApiKei(PageStar):
             message = self.alchemy.get(KeiMessage)(kei_person=person, message=msg, previous=previous)
             session.add(message)
             await asyncify(session.commit)
+            unlocks = await asyncify(session.query(self.alchemy.get(KeiUnlocks)).one)
             # Find conversation
             while True:
                 if convid not in self._conversations:
@@ -62,7 +63,8 @@ class ApiKei(PageStar):
                     result = await conv.next(session=session,
                                              person=person,
                                              message=message,
-                                             previous=previous)
+                                             previous=previous,
+                                             unlocks=unlocks)
                 except StopAsyncIteration:
                     del self._conversations[convid]
                     continue

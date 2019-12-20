@@ -30,4 +30,4 @@ class KeiPerson:
         return f"<{self.__class__.__qualname__} {self.kpid}{' ' + self.user.username if self.user is not None else ''}>"
 
     def __str__(self):
-        return self.user.username if self.user is not None else self.kpid
+        return self.name if self.name is not None else self.kpid
