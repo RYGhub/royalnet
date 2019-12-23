@@ -48,10 +48,11 @@ class ApiKei(PageStar):
             while True:
                 if convid not in self._conversations:
                     # Create a new conversation
-                    if first:
-                        self._conversations[convid] = await FirstConversation.create(self.interface)
-                    else:
-                        self._conversations[convid] = await StartConversation.create(self.interface)
+                    # if first:
+                    #     self._conversations[convid] = await FirstConversation.create(self.interface)
+                    # else:
+                    #     self._conversations[convid] = await StartConversation.create(self.interface)
+                    self._conversations[convid] = await RygmovieConversation.create(self.interface)
                     log.info(f"[{convid}] SYSTEM: New conversation created - {self._conversations[convid]}")
                 conv: Conversation = self._conversations[convid]
 

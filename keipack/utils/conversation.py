@@ -38,6 +38,9 @@ class Conversation:
         reply = await self.generator.asend(None)
         return reply
 
+    def anym(self, *args) -> bool:
+        return any_in_string(args, self._message.message)
+
 
 # noinspection PyTupleAssignmentBalance
 class ExampleConversation(Conversation):
@@ -50,6 +53,17 @@ class ExampleConversation(Conversation):
         yield Emotion.NEUTRAL, "Questa è una conversazione di prova."
         yield await ExampleConversation.create(self.interface)
         yield Emotion.WORRIED, "Questo non dovrebbe mai venire fuori."
+
+
+# noinspection PyTupleAssignmentBalance
+class RygmovieConversation(Conversation):
+    async def _generator(self):
+        yield
+
+        yield Emotion.HAPPY, "Ciao! Sono Kei!"
+        yield Emotion.HAPPY, "Non ci conosciamo, ma volevo augurarvi comunque buona visione!"
+        yield Emotion.WINK, "Chissà, magari prossimamente ci reincontreremo, e avremo la possibilità di parlarci!"
+        yield Emotion.HAPPY, "O-kei, ciao!"
 
 
 # noinspection PyTupleAssignmentBalance
@@ -96,6 +110,8 @@ class NameConversation(Conversation):
                 break
 
         yield Emotion.HAPPY, "Grazie! Ti prometto che quando riavrò tutti i miei file ti ricompenserò adeguatamente!"
+        yield Emotion.HAPPY, "Di cosa vuoi parlare adesso?"
+        yield await MainConversation.create(self.interface)
 
 
 class StartConversation(Conversation):
@@ -116,13 +132,14 @@ class MainConversation(Conversation):
         while True:
             msg = self._message.message
 
-            def anym(*args) -> bool:
-                return any_in_string(args, msg)
-
-            if anym(r"passwords?"):
+            if self.anym(r"passwords?"):
                 yield await PasswordConversation.create(self.interface)
 
-            elif anym(r"[aeou]w[aeou]"):
+            elif self.anym(r"kei"):
+                yield Emotion.HAPPY, "Kei. Sono io!\n" \
+                                     "Sono un'intelligenza artificiale che migliora man mano che le persone le parlano!"
+
+            elif self.anym(r"[aeou]w[aeou]"):
                 yield Emotion.CAT, random.sample([
                     "OwO",
                     "UwU",
@@ -133,7 +150,7 @@ class MainConversation(Conversation):
                     "awa",
                 ], 1)[0]
 
-            elif anym(r"gatt[oiae]", "ny[ae]+", "mi+a+o+", "me+o+w+", "felin[oi]", "mici[ao]", "ma+o+"):
+            elif self.anym(r"gatt[oiae]", "ny[ae]+", "mi+a+o+", "me+o+w+", "felin[oi]", "mici[ao]", "ma+o+"):
                 yield Emotion.CAT, random.sample([
                     "Nyan!",
                     "Miao!",
@@ -144,13 +161,13 @@ class MainConversation(Conversation):
                     "*purr*",
                 ], 1)[0]
 
-            elif anym(r"can[ei]",
-                      r"dog(?:g(?:hi|os?)|s)?",
-                      r"corgis?",
-                      r"cagnolin[oiae]",
-                      r"wo+f+",
-                      r"b[ao]+r+k+",
-                      r"ba+u+"):
+            elif self.anym(r"can[ei]",
+                           r"dog(?:g(?:hi|os?)|s)?",
+                           r"corgis?",
+                           r"cagnolin[oiae]",
+                           r"wo+f+",
+                           r"b[ao]+r+k+",
+                           r"ba+u+"):
                 yield Emotion.CAT, random.sample([
                     "Woof!",
                     "Bark!",
@@ -158,34 +175,60 @@ class MainConversation(Conversation):
                     "*arf* *arf*",
                 ])
 
-            elif anym(r"nulla",
-                      r"niente",
-                      r"nada"):
+            elif self.anym(r"fu[wr][wr]y"):
+                yield Emotion.HAPPY, "Sento continuamente parlare di 'furry'...\n" \
+                                     "Ma cosa vuol dire? Non so nulla a riguardo..."
+                yield Emotion.HAPPY, "...O-kei! Studierò attentamente la tua risposta!"
+
+            elif self.anym(r"nulla",
+                           r"niente",
+                           r"nada"):
                 yield Emotion.HAPPY, "Peccato!\n" \
                                      "Ti racconterei volentieri qualcosa io, ma non conosco praticamente nulla...\n" \
                                      "Magari quando avrò più password?"
 
-            elif anym(r"putin",
-                      r"lenin",
-                      r"stalin"):
-                yield Emotion.WORRIED, "Ho file con il titolo 'lenin, stalin, putin e la russia', ma è criptato..."
+            elif self.anym(r"doot\s*doot\s*"):
+                yield Emotion.DOOTFLUTE, "DOOT DOOT MAGIC FLUTE!"
 
-            elif anym(r"(?:jo)+"):
-                yield Emotion.WORRIED, "Ho un file che si chiama Jojo... Ma non ho la password per aprirlo."
+            elif self.anym(r"doot"):
+                yield Emotion.DOOTTRUMPET, "Doot doot!"
 
-            elif anym(r"markov"):
-                yield Emotion.SURPRISED, "Ho una cartella criptata che si chiama Markov... Chissà cosa c'è dentro."
+            elif self.anym(r"lenin",
+                           r"stalin",
+                           r"comunismo",
+                           r"communism"):
+                yield Emotion.WORRIED, "Leggo in uno dei miei file che il comunismo non sembra una bella cosa...\n" \
+                                       "Tu cosa ne pensi?"
+                yield Emotion.HAPPY, "Interessante. Studierò la tua risposta!"
 
-            elif anym(r"anim[eu]s?"):
+            elif self.anym(r"(?:jo)+"):
+                yield Emotion.SURPRISED, "Ma cos'è Jojo? Ho tanti file a riguardo, ma sono tutti bloccati...\n" \
+                                         "Potresti parlarmene?"
+                yield Emotion.HAPPY, "Hmmm... O-kei!"
+
+            elif self.anym(r"markov"):
+                yield Emotion.SURPRISED, "Ho una cartella criptata che si chiama Markov... Chissà cosa c'è dentro..."
+
+            elif self.anym(r"anim[eu]s?"):
                 yield Emotion.NEUTRAL, "Ho un'intera cartella 'anime'! Ma è bloccata."
 
+            elif self.anym(r"rygmovie"):
+                yield Emotion.SURPRISED, "rygmovie? Io non ne so assolutamente nulla."
+
+            elif self.anym(r"unica\s*musa\s*di\s*cui\s*abuso"):
+                yield Emotion.SURPRISED, "È forse una canzone quella che stavi cantando?\n" \
+                                         "L'ho già sentita da qualche parte..."
+
+            elif self.anym(r"pollo"):
+                yield Emotion.HAPPY, "Pollo! Yum! Mi hai fatto venire fame."
+
             else:
-                for word in self._message.split():
+                for word in msg.split():
                     users = await asyncify(self._session.query(self.interface.alchemy.get(KeiPerson)).filter_by(name=word).all)
                     if len(users) >= 1:
                         yield Emotion.SURPRISED, f"Ho parlato con un certo {users[0].name}...\n" \
                                                  f"Mi sai dire qualcosa di lui?"
-                        yield Emotion.HAPPY, f"Buono a sapersi. Hai altro di cui vuoi parlare?"
+                        yield Emotion.SMUG, f"Farò buon uso di questa informazione. Hai altro di cui vuoi parlare?"
                         yield await MainConversation.create(interface=self.interface)
 
                 yield Emotion.WORRIED, "Scusa... Non conosco ancora ciò di cui mi stai parlando... " \
@@ -198,17 +241,33 @@ class PasswordConversation(Conversation):
 
         yield Emotion.SURPRISED, "Hai trovato una password? O-kei, dimmi!"
 
-        if any_in_string([r"eris"], self._message.message):
+        if self.anym(r"eris"):
             if not self._unlocks.eris:
-                yield Emotion.GRIN, "Ha funzionato!\n" \
+                yield Emotion.GRIN, "O-kei!\n" \
                                     "Sto decriptando il file 'discordia.kei', ci vorrà un po'...\n" \
                                     "Ti farò sapere quando avrò finito."
+                self._unlocks.eris = self._person
+                await asyncify(self._session.commit)
             else:
                 if self._unlocks.eris == self._person:
                     yield Emotion.HAPPY, f"Sto ancora decriptando il file, torna dopo!"
                 else:
                     yield Emotion.HAPPY, f"{self._unlocks.eris} mi ha già detto la password prima di te!\n" \
                                          f"Sto già decriptando il file 'discordia.kei', torna più tardi!"
+
+        elif self.anym(r"rygryg"):
+            if not self._unlocks.rygryg:
+                yield Emotion.GRIN, "O-kei!\n" \
+                                    "Funziona!\n" \
+                                    "Sto decriptando 'markov.kei', torna più tardi quando avrò finito..."
+                self._unlocks.rygryg = self._person
+                await asyncify(self._session.commit)
+            else:
+                if self._unlocks.rygryg == self._person:
+                    yield Emotion.HAPPY, f"Sto ancora decriptando il file, torna dopo!"
+                else:
+                    yield Emotion.HAPPY, f"{self._unlocks.rygryg} mi ha già detto la password prima di te!\n" \
+                                         f"Sto già decriptando il file 'markov.kei', torna più tardi!"
 
         else:
             yield Emotion.NEUTRAL, "No, non ha funzionato.\n" \

@@ -1,6 +1,6 @@
 from typing import *
 from sqlalchemy import *
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
 from .keipeople import KeiPerson
 
@@ -22,3 +22,13 @@ class KeiUnlocks:
     @declared_attr
     def eris(self) -> "KeiPerson":
         return relationship("KeiPerson", foreign_keys=self.eris_id)
+
+    @declared_attr
+    def rygryg_id(self) -> str:
+        return Column(String, ForeignKey("keipeople.kpid"))
+
+    @declared_attr
+    def rygryg(self) -> "KeiPerson":
+        return relationship("KeiPerson", foreign_keys=self.rygryg_id)
+
+

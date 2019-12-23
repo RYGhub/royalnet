@@ -1,5 +1,5 @@
 from .emotion import Emotion
-from .conversation import Conversation, FirstConversation, StartConversation
+from .conversation import Conversation, FirstConversation, StartConversation, RygmovieConversation
 from .anyinstring import any_in_string
 
 __all__ = [
@@ -7,5 +7,6 @@ __all__ = [
     "Conversation",
     "FirstConversation",
     "StartConversation",
+    "RygmovieConversation",
     "any_in_string",
 ]

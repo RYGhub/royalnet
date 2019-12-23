@@ -2,7 +2,7 @@
 
 [tool.poetry]
     name = "keipack"
-    version = "0.4.2"
+    version = "0.6"
     description = "A mysterious AI assistant"
     authors = ["Stefano Pigozzi <ste.pigozzi@gmail.com>"]
     license = "AGPL-3.0+"
@@ -42,7 +42,6 @@
 
 # Optional dependencies
 [tool.poetry.extras]
-
 
 
 
