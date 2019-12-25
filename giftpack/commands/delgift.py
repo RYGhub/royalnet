@@ -12,7 +12,7 @@ class DelgiftCommand(Command):
     syntax: str = ""
 
     async def run(self, args: CommandArgs, data: CommandData) -> None:
-        gift = data.session.query(self.alchemy.get(XmasGift)).filter_by(drawn=False, gift_id=int(args[0])).order_by(func.random()).first()
+        gift = data.session.query(self.alchemy.get(XmasGift)).filter_by(gift_id=int(args[0])).order_by(func.random()).first()
         data.session.delete(gift)
         await data.reply(f"🎁 Regalo eliminato (bye bye!):\n"
                          f"{gift}")
