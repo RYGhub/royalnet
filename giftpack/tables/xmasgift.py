@@ -27,7 +27,7 @@ class XmasGift:
         return Column(Boolean, nullable=False, default=False)
 
     def __str__(self):
-        msg = f"Regalo #{self.gift_id} da {self.source} a {self.destination}" + f": {self.extra_text}" if self.extra_text else ""
+        msg = f"Regalo #{self.gift_id} da {self.source} a {self.destination}" + (f": {self.extra_text}" if self.extra_text else "")
         if self.drawn:
             return f"⚫️ {msg}"
         else:
