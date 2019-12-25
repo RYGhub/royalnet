@@ -1,9 +1,9 @@
 # Imports go here!
-
+from .xmasgift import XmasGift
 
 # Enter the tables of your Pack here!
 available_tables = [
-
+    XmasGift,
 ]
 
 # Don't change this, it should automatically generate __all__
