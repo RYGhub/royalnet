@@ -1,0 +1,58 @@
+# Remember to run `poetry update` after you edit this file!
+
+[tool.poetry]
+    # TODO: Insert here your Pack name!
+    name = "examplepack"
+    # TODO: Insert here your Pack description!
+    description = "An example pack for Royalnet."
+    # TODO: Increment this every new version of your pack!
+    version = "0.1.0"
+    # TODO: Set this to your full name and email!
+    authors = ["Name Surname <email@example.com>"]
+    # TODO: Set this to the license you want to use for your Pack!
+    license = ""
+    # TODO: Set this to the GitHub page of your pack (or another website)
+    homepage = "https://github.com/your-username/"
+    # TODO: Set this to a link to the Pack documentation (if there's any)
+    documentation = "https://gh.steffo.eu/royalpack/"
+    # TODO: Pick some classifiers to include your Pack in: https://pypi.org/classifiers/
+    classifiers = [
+        "Development Status :: 3 - Alpha",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3.8",
+        "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)"
+    ]
+    readme = "README.md"
+
+# Library dependencies
+[tool.poetry.dependencies]
+    python = "^3.8"
+
+    [tool.poetry.dependencies.royalnet]
+        version = "^5.1.6"
+        # There will soon be a way to make all these optional
+        extras = [
+            "telegram",
+            "discord",
+            "alchemy_easy",
+            "bard",
+            "constellation",
+            "sentry",
+            "herald",
+            "coloredlogs"
+        ]
+
+# Development dependencies
+[tool.poetry.dev-dependencies]
+
+
+
+# Optional dependencies
+[tool.poetry.extras]
+
+
+# Poetry stuff
+# Leave it alone!
+[build-system]
+    requires = ["poetry>=0.12"]
+    build-backend = "poetry.masonry.api"
