@@ -1,11 +1,9 @@
 # Imports go here!
-# TODO: If you create a new command, remember to import it here...
-from .example import ExampleCommand
+from .markov import MarkovCommand
 
 # Enter the commands of your Pack here!
-# TODO: and add it to the list here!
 available_commands = [
-    ExampleCommand,
+    MarkovCommand,
 ]
 
 # Don't change this, it should automatically generate __all__
