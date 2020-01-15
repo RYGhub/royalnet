@@ -30,13 +30,18 @@ class MarkovCommand(Command):
         if self.interface.name != "telegram":
             raise UnsupportedError("[c]markov[/c] funziona solo su Telegram.")
         model_name = args.optional(0, self.config["Markov"]["default_model"])
-        try:
-            sentence = self._texts[model_name].make_sentence()
-        except KeyError:
-            models = "\n- ".join([model_name for model_name in self._texts])
-            raise InvalidInputError("Il modello richiesto non esiste."
-                                    f"Modelli disponibili: {models}")
-        if sentence is None or sentence == "":
-            await data.reply(f"💭 Il bot ([c]{model_name}[/c])... non dice niente. Riprova!")
-        else:
-            await data.reply(f'💬 Il bot ([c]{model_name}[/c]) dice:\n{sentence}')
+        while True:
+            try:
+                sentence = self._texts[model_name].make_sentence()
+            except KeyError:
+                models = []
+                for mn in self._texts:
+                    models.append(f"- [c]{mn}[/c]\n")
+                raise InvalidInputError("Il modello richiesto non esiste."
+                                        f"Modelli disponibili:\n{models}")
+            if sentence is None:
+                continue
+            if len(sentence.split()) < self.config["Markov"]["min_words"]:
+                continue
+            break
+        await data.reply(f'💬 Il bot ([c]{model_name}[/c]) dice:\n{sentence}')

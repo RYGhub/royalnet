@@ -255,6 +255,17 @@ zmq = ["pyzmq"]
 
 [[package]]
 category = "main"
+description = "A simple, extensible Markov chain generator. Uses include generating random semi-plausible sentences based on an existing text."
+name = "markovify"
+optional = false
+python-versions = "*"
+version = "0.8.0"
+
+[package.dependencies]
+unidecode = "*"
+
+[[package]]
+category = "main"
 description = "A Python Matrix client library, designed according to sans I/O principles."
 name = "matrix-nio"
 optional = false
@@ -592,6 +603,14 @@ pytz = "*"
 
 [[package]]
 category = "main"
+description = "ASCII transliterations of Unicode text"
+name = "unidecode"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.1.1"
+
+[[package]]
+category = "main"
 description = "Unpadded Base64"
 name = "unpaddedbase64"
 optional = false
@@ -664,7 +683,7 @@ python-versions = "*"
 version = "2020.1.15"
 
 [metadata]
-content-hash = "e50984a2b35e6d1188ae58089db153a70de042d42e008ca6862331307f504f55"
+content-hash = "a4f472f93cfad2f414322d8d78d082a658bc57a2d7f74cfcd96e0f1c653185c5"
     python-versions = "^3.8"
 
 [metadata.files]
@@ -830,6 +849,9 @@ logbook = [
     {file = "Logbook-1.5.3-cp37-cp37m-win32.whl", hash = "sha256:8f76a2e7b1f72595f753228732f81ce342caf03babc3fed6bbdcf366f2f20f18"},
     {file = "Logbook-1.5.3-cp37-cp37m-win_amd64.whl", hash = "sha256:0cf2cdbfb65a03b5987d19109dacad13417809dcf697f66e1a7084fb21744ea9"},
     {file = "Logbook-1.5.3.tar.gz", hash = "sha256:66f454ada0f56eae43066f604a222b09893f98c1adc18df169710761b8f32fe8"},
+]
+markovify = [
+    {file = "markovify-0.8.0.tar.gz", hash = "sha256:c533a2e1aba8148bb98031b7159e8bf1a276c61db53d2e882ecb74fa5603a4f4"},
 ]
 matrix-nio = [
     {file = "matrix-nio-0.6.tar.gz", hash = "sha256:25a4ac9d5e1435035f5c5b6e9a6b453ac66ade25cb455ba6bbe9cc3ae1e0ef50"},
@@ -1032,6 +1054,10 @@ tornado = [
 tzlocal = [
     {file = "tzlocal-2.0.0-py2.py3-none-any.whl", hash = "sha256:11c9f16e0a633b4b60e1eede97d8a46340d042e67b670b290ca526576e039048"},
     {file = "tzlocal-2.0.0.tar.gz", hash = "sha256:949b9dd5ba4be17190a80c0268167d7e6c92c62b30026cf9764caf3e308e5590"},
+]
+unidecode = [
+    {file = "Unidecode-1.1.1-py2.py3-none-any.whl", hash = "sha256:1d7a042116536098d05d599ef2b8616759f02985c85b4fef50c78a5aaf10822a"},
+    {file = "Unidecode-1.1.1.tar.gz", hash = "sha256:2b6aab710c2a1647e928e36d69c21e76b453cd455f4e2621000e54b2a9b8cce8"},
 ]
 unpaddedbase64 = [
     {file = "unpaddedbase64-1.1.0-py2-none-any.whl", hash = "sha256:8917367e4e915b7dce1a72a99db8798c9f3d0d9a74cdd9aafac6d7c65ca495c5"},

@@ -11,5 +11,6 @@ A [Royalnet](https://github.com/Steffo99/royalnet) pack to have fun with [Markov
    [Packs."markovpack"]
    Markov.models_directory = "markovpack"  # The name of the directory containing the .json files
    Markov.default_model = "example"  # The name of the .json file that should be parsed if no arguments are passed to the command 
+   Markov.min_words = 5  # The minimum number of words a sentence should have to be sent
    ```
-4. Start Royalnet and have fun!
+4. Start Royalnet with `python -m royalnet` and have fun!

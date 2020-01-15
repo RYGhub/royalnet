@@ -1,7 +1,7 @@
 # Royalnet ignores
 config*.toml
 downloads/
-
+markov/
 
 # Python ignores
 **/__pycache__/
