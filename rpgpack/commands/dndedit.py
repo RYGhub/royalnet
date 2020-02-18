@@ -2,6 +2,7 @@ import re
 from royalnet.commands import *
 from .dndnew import DndnewCommand
 from ..tables import DndCharacter
+from ..utils import get_active_character
 
 
 class DndeditCommand(DndnewCommand):
@@ -18,11 +19,10 @@ class DndeditCommand(DndnewCommand):
             await data.reply(self._syntax())
             return
 
-        author = await data.get_author(error_if_none=True)
-        if author.dnd_active_character is None:
+        active_character = await get_active_character(data)
+        if active_character is None:
             raise CommandError("You don't have an active character.")
-
-        char: DndCharacter = author.dnd_active_character.character
+        char = active_character.character
 
         arguments = self._parse(character_sheet)
         for key in arguments:

@@ -2,6 +2,7 @@ import random
 import math
 from royalnet.commands import *
 from ..tables import DndCharacter
+from ..utils import get_active_character
 
 
 class DndrollCommand(Command):
@@ -73,14 +74,14 @@ class DndrollCommand(Command):
         "ste": "stealth",
         "nas": "stealth",
         "sur": "survival",
-        "sop": "sopravvivenza",
+        "sop": "survival",
     }
 
     async def run(self, args: CommandArgs, data: CommandData) -> None:
-        author = await data.get_author(error_if_none=True)
-        if author.dnd_active_character is None:
+        active_character = await get_active_character(data)
+        if active_character is None:
             raise CommandError("You don't have an active character.")
-        char: DndCharacter = author.dnd_active_character.character
+        char = active_character.character
 
         first = args[0]
         second = args.optional(1)

@@ -50,7 +50,7 @@ class DndspellCommand(Command):
 
     @staticmethod
     def _parse_spell(spell: dict) -> str:
-        string = ['✨ [b]{spell["name"]}[/b]\n']
+        string = [f'✨ [b]{spell["name"]}[/b]\n']
 
         # Source (manual, page)
         if "source" in spell:
@@ -61,10 +61,18 @@ class DndspellCommand(Command):
         string.append("\n")
 
         # Level
-        if spell["level"] == 0:
-            string.append(f'[b]Cantrip[/b]\n')
-        else:
-            string.append(f'[b]{ordinalformat(spell["level"])}[/b] level\n')
+        string.append({
+            0: "0️⃣ [b]Cantrip[/b]\n",
+            1: "1️⃣ [b]1st[/b] level\n",
+            2: "2️⃣ [b]2nd[/b] level\n",
+            3: "3️⃣ [b]3rd[/b] level\n",
+            4: "4️⃣ [b]4th[/b] level\n",
+            5: "5️⃣ [b]5th[/b] level\n",
+            6: "6️⃣ [b]6th[/b] level\n",
+            7: "7️⃣ [b]7th[/b] level\n",
+            8: "8️⃣ [b]8th[/b] level\n",
+            9: "9️⃣ [b]9th[/b] level\n",
+        }[spell["level"]])
 
         # School
         string.append({
@@ -78,6 +86,7 @@ class DndspellCommand(Command):
             "P": "Psionic",
             "T": "Transmutation",
         }[spell["school"]])
+        string.append("\n\n")
 
         # Cast time
         for time in spell.get("time", []):
@@ -98,9 +107,29 @@ class DndspellCommand(Command):
                     string.append("Range: ♾ [b]Unlimited[/b]\n")
                 else:
                     string.append(f'Range: 🏹 [b]{spell["range"]["distance"]["amount"]}'
-                                  f' {spell["range"]["distance"]["type"]}[/b] ({spell["range"]["type"]})\n')
+                                  f' {spell["range"]["distance"]["type"]}[/b] (point)\n')
+            elif range["type"] == "radius":
+                string.append(f'Range: ⭕️ [b]{spell["range"]["distance"]["amount"]}'
+                              f' {spell["range"]["distance"]["type"]}[/b] (radius)\n')
+            elif range["type"] == "sphere":
+                string.append(f'Range: 🌕 [b]{spell["range"]["distance"]["amount"]}'
+                              f' {spell["range"]["distance"]["type"]}[/b] (sphere)\n')
+            elif range["type"] == "cone":
+                string.append(f'Range: 🍦 [b]{spell["range"]["distance"]["amount"]}'
+                              f' {spell["range"]["distance"]["type"]}[/b] (cone)\n')
+            elif range["type"] == "line":
+                string.append(f'Range: ➖ [b]{spell["range"]["distance"]["amount"]}'
+                              f' {spell["range"]["distance"]["type"]}[/b] (line)\n')
+            elif range["type"] == "hemisphere":
+                string.append(f'Range: 🌗 [b]{spell["range"]["distance"]["amount"]}'
+                              f' {spell["range"]["distance"]["type"]}[/b] (hemisphere)\n')
+            elif range["type"] == "cube":
+                string.append(f'Range: ⬜️ [b]{spell["range"]["distance"]["amount"]}'
+                              f' {spell["range"]["distance"]["type"]}[/b] (cube)\n')
             elif range["type"] == "special":
                 string.append("Range: ⭐️ Special")
+            else:
+                string.append('Range: ⚠️[b]UNKNOWN[/b]')
 
         # Components
         components = spell.get("components")

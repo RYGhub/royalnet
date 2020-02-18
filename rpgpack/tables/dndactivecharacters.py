@@ -20,7 +20,15 @@ class DndActiveCharacter:
 
     @declared_attr
     def user(self):
-        return relationship("User", foreign_keys=self.user_id, backref=backref("dnd_active_character", uselist=False))
+        return relationship("User", foreign_keys=self.user_id, backref=backref("dnd_active_characters"))
+
+    @declared_attr
+    def interface_name(self):
+        return Column(String)
+
+    @declared_attr
+    def interface_data(self):
+        return Column(LargeBinary)
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} for {self.user_id}: {self.character_id}>"

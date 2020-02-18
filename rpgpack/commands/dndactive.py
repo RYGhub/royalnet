@@ -1,6 +1,8 @@
 from royalnet.commands import *
 from royalnet.utils import asyncify
 from ..tables import DndCharacter, DndActiveCharacter
+from ..utils import get_active_character, get_interface_data
+import pickle
 
 
 class DndactiveCommand(Command):
@@ -15,17 +17,20 @@ class DndactiveCommand(Command):
     async def run(self, args: CommandArgs, data: CommandData) -> None:
         identifier = args.optional(0)
         author = await data.get_author(error_if_none=True)
+        active_character = await get_active_character(data)
+
+        # Display the active character
         if identifier is None:
-            # Display the active character
-            if author.dnd_active_character is None:
-                await data.reply("ℹ️ You have no active characters.")
+            if active_character is None:
+                await data.reply("ℹ️ You haven't activated any character in this chat.")
             else:
-                await data.reply(f"ℹ️ You currently active character is [b]{author.dnd_active_character}[/b].")
+                await data.reply(f"ℹ️ Your active character for this chat is [b]{active_character.character}[/b].")
             return
+
+        # Find the character by name
         try:
             identifier = int(identifier)
         except ValueError:
-            # Find the character by name
             chars = await asyncify(data.session.query(self.alchemy.get(DndCharacter)).filter_by(name=identifier).all)
             if len(chars) >= 2:
                 char_string = "\n".join([f"[c]{char.character_id}[/c] (LV {char.level}) by {char.creator})" for char in chars])
@@ -43,12 +48,16 @@ class DndactiveCommand(Command):
         if char is None:
             raise CommandError("No character found.")
         # Check if the player already has an active character
-        if author.dnd_active_character is None:
+        if active_character is None:
             # Create a new active character
-            achar = self.alchemy.get(DndActiveCharacter)(character=char, user=author)
+            achar = self.alchemy.get(DndActiveCharacter)(
+                character=char,
+                user=author,
+                interface_name=self.interface.name,
+                interface_data=pickle.dumps(get_interface_data(data)))
             data.session.add(achar)
         else:
             # Change the active character
-            author.dnd_active_character.character = char
+            active_character.character = char
         await data.session_commit()
         await data.reply(f"✅ Active character set to [b]{char}[/b]!")

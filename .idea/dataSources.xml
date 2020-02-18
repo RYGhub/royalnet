@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="royalnet@combo.steffo.eu" uuid="e1643839-41cb-4186-bf58-6d375d1420c8">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://combo.steffo.eu:5432/royalnet</jdbc-url>
+    </data-source>
+  </component>
+</project>

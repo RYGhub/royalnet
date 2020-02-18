@@ -1,5 +1,6 @@
 from royalnet.commands import *
 from ..tables import DndCharacter, DndActiveCharacter
+from ..utils import get_active_character
 
 
 class DndinfoCommand(Command):
@@ -13,6 +14,10 @@ class DndinfoCommand(Command):
 
     async def run(self, args: CommandArgs, data: CommandData) -> None:
         author = await data.get_author(error_if_none=True)
-        if author.dnd_active_character is None:
+
+        active_character = await get_active_character(data)
+        char = active_character.character
+
+        if char is None:
             raise CommandError("You don't have an active character.")
-        await data.reply(author.dnd_active_character.character.character_sheet())
+        await data.reply(char.character_sheet())
