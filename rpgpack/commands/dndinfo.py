@@ -13,8 +13,6 @@ class DndinfoCommand(Command):
     tables = {DndCharacter, DndActiveCharacter}
 
     async def run(self, args: CommandArgs, data: CommandData) -> None:
-        author = await data.get_author(error_if_none=True)
-
         active_character = await get_active_character(data)
         char = active_character.character
 
