@@ -1,8 +1,12 @@
 import aiohttp
 import sortedcontainers
+import logging
 from royalnet.commands import *
-from royalnet.utils import ordinalformat, andformat
+from royalnet.utils import ordinalformat, andformat, sentry_exc
 from ..utils import parse_5etools_entry
+
+
+log = logging.getLogger(__name__)
 
 
 class DndspellCommand(Command):
@@ -26,85 +30,130 @@ class DndspellCommand(Command):
             for url in [
                 "https://5e.tools/data/spells/spells-ai.json",
                 "https://5e.tools/data/spells/spells-ggr.json",
-                "https://5e.tools/data/spells/spells-llk.json",
                 "https://5e.tools/data/spells/spells-phb.json",
                 "https://5e.tools/data/spells/spells-scag.json",
+                "https://5e.tools/data/spells/spells-xge.json",
+                "https://5e.tools/data/spells/spells-ua-frw.json",
                 "https://5e.tools/data/spells/spells-stream.json",
-                "https://5e.tools/data/spells/spells-ua-ar.json",
+                "https://5e.tools/data/spells/spells-llk.json",
+                "https://5e.tools/data/spells/spells-ua-saw.json",
                 "https://5e.tools/data/spells/spells-ua-mm.json",
                 "https://5e.tools/data/spells/spells-ua-ss.json",
                 "https://5e.tools/data/spells/spells-ua-tobm.json",
-                "https://5e.tools/data/spells/spells-xge.json"
+                "https://5e.tools/data/spells/spells-ua-ar.json",
             ]:
                 async with session.get(url) as response:
                     j = await response.json()
                     for spell in j["spell"]:
                         self._dnddata.add(spell)
+        self._test_all()
 
     @staticmethod
     def _parse_spell(spell: dict) -> str:
-        string = f'✨ [b]{spell["name"]}[/b]\n'
+        string = ['✨ [b]{spell["name"]}[/b]\n']
+
+        # Source (manual, page)
         if "source" in spell:
-            string += f'[i]{spell["source"]}, page {spell["page"]}[/i]\n'
-        string += "\n"
-        if spell["level"] == 0:
-            string += f'[b]Cantrip[/b] {spell["school"]}\n'
-        else:
-            string += f'[b]{ordinalformat(spell["level"])}[/b] level {spell["school"]}\n'
-        if "time" in spell:
-            for time in spell["time"]:
-                string += f'Cast time: ⌛️ [b]{time["number"]} {time["unit"]}[/b]\n'
-        if "range" in spell:
-            if spell["range"]["distance"]["type"] == "touch":
-                string += "Range: 👉 [b]Touch[/b]\n"
-            elif spell["range"]["distance"]["type"] == "self":
-                string += "Range: 👤 [b]Self[/b]\n"
+            if "page" in spell:
+                string.append(f'[i]{spell["source"]}, page {spell["page"]}[/i]\n')
             else:
-                string += f'Range: 🏹 [b]{spell["range"]["distance"]["amount"]}' \
-                          f' {spell["range"]["distance"]["type"]}[/b] ({spell["range"]["type"]})\n'
-        if "components" in spell:
-            string += f'Components: '
-            if spell["components"].get("v", False):
-                string += "👄 [b]Verbal[/b] | "
-            if spell["components"].get("s", False):
-                string += "🤙 [b]Somatic[/b] | "
-            if spell["components"].get("r", False):
-                # TODO: wtf is this
-                string += "❓ [b]R...?[/b] | "
-            if spell["components"].get("m", False):
-                if "text" in spell["components"]["m"]:
-                    string += f'💎 [b]Material[/b] ([i]{spell["components"]["m"]["text"]}[/i]) | '
+                string.append(f'[i]{spell["source"]}[/i]\n')
+        string.append("\n")
+
+        # Level
+        if spell["level"] == 0:
+            string.append(f'[b]Cantrip[/b]\n')
+        else:
+            string.append(f'[b]{ordinalformat(spell["level"])}[/b] level\n')
+
+        # School
+        string.append({
+            "A": "Abjuration",
+            "C": "Conjuration",
+            "D": "Divination",
+            "E": "Enchantment",
+            "V": "Evocation",
+            "I": "Illusion",
+            "N": "Necromancy",
+            "P": "Psionic",
+            "T": "Transmutation",
+        }[spell["school"]])
+
+        # Cast time
+        for time in spell.get("time", []):
+            string.append(f'Cast time: ⌛️ [b]{time["number"]} {time["unit"]}[/b]\n')
+
+        # Cast range
+        range = spell.get("range")
+        if range:
+            if range["type"] == "point":
+                distance = range["distance"]
+                if distance["type"] == "touch":
+                    string.append("Range: 👉 [b]Touch[/b]\n")
+                elif distance["type"] == "self":
+                    string.append("Range: 👤 [b]Self[/b]\n")
+                elif distance["type"] == "sight":
+                    string.append("Range: 👁 [b]Sight[/b]\n")
+                elif distance["type"] == "unlimited":
+                    string.append("Range: ♾ [b]Unlimited[/b]\n")
                 else:
-                    string += f'💎 [b]Material[/b] ([i]{spell["components"]["m"]}[/i]) | '
-                string = string.rstrip(" ").rstrip("|")
-            string += "\n"
-        string += "\n"
-        if "duration" in spell:
-            for duration in spell["duration"]:
-                if duration["type"] == "timed":
-                    string += f'Duration: 🕒 [b]{duration["duration"]["amount"]} {duration["duration"]["type"]}[/b]'
-                elif duration["type"] == "instant":
-                    string += 'Duration: ☁️ [b]Instantaneous[/b]'
-                elif duration["type"] == "special":
-                    string += 'Duration: ⭐️ [b]Special[/b]'
-                elif duration["type"] == "permanent":
-                    string += f"Duration: ♾ [b]Permanent[/b] (ends on {andformat(duration['ends'], final=' or ')})"
-                else:
-                    string += f'Duration: ⚠️[b]UNKNOWN[/b]'
-                if duration.get("concentration", False):
-                    string += " (requires concentration)"
-                string += "\n"
-        if "meta" in spell:
-            if spell["meta"].get("ritual", False):
-                string += "🔮 Can be casted as ritual\n"
-        string += "\n"
+                    string.append(f'Range: 🏹 [b]{spell["range"]["distance"]["amount"]}'
+                                  f' {spell["range"]["distance"]["type"]}[/b] ({spell["range"]["type"]})\n')
+            elif range["type"] == "special":
+                string.append("Range: ⭐️ Special")
+
+        # Components
+        components = spell.get("components")
+        if components:
+            string.append(f'Components: ')
+            if components.get("v", False):
+                string.append("👄 [b]Verbal[/b] | ")
+            if components.get("s", False):
+                string.append("🤙 [b]Somatic[/b] | ")
+            if components.get("r", False):
+                string.append("©️ [b]Royalty[/b] | ")
+            if components.get("m", False):
+                if isinstance(components["m"], dict):
+                    string.append(f'💎 [b]Material[/b] ([i]{spell["components"]["m"]["text"]}[/i]) | ')
+                elif isinstance(components["m"], str):
+                    string.append(f'💎 [b]Material[/b] ([i]{spell["components"]["m"]}[/i]) | ')
+            string[-1] = string[-1].replace(" | ", "\n")
+        string.append("\n")
+
+        # Durations
+        for duration in spell.get("duration", []):
+            if duration["type"] == "timed":
+                string.append(f'Duration: 🕒 [b]{duration["duration"]["amount"]} {duration["duration"]["type"]}[/b]')
+            elif duration["type"] == "instant":
+                string.append('Duration: ☁️ [b]Instantaneous[/b]')
+            elif duration["type"] == "special":
+                string.append('Duration: ⭐️ [b]Special[/b]')
+            elif duration["type"] == "permanent":
+                string.append(f"Duration: ♾ [b]Permanent[/b] (ends on {andformat(duration['ends'], final=' or ')})")
+            else:
+                string.append(f'Duration: ⚠️[b]UNKNOWN[/b]')
+            if duration.get("concentration", False):
+                string.append(" (requires 🧠 Concentration)")
+            string.append("\n")
+
+        # Extra data
+        meta = spell.get("meta")
+        if meta:
+            if meta.get("ritual", False):
+                string.append("🔮 Can be casted as ritual\n")
+        string.append("\n")
+
+        # Text entries
         for entry in spell.get("entries", []):
-            string += parse_5etools_entry(entry)
-            string += "\n\n"
+            string.append(parse_5etools_entry(entry))
+            string.append("\n\n")
+
+        # At an higher level... text entries
         for entry in spell.get("entriesHigherLevel", []):
-            string += parse_5etools_entry(entry)
-            string += "\n\n"
-        return string
+            string.append(parse_5etools_entry(entry))
+            string.append("\n\n")
+
+        return "".join(string)
 
     async def run(self, args: CommandArgs, data: CommandData) -> None:
         if self._dnddata is None:
@@ -113,3 +162,13 @@ class DndspellCommand(Command):
         search = args.joined().lower()
         result = self._dnddata[self._dnddata.bisect_key_left(search)]
         await data.reply(self._parse_spell(result))
+
+    def _test_all(self):
+        for spell in self._dnddata:
+            try:
+                log.debug(f"Testing: {spell['name']}")
+                self._parse_spell(spell)
+            except Exception as e:
+                log.error(f"Failed: {spell['name']}")
+                sentry_exc(e)
+        log.info(f"All spell tests complete!")
