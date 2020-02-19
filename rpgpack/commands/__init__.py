@@ -8,6 +8,8 @@ from .dndedit import DndeditCommand
 from .dndroll import DndrollCommand
 from .dnditem import DnditemCommand
 from .dndspell import DndspellCommand
+from .testhealth import TesthealthCommand
+from .testfaction import TestfactionCommand
 
 # Enter the commands of your Pack here!
 available_commands = [
@@ -20,6 +22,8 @@ available_commands = [
     DndrollCommand,
     DnditemCommand,
     DndspellCommand,
+    TesthealthCommand,
+    TestfactionCommand,
 ]
 
 # Don't change this, it should automatically generate __all__
