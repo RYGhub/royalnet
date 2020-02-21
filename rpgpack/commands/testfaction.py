@@ -1,7 +1,7 @@
 from typing import *
 import royalnet
 import royalnet.commands as rc
-from ..utils import FactionColor
+from ..utils import Faction
 
 
 class TestfactionCommand(rc.Command):
@@ -12,4 +12,4 @@ class TestfactionCommand(rc.Command):
     syntax: str = "{factionstring}"
 
     async def run(self, args: rc.CommandArgs, data: rc.CommandData) -> None:
-        await data.reply(FactionColor[args[0].upper()].value)
+        await data.reply(Faction[args[0].upper()].value)

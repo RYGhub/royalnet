@@ -2,7 +2,7 @@ from typing import *
 import enum
 
 
-class FactionColor(enum.Enum):
+class Faction(enum.Enum):
     RED = "🔴"
     ORANGE = "🟠"
     YELLOW = "🟡"

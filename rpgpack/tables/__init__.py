@@ -1,11 +1,15 @@
 # Imports go here!
 from .dndactivecharacters import DndActiveCharacter
 from .dndcharacters import DndCharacter
+from .dndbattle import DndBattle
+from .dndbattleunit import DndBattleUnit
 
 # Enter the tables of your Pack here!
 available_tables = [
     DndActiveCharacter,
     DndCharacter,
+    DndBattle,
+    DndBattleUnit,
 ]
 
 # Don't change this, it should automatically generate __all__

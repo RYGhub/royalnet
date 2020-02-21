@@ -10,6 +10,7 @@ from .dnditem import DnditemCommand
 from .dndspell import DndspellCommand
 from .testhealth import TesthealthCommand
 from .testfaction import TestfactionCommand
+from .dndnewbattle import DndnewbattleCommand
 
 # Enter the commands of your Pack here!
 available_commands = [
