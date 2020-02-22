@@ -17,3 +17,15 @@ class DndBattle:
     @declared_attr
     def description(self):
         return Column(String, nullable=False)
+
+    def __repr__(self):
+        return f"<{self.__class__.__qualname__} {self.name}>"
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def create_message(self):
+        string = []
+        string.append(f"⚔️ [b]{self.name}[/b]\n")
+        string.append(f"{self.description}\n")
+        return "".join(string)

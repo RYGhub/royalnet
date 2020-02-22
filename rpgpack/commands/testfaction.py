@@ -1,7 +1,7 @@
 from typing import *
 import royalnet
 import royalnet.commands as rc
-from ..utils import Faction
+from ..types import Faction
 
 
 class TestfactionCommand(rc.Command):

@@ -1,6 +1,7 @@
 import enum
 
 
+# TODO: Rename this. It will break the whole database.
 class DndProficiencyType(enum.Enum):
     NONE = 0
     HALF_PROFICIENCY = 0.5

@@ -11,6 +11,7 @@ from .dndspell import DndspellCommand
 from .testhealth import TesthealthCommand
 from .testfaction import TestfactionCommand
 from .dndnewbattle import DndnewbattleCommand
+from .dndactivebattle import DndactivebattleCommand
 
 # Enter the commands of your Pack here!
 available_commands = [
@@ -25,6 +26,8 @@ available_commands = [
     DndspellCommand,
     TesthealthCommand,
     TestfactionCommand,
+    DndnewbattleCommand,
+    DndactivebattleCommand,
 ]
 
 # Don't change this, it should automatically generate __all__

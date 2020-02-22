@@ -1,7 +1,7 @@
 from typing import *
 import royalnet
 import royalnet.commands as rc
-from ..utils import Health
+from ..types import Health
 
 
 class TesthealthCommand(rc.Command):

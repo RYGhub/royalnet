@@ -1,7 +1,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import declared_attr
-from ..utils import Health, Faction
+from ..types import Health, Faction
 
 
 class DndBattleUnit:
@@ -17,7 +17,7 @@ class DndBattleUnit:
 
     @declared_attr
     def battle(self):
-        return relationship("DndBattle", backref="units")
+        return relationship("DndBattle", foreign_keys=self.battle_id, backref="units")
 
     @declared_attr
     def initiative(self):

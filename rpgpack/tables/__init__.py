@@ -3,6 +3,7 @@ from .dndactivecharacters import DndActiveCharacter
 from .dndcharacters import DndCharacter
 from .dndbattle import DndBattle
 from .dndbattleunit import DndBattleUnit
+from .dndactivebattle import DndActiveBattle
 
 # Enter the tables of your Pack here!
 available_tables = [
@@ -10,6 +11,7 @@ available_tables = [
     DndCharacter,
     DndBattle,
     DndBattleUnit,
+    DndActiveBattle,
 ]
 
 # Don't change this, it should automatically generate __all__

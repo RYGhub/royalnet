@@ -2,7 +2,7 @@ import re
 # noinspection PyUnresolvedReferences
 from royalnet.commands import *
 from ..tables import DndCharacter
-from ..utils import DndProficiencyType
+from ..types import DndProficiencyType
 
 
 class DndnewCommand(Command):
@@ -66,4 +66,4 @@ class DndnewCommand(Command):
                 raise CommandError(f"Mandatory parameter '{param_name}' is missing.")
             raise
 
-        await data.reply(f"✅ Character [b]{character.name}[/b] created!")
+        await data.reply(f"✅ Character [b]{character.name}[/b] (ID: {character.character_id}) created!")

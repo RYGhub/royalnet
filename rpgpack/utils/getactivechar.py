@@ -1,17 +1,9 @@
 from typing import *
 from ..tables import DndActiveCharacter
+from ..utils import get_interface_data
 import royalnet.utils as ru
 import royalnet.commands as rc
 import pickle
-
-
-def get_interface_data(data: rc.CommandData):
-    if data._interface.name == "telegram":
-        return data.message.chat.id
-    elif data._interface.name == "discord":
-        return data.message.channel.id
-    else:
-        raise rc.UnsupportedError("This interface isn't supported yet.")
 
 
 async def get_active_character(data: rc.CommandData) -> Optional[DndActiveCharacter]:

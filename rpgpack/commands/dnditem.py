@@ -56,24 +56,26 @@ class DnditemCommand(Command):
         # Type
         item_type = item.get("type")
         if item_type:
-            string.append(f"Type: [b]{item_type}[/b]")
+            string.append(f"Type: [b]{item_type}[/b]\n")
 
         # Value
         item_value = item.get("value")
         if item_value:
-            string.append(f"Value: [b]{item_value}[/b]")
+            string.append(f"Value: [b]{item_value}[/b]\n")
 
         # Weight
         item_weight = item.get("weight")
         if item_weight:
-            string.append(f"Value: [b]{item_weight}[/b]")
+            string.append(f"Value: [b]{item_weight}[/b]\n")
 
         # Rarity
         item_rarity = item.get("rarity")
         if item_rarity:
-            string.append(f"Rarity: [b]{item_rarity}[/b]")
+            string.append(f"Rarity: [b]{item_rarity}[/b]\n")
         else:
-            string.append(f"Rarity: [b]Mundane[/b]")
+            string.append(f"Rarity: [b]Mundane[/b]\n")
+
+        string.append("\n")
 
         # Text entries
         for entry in item.get("entries", []):

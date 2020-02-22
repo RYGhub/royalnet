@@ -12,7 +12,7 @@ class DndActiveBattle:
 
     @declared_attr
     def battle(self):
-        return relationship("DndCharacter", foreign_keys=self.battle_id, backref="active_in")
+        return relationship("DndBattle", foreign_keys=self.battle_id, backref=backref("activated_in"))
 
     @declared_attr
     def interface_name(self):

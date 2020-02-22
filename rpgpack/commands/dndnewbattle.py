@@ -26,4 +26,4 @@ class DndnewbattleCommand(rc.Command):
         data.session.add(battle)
         await data.session_commit()
 
-        await data.reply(f"✅ Battaglia [b]{battle.name}[/b] creata!")
+        await data.reply(f"✅ Battle [b]{battle.name}[/b] (ID: {battle.id}) created!")

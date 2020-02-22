@@ -2,7 +2,7 @@ import math
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import *
-from ..utils import DndProficiencyType
+from ..types import DndProficiencyType
 
 
 class DndCharacter:
