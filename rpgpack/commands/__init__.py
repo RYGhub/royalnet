@@ -13,6 +13,12 @@ from .testfaction import TestfactionCommand
 from .dndnewbattle import DndnewbattleCommand
 from .dndactivebattle import DndactivebattleCommand
 from .dndaddunit import DndaddunitCommand
+from .dnddamage import DnddamageCommand
+from .dndheal import DndhealCommand
+from .dndstatus import DndstatusCommand
+from .dndextra import DndextraCommand
+from .dnddeathsave import DnddeathsaveCommand
+from .dndjoinbattle import DndjoinbattleCommand
 
 # Enter the commands of your Pack here!
 available_commands = [
@@ -29,7 +35,13 @@ available_commands = [
     TestfactionCommand,
     DndnewbattleCommand,
     DndactivebattleCommand,
-    DndaddunitCommand
+    DndaddunitCommand,
+    DnddamageCommand,
+    DndhealCommand,
+    DndstatusCommand,
+    DndextraCommand,
+    DnddeathsaveCommand,
+    DndjoinbattleCommand,
 ]
 
 # Don't change this, it should automatically generate __all__

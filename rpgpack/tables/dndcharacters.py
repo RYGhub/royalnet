@@ -188,6 +188,10 @@ class DndCharacter:
     def survival_proficiency(self):
         return Column(Enum(DndProficiencyType), nullable=False, default=DndProficiencyType.NONE)
 
+    @declared_attr
+    def initiative_proficiency(self):
+        return Column(Enum(DndProficiencyType), nullable=False, default=DndProficiencyType.NONE)
+
     @property
     def strength_save(self):
         return self.strength + math.floor(self.proficiency_bonus * self.strength_save_proficiency.value)
@@ -283,6 +287,10 @@ class DndCharacter:
     @property
     def survival(self):
         return self.wisdom + math.floor(self.proficiency_bonus * self.survival_proficiency.value)
+
+    @property
+    def initiative(self):
+        return self.dexterity + math.floor(self.proficiency_bonus * self.initiative_proficiency.value)
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.name}>"

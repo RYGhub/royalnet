@@ -30,5 +30,5 @@ class DndBattle:
         string.append(f"{self.description}\n")
         string.append("\n")
         for unit in sorted(self.units, key=lambda u: -u.initiative):
-            string.append(f"{unit}\n")
+            string.append(f"{unit}\n\n")
         return "".join(string)

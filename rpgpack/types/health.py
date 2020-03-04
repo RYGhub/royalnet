@@ -39,7 +39,7 @@ class Health:
         if self.temp_value > 0:
             string.append(f"{self.temp_value:+}")
         string.append("/")
-        string.append(f"{self.max_value}̋")
+        string.append(f"{self.max_value}")
         string.append("s" * self.deathsave_successes)
         string.append("f" * self.deathsave_failures)
         return "".join(string)
@@ -112,15 +112,19 @@ class Health:
                 self.value = 0
 
     def deathsave_success(self) -> None:
-        if self.dying:
+        if not self.dying:
             raise ValueError("Can't roll death saves while alive")
         if self.stable:
-            raise ValueError("Successful death saves are capped at 3")
+            raise ValueError("Can't roll death saves while stable")
+        if self.dead:
+            raise ValueError("Can't roll death saves while dead")
         self.deathsave_successes += 1
 
     def deathsave_failure(self) -> None:
-        if self.dying:
+        if not self.dying:
             raise ValueError("Can't roll death saves while alive")
+        if self.stable:
+            raise ValueError("Can't roll death saves while stable")
         if self.dead:
-            raise ValueError("Failing death saves are capped at 3")
+            raise ValueError("Can't roll death saves while dead")
         self.deathsave_failures += 1

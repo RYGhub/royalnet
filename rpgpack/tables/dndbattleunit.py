@@ -12,6 +12,14 @@ class DndBattleUnit:
         return Column(Integer, primary_key=True)
 
     @declared_attr
+    def linked_character_id(self):
+        return Column(Integer, ForeignKey("dndcharacters.character_id"))
+
+    @declared_attr
+    def linked_character(self):
+        return relationship("DndCharacter", foreign_keys=self.linked_character_id, backref="as_battle_unit")
+
+    @declared_attr
     def battle_id(self):
         return Column(Integer, ForeignKey("dndbattle.id"))
 
