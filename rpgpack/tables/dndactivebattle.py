@@ -7,8 +7,12 @@ class DndActiveBattle:
     __tablename__ = "dndactivebattle"
 
     @declared_attr
+    def active_battle_id(self):
+        return Column(Integer, primary_key=True)
+
+    @declared_attr
     def battle_id(self):
-        return Column(Integer, ForeignKey("dndbattle.id"), primary_key=True)
+        return Column(Integer, ForeignKey("dndbattle.id"))
 
     @declared_attr
     def battle(self):

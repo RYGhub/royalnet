@@ -54,3 +54,23 @@ class DndBattleUnit:
     @declared_attr
     def status(self):
         return Column(String)
+
+    def __str__(self):
+        string = [
+            f"{self.faction.value}",
+            f"[b]{self.name}[/b]",
+            f"[{self.initiative}]",
+        ]
+
+        if self.health:
+            string.append(f"{self.health}")
+        if self.armor_class:
+            string.append(f"🛡 {self.armor_class}")
+        if self.extra:
+            string.append(f"💠 {self.extra}")
+        if self.status:
+            string.append(f"💫 {self.status}")
+        return " ".join(string)
+
+    def __repr__(self):
+        return f"<DndBattleUnit {self.id} ({self.name})>"

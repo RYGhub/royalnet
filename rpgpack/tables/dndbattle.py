@@ -28,4 +28,7 @@ class DndBattle:
         string = []
         string.append(f"⚔️ [b]{self.name}[/b]\n")
         string.append(f"{self.description}\n")
+        string.append("\n")
+        for unit in sorted(self.units, key=lambda u: -u.initiative):
+            string.append(f"{unit}\n")
         return "".join(string)

@@ -12,6 +12,7 @@ from .testhealth import TesthealthCommand
 from .testfaction import TestfactionCommand
 from .dndnewbattle import DndnewbattleCommand
 from .dndactivebattle import DndactivebattleCommand
+from .dndaddunit import DndaddunitCommand
 
 # Enter the commands of your Pack here!
 available_commands = [
@@ -28,6 +29,7 @@ available_commands = [
     TestfactionCommand,
     DndnewbattleCommand,
     DndactivebattleCommand,
+    DndaddunitCommand
 ]
 
 # Don't change this, it should automatically generate __all__

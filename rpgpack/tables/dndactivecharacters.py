@@ -7,12 +7,16 @@ class DndActiveCharacter:
     __tablename__ = "dndactivecharacters"
 
     @declared_attr
+    def active_character_id(self):
+        return Column(Integer, primary_key=True)
+
+    @declared_attr
     def character_id(self):
-        return Column(Integer, ForeignKey("dndcharacters.character_id"), primary_key=True)
+        return Column(Integer, ForeignKey("dndcharacters.character_id"))
 
     @declared_attr
     def user_id(self):
-        return Column(Integer, ForeignKey("users.uid"), primary_key=True)
+        return Column(Integer, ForeignKey("users.uid"))
 
     @declared_attr
     def character(self):
