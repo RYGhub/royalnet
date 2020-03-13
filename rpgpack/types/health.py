@@ -9,32 +9,37 @@ class Health:
                  hidden: Optional[bool] = None,
                  temp_value: Optional[int] = None,
                  deathsave_successes: Optional[int] = None,
-                 deathsave_failures: Optional[int] = None):
+                 deathsave_failures: Optional[int] = None,
+                 instadeath: Optional[bool] = None):
         self.value: int = 0
         self.max_value: int = max_value
         self.hidden: bool = hidden if hidden else False
         self.temp_value: int = temp_value if temp_value else 0
         self.deathsave_successes: int = deathsave_successes if deathsave_successes else 0
         self.deathsave_failures: int = deathsave_failures if deathsave_failures else 0
+        self.instadeath: bool = instadeath if instadeath else False
         self.change(initial_value)
 
     @classmethod
     def from_text(cls, text: str) -> "Health":
-        match = re.match(r"(h)?([0-9]+)(?:\+([0-9]+))?/([0-9]+)(s{0,3})(f{0,3})", text)
+        match = re.match(r"(h)?(d)?([0-9]+)(?:\+([0-9]+))?/([0-9]+)(s{0,3})(f{0,3})", text)
         if not match:
             raise ValueError("Could not parse passed string.")
-        hidden, value, temp_value, max_value, ds_successes, ds_failures = match.groups()
+        hidden, instadeath, value, temp_value, max_value, ds_successes, ds_failures = match.groups()
         return cls(initial_value=int(value),
                    max_value=int(max_value),
                    hidden=bool(hidden),
                    temp_value=int(temp_value) if temp_value else None,
                    deathsave_successes=len(ds_successes) if ds_successes else None,
-                   deathsave_failures=len(ds_failures) if ds_failures else None)
+                   deathsave_failures=len(ds_failures) if ds_failures else None,
+                   instadeath=bool(instadeath))
 
     def to_text(self) -> str:
         string = []
         if self.hidden:
             string.append("h")
+        if self.instadeath:
+            string.append("d")
         string.append(f"{self.value}")
         if self.temp_value > 0:
             string.append(f"{self.temp_value:+}")
@@ -46,7 +51,7 @@ class Health:
 
     @property
     def dead(self) -> bool:
-        return self.deathsave_failures >= 3
+        return self.deathsave_failures >= 3 or (self.dying and self.instadeath)
 
     @property
     def stable(self) -> bool:
