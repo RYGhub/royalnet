@@ -3,6 +3,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import *
 from ..types import DndProficiencyType
+from royalnet.utils import JSON
 
 
 class DndCharacter:
@@ -308,3 +309,127 @@ class DndCharacter:
             value = self.__getattribute__(column_name)
             message += f"{column_name} {value}\n"
         return message
+
+    def json(self) -> JSON:
+        return {
+            "creator": self.creator.json() if self.creator else None,
+            "name": self.name,
+            "level": self.level,
+            "hp": {
+                "current": self.current_hp,
+                "max": self.max_hp
+            },
+            "armor_class": self.armor_class,
+            "strength": {
+                "score": self.strength_score,
+                "modifier": self.strength,
+                "save": self.strength_save,
+                "save_proficiency": self.strength_save_proficiency.value
+            },
+            "dexterity": {
+                "score": self.dexterity_score,
+                "modifier": self.dexterity,
+                "save": self.dexterity_save,
+                "save_proficiency": self.dexterity_save_proficiency.value
+            },
+            "constitution": {
+                "score": self.constitution_score,
+                "modifier": self.constitution,
+                "save": self.constitution_save,
+                "save_proficiency": self.constitution_save_proficiency.value
+            },
+            "intelligence": {
+                "score": self.intelligence_score,
+                "modifier": self.intelligence,
+                "save": self.intelligence_save,
+                "save_proficiency": self.intelligence_save_proficiency.value
+            },
+            "wisdom": {
+                "score": self.wisdom_score,
+                "modifier": self.wisdom,
+                "save": self.wisdom_save,
+                "save_proficiency": self.wisdom_save_proficiency.value
+            },
+            "charisma": {
+                "score": self.charisma_score,
+                "modifier": self.charisma,
+                "save": self.charisma_save,
+                "save_proficiency": self.charisma_save_proficiency.value
+            },
+            "acrobatics": {
+                "modifier": self.acrobatics,
+                "proficiency": self.acrobatics_proficiency.value
+            },
+            "animal_handling": {
+                "modifier": self.animal_handling,
+                "proficiency": self.animal_handling_proficiency.value
+            },
+            "arcana": {
+                "modifier": self.arcana,
+                "proficiency": self.arcana_proficiency.value
+            },
+            "athletics": {
+                "modifier": self.athletics,
+                "proficiency": self.athletics_proficiency.value
+            },
+            "deception": {
+                "modifier": self.deception,
+                "proficiency": self.deception_proficiency.value
+            },
+            "history": {
+                "modifier": self.history,
+                "proficiency": self.history_proficiency.value
+            },
+            "insight": {
+                "modifier": self.insight,
+                "proficiency": self.insight_proficiency.value
+            },
+            "intimidation": {
+                "modifier": self.intimidation,
+                "proficiency": self.intimidation_proficiency.value
+            },
+            "investigation": {
+                "modifier": self.investigation,
+                "proficiency": self.investigation_proficiency.value
+            },
+            "medicine": {
+                "modifier": self.medicine,
+                "proficiency": self.medicine_proficiency.value
+            },
+            "nature": {
+                "modifier": self.nature,
+                "proficiency": self.nature_proficiency.value
+            },
+            "perception": {
+                "modifier": self.perception,
+                "proficiency": self.perception_proficiency.value
+            },
+            "performance": {
+                "modifier": self.performance,
+                "proficiency": self.performance_proficiency.value
+            },
+            "persuasion": {
+                "modifier": self.persuasion,
+                "proficiency": self.persuasion_proficiency.value
+            },
+            "religion": {
+                "modifier": self.religion,
+                "proficiency": self.religion_proficiency.value
+            },
+            "sleight_of_hand": {
+                "modifier": self.sleight_of_hand,
+                "proficiency": self.sleight_of_hand_proficiency.value
+            },
+            "stealth": {
+                "modifier": self.stealth,
+                "proficiency": self.stealth_proficiency.value
+            },
+            "survival": {
+                "modifier": self.survival,
+                "proficiency": self.survival_proficiency.value
+            },
+            "initiative": {
+                "modifier": self.initiative,
+                "proficiency": self.initiative_proficiency.value
+            }
+        }

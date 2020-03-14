@@ -24,7 +24,7 @@
     aiohttp = "^3.5"
 
     [tool.poetry.dependencies.royalnet]
-        version = "^5.5"
+        version = "^5.6"
         extras = [
             "telegram",
             "alchemy_easy",
