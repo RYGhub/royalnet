@@ -5,6 +5,7 @@ import royalnet.utils as ru
 from ..types import Faction
 from ..tables import DndBattleUnit
 from ..utils import get_active_battle
+from ..types import Health
 
 
 class DndaddunitCommand(rc.Command):
@@ -36,6 +37,11 @@ class DndaddunitCommand(rc.Command):
 
         if len(units_with_same_name) != 0:
             raise rc.InvalidInputError("A unit with the same name already exists.")
+
+        try:
+            health = Health.from_text(health)
+        except ValueError:
+            raise rc.InvalidInputError("Invalid health string.")
 
         dbu = DndBattleUnitT(
             linked_character_id=None,
