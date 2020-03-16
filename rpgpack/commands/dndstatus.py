@@ -1,34 +1,16 @@
 from typing import *
-import royalnet
-import royalnet.commands as rc
-import royalnet.utils as ru
 from ..tables import DndBattleUnit
-from ..utils import find_unit_in_current_battle
+from .abstract import DndBattleTargetCommand
 
 
-class DndstatusCommand(rc.Command):
+class DndstatusCommand(DndBattleTargetCommand):
     name: str = "dndstatus"
 
-    description: str = "Change the status for a unit in the current battle."
+    description: str = "Change the target for a unit in the current battle."
 
-    syntax: str = "[name] {status}"
+    syntax: str = "{target} {status}"
 
     aliases = ["status", "dstatus"]
 
-    async def run(self, args: rc.CommandArgs, data: rc.CommandData) -> None:
-        name = args.optional(0)
-        status = " ".join(args[1:])
-
-        if name is not None:
-            unit: Optional[DndBattleUnit] = await find_unit_in_current_battle(data, name)
-        else:
-            unit = None
-
-        if unit is None:
-            status = " ".join(args)
-            unit: Optional[DndBattleUnit] = await find_unit_in_current_battle(data, None)
-
-
-        unit.status = status
-        await data.session_commit()
-        await data.reply(f"{unit}")
+    async def _change(self, unit: DndBattleUnit, args: List[str]):
+        unit.status = " ".join(args)

@@ -12,3 +12,10 @@ class Faction(enum.Enum):
     BLACK = "⚫️"
     WHITE = "⚪️"
     BROWN = "🟤"
+
+    @classmethod
+    def get(cls, string: str):
+        try:
+            return cls[string.upper()]
+        except KeyError:
+            return cls(string)
