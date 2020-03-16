@@ -23,7 +23,7 @@ class DndCharacter:
 
     @declared_attr
     def name(self):
-        return Column(String, nullable=False)
+        return Column(String, nullable=False, unique=True)
 
     @declared_attr
     def strength_score(self):
@@ -299,7 +299,7 @@ class DndCharacter:
     def __str__(self):
         return f"{self.name}"
 
-    def character_sheet(self) -> str:
+    def to_edit_string(self) -> str:
         columns = list(self.__class__.__table__.columns)
         column_names = [column.name for column in columns if (not column.primary_key and
                                                               not column.foreign_keys and

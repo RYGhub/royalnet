@@ -15,14 +15,15 @@ class DndeditCommand(DndnewCommand):
     async def run(self, args: CommandArgs, data: CommandData) -> None:
         character_sheet = args.joined()
 
-        if character_sheet == "":
-            await data.reply(self._syntax())
-            return
-
         active_character = await get_active_character(data)
+
         if active_character is None:
             raise CommandError("You don't have an active character.")
-        char = active_character.character
+        char: DndCharacter = active_character.character
+
+        if character_sheet == "":
+            await data.reply(char.to_edit_string())
+            return
 
         arguments = self._parse(character_sheet)
         for key in arguments:

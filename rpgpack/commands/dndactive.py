@@ -19,6 +19,9 @@ class DndactiveCommand(Command):
         author = await data.get_author(error_if_none=True)
         active_character = await get_active_character(data)
 
+        DndCharacterT = self.alchemy.get(DndCharacter)
+        DndActiveCharacterT = self.alchemy.get(DndActiveCharacter)
+
         # Display the active character
         if identifier is None:
             if active_character is None:
@@ -31,7 +34,7 @@ class DndactiveCommand(Command):
         try:
             identifier = int(identifier)
         except ValueError:
-            chars = await asyncify(data.session.query(self.alchemy.get(DndCharacter)).filter_by(name=identifier).all)
+            chars = await asyncify(data.session.query(DndCharacterT).filter_by(name=identifier).all)
             if len(chars) >= 2:
                 char_string = "\n".join([f"[c]{char.character_id}[/c] (LV {char.level}) by {char.creator})" for char in chars])
                 raise CommandError(f"Multiple characters share the name {identifier}, "
@@ -42,7 +45,7 @@ class DndactiveCommand(Command):
                 char = None
         else:
             # Find the character by id
-            char = await asyncify(data.session.query(self.alchemy.get(DndCharacter))
+            char = await asyncify(data.session.query(DndCharacterT)
                                               .filter_by(character_id=identifier)
                                               .one_or_none)
         if char is None:
@@ -50,7 +53,7 @@ class DndactiveCommand(Command):
         # Check if the player already has an active character
         if active_character is None:
             # Create a new active character
-            achar = self.alchemy.get(DndActiveCharacter)(
+            achar = DndActiveCharacterT(
                 character=char,
                 user=author,
                 interface_name=self.interface.name,
