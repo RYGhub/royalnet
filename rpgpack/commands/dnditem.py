@@ -96,7 +96,7 @@ class DnditemCommand(Command):
         for item in self._dnddata:
             try:
                 log.debug(f"Testing: {item['name']}")
-                self._parse_item(item)
+                result = self._parse_item(item)
             except Exception as e:
                 log.error(f"Failed: {item['name']}")
                 sentry_exc(e)

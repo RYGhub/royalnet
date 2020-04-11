@@ -10,7 +10,7 @@ class DnddamageCommand(DndBattleTargetCommand):
 
     syntax: str = "{target} {damage}"
 
-    aliases = ["damage", "ddamage", "dd"]
+    aliases = ["damage", "ddamage", "dd", "dmg", "ddmg"]
 
     async def _change(self, unit: DndBattleUnit, args: List[str]):
         health = unit.health

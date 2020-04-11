@@ -196,7 +196,7 @@ class DndspellCommand(Command):
         for spell in self._dnddata:
             try:
                 log.debug(f"Testing: {spell['name']}")
-                self._parse_spell(spell)
+                result = self._parse_spell(spell)
             except Exception as e:
                 log.error(f"Failed: {spell['name']}")
                 sentry_exc(e)
