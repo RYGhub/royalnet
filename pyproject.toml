@@ -29,7 +29,7 @@
     python = "^3.8"
 
     [tool.poetry.dependencies.royalnet]
-        version = "^5.8.13"
+        version = "~5.8.13"
         # TODO: select the Royalnet modules required by your pack
         extras = [
             "telegram",
