@@ -1,0 +1,13 @@
+# Royalnet ignores
+config*.toml
+downloads/
+
+
+# Python ignores
+**/__pycache__/
+dist/
+*.egg-info/
+**/*.pyc
+
+# PyCharm ignores
+.idea/
