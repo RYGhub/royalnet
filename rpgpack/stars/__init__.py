@@ -1,9 +1,9 @@
 # Imports go here!
-from .api_dnd_character_get import ApiDndCharacterGetStar
+from .api_dnd_character import ApiDndCharacterStar
 
 # Enter the PageStars of your Pack here!
 available_page_stars = [
-    ApiDndCharacterGetStar,
+    ApiDndCharacterStar,
 ]
 
 # Don't change this, it should automatically generate __all__

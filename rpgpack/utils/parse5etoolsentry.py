@@ -26,6 +26,7 @@ tags = {
     r"{@h}": r"[i]Hit:[/i]",
 }
 
+
 def parse_5etools_entry(entry) -> str:
     if isinstance(entry, str):
         result = entry
@@ -49,7 +50,13 @@ def parse_5etools_entry(entry) -> str:
             #         string += f"| {self._parse_entry(column)} "
             #     string += "|\n"
         elif entry["type"] == "quote":
-            return f"> {parse_5etools_entry(entry['entry'])}"
+            if "entries" in entry:
+                rows = []
+                for subentry in entry["entries"]:
+                    rows.append(f"> {parse_5etools_entry(subentry)}")
+                return "\n".join(rows)
+            else:
+                return f"> {parse_5etools_entry(entry['entry'])}"
         elif entry["type"] == "cell":
             return parse_5etools_entry(entry["entry"])
         elif entry["type"] == "list":

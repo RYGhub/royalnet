@@ -2,15 +2,14 @@
 
 [tool.poetry]
     name = "rpgpack"
-    version = "5.5.2"
-    description = "A Royalnet Pack to play role-playing-games"
+    version = "5.9.0"
+    description = "A Dungeons & Dragons utilities pack for Royalnet"
     authors = ["Stefano Pigozzi <ste.pigozzi@gmail.com>"]
     license = "AGPL-3.0+"
     readme = "README.md"
-    homepage = "https://github.com/Steffo99/royalnet"
-    documentation = "https://gh.steffo.eu/royalnet/"
+    homepage = "https://github.com/Steffo99/rpgpack"
     classifiers = [
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)"
@@ -24,7 +23,7 @@
     aiohttp = "^3.5"
 
     [tool.poetry.dependencies.royalnet]
-        version = "^5.6"
+        version = "~5.9.2"
         extras = [
             "telegram",
             "alchemy_easy",

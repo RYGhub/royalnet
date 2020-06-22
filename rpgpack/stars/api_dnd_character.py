@@ -4,18 +4,19 @@ from royalnet.constellation.api import *
 from ..tables import DndCharacter
 
 
-class ApiDndCharacterGetStar(ApiStar):
-    path = "/api/dnd/character/get/v1"
-
-    summary = "Get a D&D Character."
+class ApiDndCharacterStar(ApiStar):
+    path = "/api/dnd/character/v2"
 
     parameters = {
-        "character_id": "The id of the character to get."
+        "get": {
+            "character_id": "The id of the character to get."
+        }
     }
 
     tags = ["dnd"]
 
-    async def api(self, data: ApiData) -> dict:
+    async def get(self, data: ApiData) -> dict:
+        """Get the character sheet of a specific D&D Character."""
         DndCharacterT = self.alchemy.get(DndCharacter)
 
         character_id = data["character_id"]
