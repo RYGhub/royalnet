@@ -1,11 +1,9 @@
 # Imports go here!
-from .wikipage import WikiPage
 from .wikirevision import WikiRevision
 from .wikideletion import WikiDeletion
 
 # Enter the tables of your Pack here!
 available_tables = [
-    WikiPage,
     WikiRevision,
     WikiDeletion,
 ]

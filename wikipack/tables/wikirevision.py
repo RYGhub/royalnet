@@ -8,7 +8,6 @@ import datetime
 
 if TYPE_CHECKING:
     from royalnet.backpack.tables import User
-    from .wikipage import WikiPage
 
 
 class WikiRevision:
@@ -16,17 +15,11 @@ class WikiRevision:
 
     @declared_attr
     def page_id(self) -> int:
-        return Column(Integer, ForeignKey("wikipages.page_id"), nullable=False)
-
-    @declared_attr
-    def page(self) -> "WikiPage":
-        return relationship("WikiPage",
-                            foreign_keys=self.page_id,
-                            backref=backref("revisions", cascade="save-update, merge, delete"))
+        return Column(Integer, Sequence('wikirevision_page_id_seq'), primary_key=True)
 
     @declared_attr
     def revision_id(self) -> int:
-        return Column(Integer, primary_key=True)
+        return Column(Integer, Sequence('wikirevision_revision_id_seq'), primary_key=True)
 
     @declared_attr
     def category(self) -> str:
@@ -65,9 +58,6 @@ class WikiRevision:
     @declared_attr
     def role_to_edit(self) -> str:
         return Column(String)
-
-    def set_as_latest(self) -> None:
-        self.page.latest_revision = self
 
     def json_list(self):
         return {

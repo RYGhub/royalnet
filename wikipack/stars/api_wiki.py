@@ -22,8 +22,12 @@ class ApiWikiStar(rca.ApiStar):
             "title": "The title of the page.",
             "contents": "The contents of the page.",
             "format": "(Optional) The format of the page. Default is 'gfm' for GitHub Flavored Markdown.",
-            "role_to_view": "(Optional) The role required to view this page. Be careful to not lock yourself out!",
-            "role_to_edit": "(Optional) The role required to edit this page. Be careful to not lock yourself out!",
+            "role_to_view": "(Optional) The role required to view this page.\n\n"
+                            "A * means unauthenticated users can view this page.\n\n"
+                            "Be careful to not lock yourself out!",
+            "role_to_edit": "(Optional) The role required to edit this page.\n\n"
+                            "A * means unauthenticated users can edit this page.\n\n"
+                            "Be careful to not lock yourself out!",
         },
         "put": {
             "page_id": "The id of the wiki page to create a new revision of.",
@@ -31,8 +35,12 @@ class ApiWikiStar(rca.ApiStar):
             "title": "The title of the page.",
             "contents": "The contents of the page.",
             "format": "The format of the page. Default is 'gfm' for GitHub Flavored Markdown.",
-            "role_to_view": "The role required to view this page. Be careful to not lock yourself out!",
-            "role_to_edit": "The role required to edit this page. Be careful to not lock yourself out!",
+            "role_to_view": "The role required to view this page.\n\n"
+                            "A * means unauthenticated users can view this page.\n\n"
+                            "Be careful to not lock yourself out!",
+            "role_to_edit": "The role required to edit this page.\n\n"
+                            "A * means unauthenticated users can edit this page.\n\n"
+                            "Be careful to not lock yourself out!",
         },
         "delete": {
             "page_id": "The id of the wiki page to delete.",
@@ -48,12 +56,10 @@ class ApiWikiStar(rca.ApiStar):
 
     @property
     def default_view_role(self) -> str:
-        return self.config["wikipack"]["roles"]["view"]
+        return self.config["roles"]["view"]
 
-    async def can_view(self, user: rbt.User, page: WikiPage) -> bool:
-        lr = page.latest_revision
-
-        if lr.role_to_view == "":
+    async def can_view(self, user: rbt.User, lr: WikiRevision) -> bool:
+        if lr.role_to_view == "*":
             return True
 
         if lr.role_to_view:
@@ -64,12 +70,10 @@ class ApiWikiStar(rca.ApiStar):
 
     @property
     def default_edit_role(self) -> str:
-        return self.config["wikipack"]["roles"]["edit"]
+        return self.config["roles"]["edit"]
 
-    async def can_edit(self, user: rbt.User, page: WikiPage) -> bool:
-        lr = page.latest_revision
-
-        if lr.role_to_edit == "":
+    async def can_edit(self, user: rbt.User, lr: WikiRevision) -> bool:
+        if lr.role_to_edit == "*":
             return True
 
         if lr.role_to_edit:
@@ -80,19 +84,22 @@ class ApiWikiStar(rca.ApiStar):
 
     @property
     def create_role(self) -> str:
-        return self.config["wikipack"]["roles"]["create"]
+        return self.config["roles"]["create"]
 
     async def can_create(self, user: rbt.User) -> bool:
+        if self.create_role == "*":
+            return True
+
         if self.create_role in user.roles or self.admin_role in user.roles:
             return True
         return False
 
     @property
     def delete_role(self) -> str:
-        return self.config["wikipack"]["roles"]["delete"]
+        return self.config["roles"]["delete"]
 
     async def can_delete(self, user: rbt.User) -> bool:
-        if self.delete_role == "":
+        if self.delete_role == "*":
             return True
 
         if self.delete_role in user.roles or self.admin_role in user.roles:
@@ -101,28 +108,32 @@ class ApiWikiStar(rca.ApiStar):
 
     @property
     def admin_role(self) -> str:
-        return self.config["wikipack"]["roles"]["admin"]
+        return self.config["roles"]["admin"]
 
-    async def find_page(self, data: rca.ApiData) -> Tuple[WikiPage, WikiRevision]:
-        WikiPageT = self.alchemy.get(WikiPage)
+    async def find_lr(self, data: rca.ApiData) -> WikiRevision:
+        WikiRevisionT = self.alchemy.get(WikiRevision)
 
         page_id = data.int("page_id")
 
-        page: WikiPage = await ru.asyncify(
-            data.session.query(WikiPageT).filter_by(page_id=page_id).one_or_none
+        lr: WikiRevision = await ru.asyncify(
+            data.session
+                .query(WikiRevisionT)
+                .filter_by(page_id=page_id)
+                .order_by(WikiRevisionT.revision_id.desc())
+                .first
         )
 
-        if page is None:
+        if lr is None:
             raise rca.NotFoundError(f"No page found with the id `{page_id}`.")
 
-        return page, page.latest_revision
+        return lr
 
     async def get(self, data: rca.ApiData) -> ru.JSON:
         """Get the details of a specific Wiki page."""
-        page, lr = await self.find_page(data)
+        lr = await self.find_lr(data)
         user = await data.user()
 
-        if not self.can_view(user, page):
+        if not await self.can_view(user, lr):
             raise rca.ForbiddenError(f"Viewing this page requires the `{lr.role_to_view}` role.")
 
         return lr.json()
@@ -133,7 +144,7 @@ class ApiWikiStar(rca.ApiStar):
 
         user = await data.user()
 
-        if not self.can_create(user):
+        if not await self.can_create(user):
             raise rca.ForbiddenError(f"Creating a new page requires the `{self.create_role}` role.")
 
         category = data.str("category", optional=False)
@@ -143,12 +154,7 @@ class ApiWikiStar(rca.ApiStar):
         role_to_view = data.str("role_to_view", optional=True)
         role_to_edit = data.str("role_to_edit", optional=True)
 
-        page = WikiPage()
-        data.session.add(page)
-        data.session.flush()
-
         nr: WikiRevision = WikiRevisionT(
-            page_id=page.page_id,
             category=category,
             title=title,
             contents=contents,
@@ -160,7 +166,7 @@ class ApiWikiStar(rca.ApiStar):
         )
 
         data.session.add(nr)
-        await data.session.commit()
+        await data.session_commit()
 
         return nr.json()
 
@@ -168,10 +174,10 @@ class ApiWikiStar(rca.ApiStar):
         """Edit a specific Wiki page, creating a new revision."""
         WikiRevisionT = self.alchemy.get(WikiRevision)
 
-        page, lr = await self.find_page(data)
+        lr = await self.find_lr(data)
         user = await data.user()
 
-        if not self.can_edit(user, page):
+        if not await self.can_edit(user, lr):
             raise rca.ForbiddenError(f"Editing this page requires the `{lr.role_to_edit}` role.")
 
         category = data.str("category", optional=True)
@@ -182,7 +188,7 @@ class ApiWikiStar(rca.ApiStar):
         role_to_edit = data.str("role_to_edit", optional=True)
 
         nr: WikiRevision = WikiRevisionT(
-            page_id=page.page_id,
+            page_id=lr.page_id,
             category=category or lr.category,
             title=title or lr.title,
             contents=contents or lr.contents,
@@ -194,29 +200,33 @@ class ApiWikiStar(rca.ApiStar):
         )
 
         data.session.add(nr)
-        await data.session.commit()
+        await data.session_commit()
 
         return nr.json()
 
     async def delete(self, data: rca.ApiData) -> ru.JSON:
         """Delete a specific Wiki page and all its revisions."""
+        WikiRevisionT = self.alchemy.get(WikiRevision)
         WikiDeletionT = self.alchemy.get(WikiDeletion)
 
-        page, lr = await self.find_page(data)
+        lr = await self.find_lr(data)
         user = await data.user()
 
-        if not self.can_delete(user):
+        if not await self.can_delete(user):
             raise rca.ForbiddenError(f"Deleting pages requires the `{self.delete_role}` role.")
 
         deletion = WikiDeletionT(
-            page_id=page.page_id,
+            page_id=lr.page_id,
             deleted_by=user,
             timestamp=datetime.datetime.now(),
         )
 
-        data.session.delete(page)
+        pages = await ru.asyncify(
+            data.session.query(WikiRevisionT).filter_by(page_id=lr.page_id).all
+        )
+        data.session.delete(pages)
         data.session.add(deletion)
 
-        await data.session.commit()
+        await data.session_commit()
 
         return deletion.json()
