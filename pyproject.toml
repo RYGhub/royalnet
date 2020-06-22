@@ -1,21 +1,12 @@
 # Remember to run `poetry update` after you edit this file!
 
 [tool.poetry]
-    # TODO: Insert here your Pack name!
-    name = "examplepack"
-    # TODO: Insert here your Pack description!
-    description = "An example pack for Royalnet."
-    # TODO: Increment this every new version of your pack!
+    name = "wikipack"
+    description = "A Wiki for Royalnet"
     version = "0.1.0"
-    # TODO: Set this to your full name and email!
-    authors = ["Name Surname <email@example.com>"]
-    # TODO: Set this to the license you want to use for your Pack!
-    license = ""
-    # TODO: Set this to the GitHub page of your pack (or another website)
-    homepage = "https://github.com/your-username/"
-    # TODO: Set this to a link to the Pack documentation (if there's any)
-    documentation = "https://gh.steffo.eu/royalpack/"
-    # TODO: Pick some classifiers to include your Pack in: https://pypi.org/classifiers/
+    authors = ["Stefano Pigozzi <ste.pigozzi@gmail.com>"]
+    license = "AGPL-3.0+"
+    homepage = "https://github.com/Steffo99/wikipack/"
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Operating System :: OS Independent",
@@ -29,17 +20,10 @@
     python = "^3.8"
 
     [tool.poetry.dependencies.royalnet]
-        version = "^5.1.6"
-        # TODO: select the Royalnet modules required by your pack
+        version = "~5.8.16"
         extras = [
-            "telegram",
-            "discord",
             "alchemy_easy",
-            "bard",
             "constellation",
-            "sentry",
-            "herald",
-            "coloredlogs"
         ]
 
 # Development dependencies

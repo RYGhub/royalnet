@@ -1,9 +1,13 @@
 # Imports go here!
-# from .example import Example
+from .wikipage import WikiPage
+from .wikirevision import WikiRevision
+from .wikideletion import WikiDeletion
 
 # Enter the tables of your Pack here!
 available_tables = [
-    # Example
+    WikiPage,
+    WikiRevision,
+    WikiDeletion,
 ]
 
 # Don't change this, it should automatically generate __all__
