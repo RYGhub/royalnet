@@ -1,9 +1,9 @@
 from typing import *
+import datetime
 import royalnet.constellation.api as rca
 import royalnet.utils as ru
-from royalnet.backpack.tables import *
+import royalnet.backpack.tables as rbt
 from ..tables import *
-import datetime
 
 
 class ApiWikiStar(rca.ApiStar):
@@ -39,11 +39,18 @@ class ApiWikiStar(rca.ApiStar):
         },
     }
 
+    auth = {
+        "get": True,
+        "post": True,
+        "put": True,
+        "delete": True
+    }
+
     @property
     def default_view_role(self) -> str:
         return self.config["wikipack"]["roles"]["view"]
 
-    async def can_view(self, user: User, page: WikiPage) -> bool:
+    async def can_view(self, user: rbt.User, page: WikiPage) -> bool:
         lr = page.latest_revision
 
         if lr.role_to_view == "":
@@ -59,7 +66,7 @@ class ApiWikiStar(rca.ApiStar):
     def default_edit_role(self) -> str:
         return self.config["wikipack"]["roles"]["edit"]
 
-    async def can_edit(self, user: User, page: WikiPage) -> bool:
+    async def can_edit(self, user: rbt.User, page: WikiPage) -> bool:
         lr = page.latest_revision
 
         if lr.role_to_edit == "":
@@ -75,7 +82,7 @@ class ApiWikiStar(rca.ApiStar):
     def create_role(self) -> str:
         return self.config["wikipack"]["roles"]["create"]
 
-    async def can_create(self, user: User) -> bool:
+    async def can_create(self, user: rbt.User) -> bool:
         if self.create_role in user.roles or self.admin_role in user.roles:
             return True
         return False
@@ -84,7 +91,7 @@ class ApiWikiStar(rca.ApiStar):
     def delete_role(self) -> str:
         return self.config["wikipack"]["roles"]["delete"]
 
-    async def can_delete(self, user: User) -> bool:
+    async def can_delete(self, user: rbt.User) -> bool:
         if self.delete_role == "":
             return True
 
