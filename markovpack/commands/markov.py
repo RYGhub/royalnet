@@ -38,7 +38,7 @@ class MarkovCommand(Command):
                 for mn in self._texts:
                     models.append(f"- [c]{mn}[/c]\n")
                 raise InvalidInputError("Il modello richiesto non esiste."
-                                        f"Modelli disponibili:\n{models}")
+                                        f"Modelli disponibili:\n{''.join(models)}")
             if sentence is None:
                 continue
             if len(sentence.split()) < self.config["Markov"]["min_words"]:
