@@ -131,7 +131,11 @@ class ApiWikiStar(rca.ApiStar):
     async def get(self, data: rca.ApiData) -> ru.JSON:
         """Get the details of a specific Wiki page."""
         lr = await self.find_lr(data)
-        user = await data.user()
+
+        try:
+            user = await data.user()
+        except rca.MissingParameterError:
+            user = None
 
         if not await self.can_view(user, lr):
             raise rca.ForbiddenError(f"Viewing this page requires the `{lr.role_to_view}` role.")
@@ -142,7 +146,10 @@ class ApiWikiStar(rca.ApiStar):
         """Create a new Wiki page."""
         WikiRevisionT = self.alchemy.get(WikiRevision)
 
-        user = await data.user()
+        try:
+            user = await data.user()
+        except rca.MissingParameterError:
+            user = None
 
         if not await self.can_create(user):
             raise rca.ForbiddenError(f"Creating a new page requires the `{self.create_role}` role.")
@@ -175,7 +182,11 @@ class ApiWikiStar(rca.ApiStar):
         WikiRevisionT = self.alchemy.get(WikiRevision)
 
         lr = await self.find_lr(data)
-        user = await data.user()
+
+        try:
+            user = await data.user()
+        except rca.MissingParameterError:
+            user = None
 
         if not await self.can_edit(user, lr):
             raise rca.ForbiddenError(f"Editing this page requires the `{lr.role_to_edit}` role.")
@@ -210,7 +221,11 @@ class ApiWikiStar(rca.ApiStar):
         WikiDeletionT = self.alchemy.get(WikiDeletion)
 
         lr = await self.find_lr(data)
-        user = await data.user()
+
+        try:
+            user = await data.user()
+        except rca.MissingParameterError:
+            user = None
 
         if not await self.can_delete(user):
             raise rca.ForbiddenError(f"Deleting pages requires the `{self.delete_role}` role.")
