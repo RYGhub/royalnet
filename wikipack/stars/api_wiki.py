@@ -249,7 +249,8 @@ class ApiWikiStar(rca.ApiStar):
         pages = await ru.asyncify(
             data.session.query(WikiRevisionT).filter_by(page_id=lr.page_id).all
         )
-        data.session.delete(pages)
+        for page in pages:
+            data.session.delete(page)
         data.session.add(deletion)
 
         await data.session_commit()
