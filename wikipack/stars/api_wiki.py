@@ -11,8 +11,6 @@ class ApiWikiStar(rca.ApiStar):
 
     tags = ["wiki"]
 
-    methods = ["GET", "POST", "PUT", "DELETE"]
-
     parameters = {
         "get": {
             "page_id": "The id of the wiki page to get the details of."
@@ -62,11 +60,12 @@ class ApiWikiStar(rca.ApiStar):
         if lr.role_to_view == "*":
             return True
 
-        if lr.role_to_view:
-            if lr.role_to_view in user.roles or self.admin_role in user.roles:
-                return True
+        if user is None:
             return False
-        return True
+
+        if lr.role_to_view in user.roles or self.admin_role in user.roles:
+            return True
+        return False
 
     @property
     def default_edit_role(self) -> str:
@@ -76,11 +75,12 @@ class ApiWikiStar(rca.ApiStar):
         if lr.role_to_edit == "*":
             return True
 
-        if lr.role_to_edit:
-            if lr.role_to_edit in user.roles or self.admin_role in user.roles:
-                return True
+        if user is None:
             return False
-        return True
+
+        if lr.role_to_edit in user.roles or self.admin_role in user.roles:
+            return True
+        return False
 
     @property
     def create_role(self) -> str:
@@ -89,6 +89,9 @@ class ApiWikiStar(rca.ApiStar):
     async def can_create(self, user: rbt.User) -> bool:
         if self.create_role == "*":
             return True
+
+        if user is None:
+            return False
 
         if self.create_role in user.roles or self.admin_role in user.roles:
             return True
@@ -101,6 +104,9 @@ class ApiWikiStar(rca.ApiStar):
     async def can_delete(self, user: rbt.User) -> bool:
         if self.delete_role == "*":
             return True
+
+        if user is None:
+            return False
 
         if self.delete_role in user.roles or self.admin_role in user.roles:
             return True
@@ -128,6 +134,7 @@ class ApiWikiStar(rca.ApiStar):
 
         return lr
 
+    @rca.magic
     async def get(self, data: rca.ApiData) -> ru.JSON:
         """Get the details of a specific Wiki page."""
         lr = await self.find_lr(data)
@@ -142,6 +149,7 @@ class ApiWikiStar(rca.ApiStar):
 
         return lr.json()
 
+    @rca.magic
     async def post(self, data: rca.ApiData) -> ru.JSON:
         """Create a new Wiki page."""
         WikiRevisionT = self.alchemy.get(WikiRevision)
@@ -177,6 +185,7 @@ class ApiWikiStar(rca.ApiStar):
 
         return nr.json()
 
+    @rca.magic
     async def put(self, data: rca.ApiData) -> ru.JSON:
         """Edit a specific Wiki page, creating a new revision."""
         WikiRevisionT = self.alchemy.get(WikiRevision)
@@ -215,6 +224,7 @@ class ApiWikiStar(rca.ApiStar):
 
         return nr.json()
 
+    @rca.magic
     async def delete(self, data: rca.ApiData) -> ru.JSON:
         """Delete a specific Wiki page and all its revisions."""
         WikiRevisionT = self.alchemy.get(WikiRevision)

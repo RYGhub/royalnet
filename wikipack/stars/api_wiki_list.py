@@ -12,8 +12,6 @@ class ApiWikiListStar(rca.ApiStar):
 
     tags = ["wiki"]
 
-    methods = ["GET"]
-
     parameters = {
         "get": {},
     }
@@ -22,6 +20,7 @@ class ApiWikiListStar(rca.ApiStar):
         "get": False,
     }
 
+    @rca.magic
     async def get(self, data: rca.ApiData) -> ru.JSON:
         """Get the details of a specific Wiki page."""
         WikiRevisionT = self.alchemy.get(WikiRevision)
