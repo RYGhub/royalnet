@@ -44,4 +44,4 @@ class ApiWikiListStar(rca.ApiStar):
 
             pages.append(page)
 
-        return [r.json_list() for r in pages]
+        return [r.json_list() for r in sorted(pages, key=lambda p: (p.category, p.title))]
