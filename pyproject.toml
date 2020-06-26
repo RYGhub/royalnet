@@ -20,7 +20,7 @@
     python = "^3.8"
 
     [tool.poetry.dependencies.royalnet]
-        version = "~5.9.0"
+        version = "~5.10.0"
         extras = [
             "alchemy_easy",
             "constellation",

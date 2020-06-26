@@ -1,1 +1,1 @@
-semantic = "1.1.0"
+semantic = "1.1.1"
