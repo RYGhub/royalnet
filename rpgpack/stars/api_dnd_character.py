@@ -1,10 +1,9 @@
-from royalnet.utils import *
-from royalnet.backpack.tables import *
-from royalnet.constellation.api import *
+import royalnet.utils as ru
+import royalnet.constellation.api as rca
 from ..tables import DndCharacter
 
 
-class ApiDndCharacterStar(ApiStar):
+class ApiDndCharacterStar(rca.ApiStar):
     path = "/api/dnd/character/v2"
 
     parameters = {
@@ -15,13 +14,14 @@ class ApiDndCharacterStar(ApiStar):
 
     tags = ["dnd"]
 
-    async def get(self, data: ApiData) -> dict:
+    @rca.magic
+    async def get(self, data: rca.ApiData) -> dict:
         """Get the character sheet of a specific D&D Character."""
         DndCharacterT = self.alchemy.get(DndCharacter)
 
         character_id = data["character_id"]
 
-        character = await asyncify(
+        character = await ru.asyncify(
             data.session
                 .query(DndCharacterT)
                 .filter_by(character_id=character_id)
@@ -29,6 +29,6 @@ class ApiDndCharacterStar(ApiStar):
         )
 
         if character is None:
-            raise NotFoundError(f"No character with id '{character_id}' found")
+            raise rca.NotFoundError(f"No character with id '{character_id}' found")
 
         return character.json()
