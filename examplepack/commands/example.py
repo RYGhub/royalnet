@@ -2,6 +2,8 @@ from typing import *
 from royalnet.commands import *
 from royalnet.utils import *
 
+# TODO: delete this file!
+
 
 class ExampleCommand(Command):
     name: str = "example"

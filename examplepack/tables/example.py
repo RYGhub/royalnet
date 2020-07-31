@@ -2,6 +2,8 @@ from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import declared_attr
 
+# TODO: delete this file!
+
 
 class Example:
     __tablename__ = "examples"

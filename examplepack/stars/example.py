@@ -3,6 +3,8 @@ from starlette.responses import *
 from royalnet.constellation import *
 from royalnet.utils import *
 
+# TODO: delete this file!
+
 
 class ExampleStar(PageStar):
     path = "/example"
