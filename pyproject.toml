@@ -14,7 +14,7 @@
     # TODO: Set this to the GitHub page of your pack (or another website)
     homepage = "https://github.com/your-username/"
     # TODO: Set this to a link to the Pack documentation (if there's any)
-    documentation = "https://gh.steffo.eu/royalpack/"
+    documentation = "https://gh.steffo.eu/royalnet-pack-template/"
     # TODO: Pick some classifiers to include your Pack in: https://pypi.org/classifiers/
     classifiers = [
         "Development Status :: 3 - Alpha",
@@ -29,13 +29,12 @@
     python = "^3.8"
 
     [tool.poetry.dependencies.royalnet]
-        version = "~5.10.3"
+        version = "~5.11.0"
         # TODO: select the Royalnet modules required by your pack
         extras = [
             "telegram",
             "discord",
             "alchemy_easy",
-            "bard",
             "constellation",
             "sentry",
             "herald",
