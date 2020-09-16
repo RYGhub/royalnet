@@ -8,8 +8,8 @@ from ..types.faction import Faction
 from sqlalchemy import and_
 
 
-async def get_targets(data: rc.CommandData, target: Optional[str]) -> List[DndBattleUnit]:
-    DndBattleUnitT = data._interface.alchemy.get(DndBattleUnit)
+async def get_targets(target: Optional[str], *, data: rc.CommandData, session) -> List[DndBattleUnit]:
+    DndBattleUnitT = data.alchemy.get(DndBattleUnit)
 
     active_battle = await get_active_battle(data)
     if active_battle is None:
@@ -23,14 +23,14 @@ async def get_targets(data: rc.CommandData, target: Optional[str]) -> List[DndBa
             return []
         char = active_character.character
 
-        return await ru.asyncify(data.session.query(DndBattleUnitT).filter_by(
+        return await ru.asyncify(session.query(DndBattleUnitT).filter_by(
             linked_character=char,
             battle=battle
         ).all)
 
     # Get all
     if target.upper() == "ALL":
-        return await ru.asyncify(data.session.query(DndBattleUnitT).filter_by(
+        return await ru.asyncify(session.query(DndBattleUnitT).filter_by(
             battle=battle
         ).all)
 
@@ -40,13 +40,13 @@ async def get_targets(data: rc.CommandData, target: Optional[str]) -> List[DndBa
     except ValueError:
         pass
     else:
-        return await ru.asyncify(data.session.query(DndBattleUnitT).filter_by(
+        return await ru.asyncify(session.query(DndBattleUnitT).filter_by(
             faction=faction,
             battle=battle
         ).all)
 
     # Get by ilike
-    return await ru.asyncify(data.session.query(DndBattleUnitT).filter(and_(
+    return await ru.asyncify(session.query(DndBattleUnitT).filter(and_(
         DndBattleUnitT.name.ilike(target),
         DndBattleUnitT.battle == battle
     )).all)

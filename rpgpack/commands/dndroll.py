@@ -78,67 +78,68 @@ class DndrollCommand(Command):
     }
 
     async def run(self, args: CommandArgs, data: CommandData) -> None:
-        active_character = await get_active_character(data)
-        if active_character is None:
-            raise CommandError("You don't have an active character.")
-        char = active_character.character
+        async with data.session_acm() as session:
+            active_character = await get_active_character(session=session, data=data)
+            if active_character is None:
+                raise CommandError("You don't have an active character.")
+            char = active_character.character
 
-        first = args[0]
-        second = args.optional(1)
-        third = args.optional(2)
+            first = args[0]
+            second = args.optional(1)
+            third = args.optional(2)
 
-        advantage = False
-        disadvantage = False
-        extra_modifier = 0
+            advantage = False
+            disadvantage = False
+            extra_modifier = 0
 
-        if third:
-            try:
-                extra_modifier = int(third)
-            except ValueError:
-                raise InvalidInputError("Invalid modifier value (third parameter).")
-            if second.startswith("a") or second.startswith("v"):
-                advantage = True
-            elif second.startswith("d") or second.startswith("d"):
-                disadvantage = True
-            else:
-                raise InvalidInputError("Invalid advantage string (second parameter).")
-
-        elif second:
-            try:
-                extra_modifier = int(second)
-            except ValueError:
+            if third:
+                try:
+                    extra_modifier = int(third)
+                except ValueError:
+                    raise InvalidInputError("Invalid modifier value (third parameter).")
                 if second.startswith("a") or second.startswith("v"):
                     advantage = True
                 elif second.startswith("d") or second.startswith("d"):
                     disadvantage = True
                 else:
-                    raise InvalidInputError("Invalid modifier value or advantage string (second parameter).")
+                    raise InvalidInputError("Invalid advantage string (second parameter).")
 
-        skill_short_name = first.lower()
-        for root in self._skill_names:
-            if skill_short_name.startswith(root):
-                skill_name = self._skill_names[root]
-                break
-        else:
-            raise CommandError("Invalid skill name (first parameter).")
+            elif second:
+                try:
+                    extra_modifier = int(second)
+                except ValueError:
+                    if second.startswith("a") or second.startswith("v"):
+                        advantage = True
+                    elif second.startswith("d") or second.startswith("d"):
+                        disadvantage = True
+                    else:
+                        raise InvalidInputError("Invalid modifier value or advantage string (second parameter).")
 
-        skill_modifier = int(char.__getattribute__(skill_name))
-        modifier = skill_modifier + extra_modifier
-        modifier_str = f"{modifier:+d}" if modifier != 0 else ""
+            skill_short_name = first.lower()
+            for root in self._skill_names:
+                if skill_short_name.startswith(root):
+                    skill_name = self._skill_names[root]
+                    break
+            else:
+                raise CommandError("Invalid skill name (first parameter).")
 
-        if advantage:
-            roll_a = random.randrange(1, 21)
-            roll_b = random.randrange(1, 21)
-            roll = max([roll_a, roll_b])
-            total = roll + modifier
-            await data.reply(f"🎲 2d20h1{modifier_str} = ({roll_a}|{roll_b}){modifier_str} = [b]{total}[/b]")
-        elif disadvantage:
-            roll_a = random.randrange(1, 21)
-            roll_b = random.randrange(1, 21)
-            roll = min([roll_a, roll_b])
-            total = roll + modifier
-            await data.reply(f"🎲 2d20l1{modifier_str} = ({roll_a}|{roll_b}){modifier_str} = [b]{total}[/b]")
-        else:
-            roll = random.randrange(1, 21)
-            total = roll + modifier
-            await data.reply(f"🎲 1d20{modifier_str} = {roll}{modifier_str} = [b]{total}[/b]")
+            skill_modifier = int(char.__getattribute__(skill_name))
+            modifier = skill_modifier + extra_modifier
+            modifier_str = f"{modifier:+d}" if modifier != 0 else ""
+
+            if advantage:
+                roll_a = random.randrange(1, 21)
+                roll_b = random.randrange(1, 21)
+                roll = max([roll_a, roll_b])
+                total = roll + modifier
+                await data.reply(f"🎲 [i]{skill_name.capitalize()}[/i]: 2d20h1{modifier_str} = ({roll_a}|{roll_b} ){modifier_str} = [b]{total}[/b]")
+            elif disadvantage:
+                roll_a = random.randrange(1, 21)
+                roll_b = random.randrange(1, 21)
+                roll = min([roll_a, roll_b])
+                total = roll + modifier
+                await data.reply(f"🎲 [i]{skill_name.capitalize()}[/i]: 2d20l1{modifier_str} = ({roll_a}|{roll_b}){modifier_str} = [b]{total}[/b]")
+            else:
+                roll = random.randrange(1, 21)
+                total = roll + modifier
+                await data.reply(f"🎲 [i]{skill_name.capitalize()}[/i]: 1d20{modifier_str} = {roll}{modifier_str} = [b]{total}[/b]")

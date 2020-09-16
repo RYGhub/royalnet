@@ -1,6 +1,7 @@
 import re
 # noinspection PyUnresolvedReferences
 from royalnet.commands import *
+import royalnet.utils as ru
 from ..tables import DndCharacter
 from ..types import DndProficiencyType
 
@@ -14,7 +15,8 @@ class DndnewCommand(Command):
 
     syntax = "{name}\n{character_sheet}"
 
-    def _search_value(self, name: str, string: str):
+    @staticmethod
+    def _search_value(name: str, string: str):
         return re.search(r"\s*" + name + r"\s*([0-9.]+)\s*", string, re.IGNORECASE)
 
     def _parse(self, character_sheet: str) -> dict:
@@ -50,20 +52,21 @@ class DndnewCommand(Command):
             await data.reply(self._syntax())
             return
 
-        creator = await data.get_author()
+        async with data.session_acm() as session:
+            creator = await data.find_author(session=session, required=True)
 
-        name, rest = character_sheet.split("\n", 1)
+            name, rest = character_sheet.split("\n", 1)
 
-        character = self.alchemy.get(DndCharacter)(name=name, creator=creator, **self._parse(rest))
-        data.session.add(character)
+            character = self.alchemy.get(DndCharacter)(name=name, creator=creator, **self._parse(rest))
+            session.add(character)
 
-        try:
-            await data.session_commit()
-        except Exception as err:
-            # THIS IS INTENDED
-            if err.__class__.__name__ == "IntegrityError":
-                param_name = re.search(r'in column "(\S+)"', err.args[0]).group(1)
-                raise CommandError(f"Mandatory parameter '{param_name}' is missing.")
-            raise
+            try:
+                await ru.asyncify(session.commit)
+            except Exception as err:
+                # THIS IS INTENDED
+                if err.__class__.__name__ == "IntegrityError":
+                    param_name = re.search(r'in column "(\S+)"', err.args[0]).group(1)
+                    raise CommandError(f"Mandatory parameter '{param_name}' is missing.")
+                raise
 
-        await data.reply(f"✅ Character [b]{character.name}[/b] (ID: {character.character_id}) created!")
+            await data.reply(f"✅ Character [b]{character.name}[/b] (ID: {character.character_id}) created!")

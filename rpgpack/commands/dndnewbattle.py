@@ -1,6 +1,7 @@
 from typing import *
 import royalnet
 import royalnet.commands as rc
+import royalnet.utils as ru
 from ..tables import DndBattle
 
 
@@ -18,12 +19,13 @@ class DndnewbattleCommand(rc.Command):
         name = line_args[0]
         description = line_args[1] if len(line_args) > 1 else None
 
-        battle = BattleT(
-            name=name,
-            description=description
-        )
+        async with data.session_acm() as session:
+            battle = BattleT(
+                name=name,
+                description=description
+            )
 
-        data.session.add(battle)
-        await data.session_commit()
+            session.add(battle)
+            await ru.asyncify(session.commit)
 
-        await data.reply(f"✅ Battle [b]{battle.name}[/b] (ID: {battle.id}) created!")
+            await data.reply(f"✅ Battle [b]{battle.name}[/b] (ID: {battle.id}) created!")

@@ -2,6 +2,7 @@ import aiohttp
 import sortedcontainers
 import logging
 from royalnet.commands import *
+import royalnet.serf as rs
 from royalnet.utils import sentry_exc
 from ..utils import parse_5etools_entry
 
@@ -20,9 +21,9 @@ class DnditemCommand(Command):
 
     _dnddata: sortedcontainers.SortedKeyList = None
 
-    def __init__(self, interface: CommandInterface):
-        super().__init__(interface)
-        self.loop.create_task(self._fetch_dnddata())
+    def __init__(self, serf: rs.Serf, config: "ConfigDict"):
+        super().__init__(serf, config)
+        self.serf.tasks.add(self._fetch_dnddata())
 
     async def _fetch_dnddata(self):
         self._dnddata = self._dnddata = sortedcontainers.SortedKeyList([], key=lambda i: i["name"].lower())

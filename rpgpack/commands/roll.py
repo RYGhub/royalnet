@@ -28,7 +28,7 @@ class RollCommand(Command):
         except ValueError:
             if isinstance(first, str) and "d20" in first:
                 raise InvalidInputError(f"Invalid value specified.\n"
-                                        f"Were you looking for [c]{self.interface.prefix}dice[/c]?")
+                                        f"Were you looking for [c]{self.serf.prefix}dice[/c]?")
             else:
                 raise InvalidInputError("Invalid value specified.")
         result = random.randrange(minimum, maximum+1)

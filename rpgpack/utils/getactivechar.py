@@ -6,27 +6,26 @@ import royalnet.commands as rc
 import pickle
 
 
-async def get_active_character(data: rc.CommandData) -> Optional[DndActiveCharacter]:
-    interface = data._interface
-    alchemy = interface.alchemy
-    user = await data.get_author(error_if_none=True)
+async def get_active_character(*, data: rc.CommandData, session) -> Optional[DndActiveCharacter]:
+    alchemy = data.alchemy
+    user = await data.find_author(session=session, required=True)
     idata = get_interface_data(data)
 
     DndAcChT = alchemy.get(DndActiveCharacter)
     active_characters: List[DndActiveCharacter] = await ru.asyncify(
-        data.session
-            .query(DndAcChT)
-            .filter_by(interface_name=interface.name, user=user)
-            .all
+        session
+        .query(DndAcChT)
+        .filter_by(interface_name=data.command.serf.__class__.__name__, user=user)
+        .all
     )
 
     for active_character in active_characters:
-        if interface.name == "telegram":
+        if data.command.serf.__class__.__name__ == "TelegramSerf":
             # interface_data is chat id
             chat_id = pickle.loads(active_character.interface_data)
             if chat_id == idata:
                 return active_character
-        elif interface.name == "discord":
+        elif data.command.serf.__class__.__name__ == "DiscordSerf":
             # interface_data is channel id
             chat_id = pickle.loads(active_character.interface_data)
             if chat_id == idata:
