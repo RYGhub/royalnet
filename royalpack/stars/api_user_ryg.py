@@ -41,6 +41,7 @@ class ApiUserRygStar(rca.ApiStar):
             "steam": [steam.json() for steam in user.steam],
             "leagueoflegends": [leagueoflegends.json() for leagueoflegends in user.leagueoflegends],
             "osu": [osu.json() for osu in user.osu],
-            "trivia": user.trivia_score.json() if user.trivia_score is not None else None
+            "trivia": user.trivia_score.json() if user.trivia_score is not None else None,
+            "halloween2020": user.halloween2020.json() if user.halloween2020 is not None else None,
         }
         return result
