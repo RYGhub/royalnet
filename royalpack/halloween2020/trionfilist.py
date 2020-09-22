@@ -26,7 +26,7 @@ trionfilist = (
         roman="II",
         name="La Sacerdotessa",
         puzzle="DEL DECIMO MESE",
-        objective="Gioca almeno un'ora a [url=https://store.steampowered.com/app/881100]Noita[/url].",
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/881100]Noita[/url].",
         check=CheckPlayedSteamGame(881100),
     ),
     TrionfoInfo(
@@ -35,7 +35,7 @@ trionfilist = (
         roman="III",
         name="L'Imperatrice",
         puzzle="NON IMPEGNARTI",
-        objective="Gioca a [url=https://store.steampowered.com/app/245170]Skullgirls[/url].",
+        objective="Gioca almeno mezz'ora [url=https://store.steampowered.com/app/245170]Skullgirls[/url].",
         check=CheckPlayedSteamGame(245170),
     ),
     TrionfoInfo(
@@ -59,7 +59,7 @@ trionfilist = (
         title="vi",
         roman="VI",
         name="Gli Amanti",
-        puzzle="ANCORA DIECI MINUTI",
+        puzzle="PIÙ DIECI MINUTI",
         objective="Finisci l'Atto 3 di [url=https://store.steampowered.com/app/698780]Doki Doki Literature Club["
                   "/url].",
         check=CheckPlayedSteamGame(698780),
@@ -76,6 +76,7 @@ trionfilist = (
         title="viii",
         roman="VIII",
         name="La Giustizia",
+        puzzle="RAGGIUNGI",
         objective="Porta la giustizia dalla tua parte su [url=https://store.steampowered.com/app/1289310]Helltaker["
                   "/url].",
         check=CheckAchievementSteamGame(1289310, "achiev_05"),
@@ -92,6 +93,7 @@ trionfilist = (
         title="x",
         roman="X",
         name="La Fortuna",
+        puzzle="LA CASA DEI GIOCHI"
     ),
     TrionfoInfo(
         variable="xi",
@@ -104,6 +106,9 @@ trionfilist = (
         title="xii",
         roman="XII",
         name="L'Appeso",
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/381210]Dead by "
+                  "Daylight.[/url]",
+        check=CheckPlayedSteamGame(381210),
     ),
     TrionfoInfo(
         variable="xiii",
@@ -131,6 +136,10 @@ trionfilist = (
         title="xvi",
         roman="XVI",
         name="La Torre",
+        objective="Sconfiggi un boss del secondo piano su [url=https://store.steampowered.com/app/646570/]"
+                  "Slay the Spire[/url].",
+        check=CheckAchievementSteamGame(646570, "AUTOMATON") or CheckAchievementSteamGame(646570, "COLLECTOR") or
+              CheckAchievementSteamGame(646570, "CHAMP")
     ),
     TrionfoInfo(
         variable="xvii",

@@ -18,6 +18,12 @@ class Check(metaclass=abc.ABCMeta):
     async def check(self, status: "TrionfiStatus") -> bool:
         raise NotImplementedError()
 
+    def __or__(self, other: "Check"):
+        return CheckOr(self, other)
+
+    def __and__(self, other):
+        return CheckAnd(self, other)
+
 
 class CheckPlayedSteamGame(Check):
     def __init__(self, appid: int, *args, **kwargs):
@@ -44,7 +50,7 @@ class CheckPlayedSteamGame(Check):
                 for game in games:
                     if game["appid"] != self.appid:
                         continue
-                    if game["playtime_forever"] >= 1:
+                    if game["playtime_forever"] >= 30:
                         return True
                 return False
 
@@ -74,3 +80,23 @@ class CheckAchievementSteamGame(Check):
                         continue
                     return ach["achieved"] == 1
                 return False
+
+
+class CheckOr(Check):
+    def __init__(self, first: Check, second: Check, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.first: Check = first
+        self.second: Check = second
+
+    async def check(self, status: "TrionfiStatus") -> bool:
+        return (await self.first.check(status)) or (await self.second.check(status))
+
+
+class CheckAnd(Check):
+    def __init__(self, first: Check, second: Check, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.first: Check = first
+        self.second: Check = second
+
+    async def check(self, status: "TrionfiStatus") -> bool:
+        return (await self.first.check(status)) and (await self.second.check(status))
