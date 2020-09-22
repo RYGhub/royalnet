@@ -76,7 +76,8 @@ class Steam:
             "most_played_game_forever": self.most_played_game_forever,
 
             "dota": self.dota.json() if self.dota is not None else None,
-            "brawlhalla": self.brawlhalla.json() if self.brawlhalla is not None else None
+            "brawlhalla": self.brawlhalla.json() if self.brawlhalla is not None else None,
+            "halloween2020": self.halloween2020.json() if self.halloween2020 is not None else None,
         }
 
     def __repr__(self):

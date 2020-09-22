@@ -7,12 +7,12 @@ class Halloween2020:
     __tablename__ = "halloween2020"
 
     @declared_attr
-    def user_id(self):
-        return Column(Integer, ForeignKey("users.uid"), primary_key=True)
+    def _steamid(self):
+        return Column(BigInteger, ForeignKey("steam._steamid"), primary_key=True)
 
     @declared_attr
-    def user(self):
-        return relationship("User", backref=backref("halloween2020", uselist=False))
+    def steam(self):
+        return relationship("Steam", backref=backref("halloween2020", uselist=False))
 
     @declared_attr
     def zero(self):
