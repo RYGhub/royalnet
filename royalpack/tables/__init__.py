@@ -19,7 +19,7 @@ from .mmresponse import MMResponse
 from .cvstats import Cvstats
 from .treasure import Treasure
 from .osu import Osu
-from .halloween2020 import Halloween2020
+from ..halloween2020.trionfistatus import Halloween2020
 
 # Enter the tables of your Pack here!
 available_tables = [

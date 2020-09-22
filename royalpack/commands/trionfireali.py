@@ -1,8 +1,9 @@
 from typing import *
 import logging
-import aiohttp
+import steam.webapi
 import royalnet.commands as rc
 import royalnet.utils as ru
+import requests
 from royalnet.backpack import tables as rbt
 from .abstract.linker import LinkerCommand
 
@@ -10,6 +11,8 @@ from ..tables import Steam, Dota
 from ..types import DotaRank
 
 log = logging.getLogger(__name__)
+
+
 
 
 class TrionfirealiCommand(LinkerCommand):

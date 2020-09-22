@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declared_attr
 
 
-class Halloween2020:
-    __tablename__ = "halloween2020"
+class TrionfiStatus:
+    __tablename__ = "trionfistatus"
 
     @declared_attr
     def _steamid(self):
@@ -12,7 +12,7 @@ class Halloween2020:
 
     @declared_attr
     def steam(self):
-        return relationship("Steam", backref=backref("halloween2020", uselist=False))
+        return relationship("Steam", backref=backref("trionfistatus", uselist=False))
 
     @declared_attr
     def zero(self):
