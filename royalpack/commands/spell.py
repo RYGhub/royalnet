@@ -35,6 +35,7 @@ class SpellCommand(rc.Command):
                     author = await data.find_author(session=session, required=False)
                     if author is not None and author.halloween2020 is not None:
                         author.halloween2020.i = datetime.datetime.now()
+                        await ru.asyncify(session.commit)
 
         if spell.healing_component:
             heal: rs.HealingComponent = spell.healing_component

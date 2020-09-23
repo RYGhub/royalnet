@@ -73,6 +73,8 @@ class CheckAchievementSteamGame(Check):
                     j = await response.json()
                 except Exception:
                     return False
+                if not j["playerstats"]["success"]:
+                    return False
 
                 achievements = j["playerstats"]["achievements"]
                 for ach in achievements:

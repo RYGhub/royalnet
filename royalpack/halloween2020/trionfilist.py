@@ -24,7 +24,7 @@ trionfilist = (
         variable="ii",
         title="ii",
         roman="II",
-        name="La Sacerdotessa",
+        name="L'Alta Sacerdotessa",
         puzzle="DEL DECIMO MESE",
         objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/881100]Noita[/url].",
         check=CheckPlayedSteamGame(881100),
@@ -34,7 +34,7 @@ trionfilist = (
         title="iii",
         roman="III",
         name="L'Imperatrice",
-        puzzle="NON IMPEGNARTI",
+        puzzle="RIMANI LIBERO",
         objective="Gioca almeno mezz'ora [url=https://store.steampowered.com/app/245170]Skullgirls[/url].",
         check=CheckPlayedSteamGame(245170),
     ),
@@ -43,7 +43,7 @@ trionfilist = (
         title="iv",
         roman="IV",
         name="L'Imperatore",
-        puzzle="ESEGUI GLI ORDINI",
+        puzzle="ESEGUI QUESTI ORDINI",
         objective="Vinci una partita su [url=https://store.steampowered.com/app/611500]Quake Champions[/url].",
         check=CheckAchievementSteamGame(611500, "qc_victory")
     ),
@@ -70,6 +70,9 @@ trionfilist = (
         roman="VII",
         name="Il Carro",
         puzzle="SOPRA UN CARRO",
+        objective="Gioca 5 incontri a [url=https://store.steampowered.com/app/326460/ShellShock_Live]ShellShock Live["
+                  "/url].",
+        check=CheckPlayedSteamGame(326460, "play5")
     ),
     TrionfoInfo(
         variable="viii",
@@ -87,25 +90,33 @@ trionfilist = (
         roman="IX",
         name="L'Eremita",
         puzzle="SEGRETAMENTE",
+        objective="Sconfiggi tutti i boss del Basement almeno una volta su ["
+                  "url=https://store.steampowered.com/app/250900]The Binding "
+                  "of Isaac: Rebirth[/url].",
+        check=CheckAchievementSteamGame(250900, "13"),
     ),
     TrionfoInfo(
         variable="x",
         title="x",
         roman="X",
         name="La Fortuna",
-        puzzle="LA CASA DEI GIOCHI"
+        puzzle="LA CASA DEI GIOCHI",
+        objective="Chiedi a Royal Bot di predire il tuo futuro.",
+        check=None,
     ),
     TrionfoInfo(
         variable="xi",
         title="xi",
         roman="XI",
         name="La Forza",
+        puzzle="PORTA STRUMENTI DI CONTROLLO"
     ),
     TrionfoInfo(
         variable="xii",
         title="xii",
         roman="XII",
         name="L'Appeso",
+        puzzle="PREPARA LA CORDA ELETTRICA",
         objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/381210]Dead by "
                   "Daylight.[/url]",
         check=CheckPlayedSteamGame(381210),
@@ -115,21 +126,25 @@ trionfilist = (
         title="xiii",
         roman="XIII",
         name="La Morte",
-        objective="Raggiungi la Tenuta dell'Antenato su [url=https://store.steampowered.com/app/262060]Darkest Dungeon["
-                  "/url].",
-        check=CheckAchievementSteamGame(262060, "welcome_home"),
+        objective="Completa la campagna Dead Center di [url=]Left 4 Dead 2[/url].",
+        check=CheckAchievementSteamGame(550, "ACH_SURVIVE_MALL"),
     ),
     TrionfoInfo(
         variable="xiv",
         title="xiv",
         roman="XIV",
         name="La Temperanza",
+        objective="Raggiungi la Tenuta dell'Antenato su [url=https://store.steampowered.com/app/262060]Darkest Dungeon["
+                  "/url].",
+        check=CheckAchievementSteamGame(262060, "welcome_home"),
     ),
     TrionfoInfo(
         variable="xv",
         title="xv",
         roman="XV",
         name="Il Diavolo",
+        objective="Completa la prima missione di [url=https://store.steampowered.com/app/379720]DOOM[/url]."
+        # DOOM E1M1 https://steamcommunity.com/stats/379720/achievements/
     ),
     TrionfoInfo(
         variable="xvi",
@@ -146,13 +161,16 @@ trionfilist = (
         title="xvii",
         roman="XVII",
         name="Le Stelle",
+        objective="Completa due missioni co-op online su ["
+                  "url=https://store.steampowered.com/app/630/Alien_Swarm]Alien Swarm[/url].",
+        check=CheckAchievementSteamGame(630, "ASW_PARA_HAT"),
     ),
     TrionfoInfo(
         variable="xviii",
         title="xviii",
         roman="XVIII",
         name="La Luna",
-        objective="Gioca a [url=https://store.steampowered.com/app/388880]Oxenfree[/url].",
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/388880]Oxenfree[/url].",
         check=CheckPlayedSteamGame(388880),
     ),
     TrionfoInfo(
@@ -160,6 +178,8 @@ trionfilist = (
         title="xix",
         roman="XIX",
         name="Il Sole",
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/420530]OneShot[/url].",
+        check=CheckPlayedSteamGame(420530),
     ),
     TrionfoInfo(
         variable="xx",

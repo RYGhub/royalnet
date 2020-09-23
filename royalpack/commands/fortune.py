@@ -1,6 +1,7 @@
 from typing import *
 import royalnet
 import royalnet.commands as rc
+import royalnet.utils as ru
 import random
 import datetime
 
@@ -58,16 +59,23 @@ class FortuneCommand(rc.Command):
         "🔙 Oggi torneai indietro nel tempo!",
         "🚨 Oggi suonerà l'allarme della Velvet Room!",
         "♾ Oggi ti sembrerà infinito!",
+        "👹 Oggi perfino i demoni avranno paura di te!",
+        "🥐 Oggi mangerai una brioche (o lancerai un boomerang)!",
     ]
 
     async def run(self, args: rc.CommandArgs, data: rc.CommandData) -> None:
         async with data.session_acm() as session:
             author = await data.find_author(session=session, required=True)
-        today = datetime.date.today()
+            today = datetime.date.today()
 
-        h = author.uid * hash(today)
+            h = author.uid * hash(today)
 
-        r = random.Random(x=h)
+            r = random.Random(x=h)
 
-        message = r.sample(self._fortunes, 1)[0]
-        await data.reply(message)
+            if author is not None and author.halloween2020 is not None:
+                author.halloween2020.x = datetime.datetime.now()
+                await ru.asyncify(session.commit)
+
+            message = r.sample(self._fortunes, 1)[0]
+            await data.reply(message)
+
