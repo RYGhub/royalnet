@@ -13,14 +13,14 @@ class TrionfoInfo:
                  name: str,
                  objective: str,
                  puzzle: str,
-                 check: Optional["Check"]):
+                 check: "Check"):
         self.variable: str = variable
         self.title: str = title
         self.roman: str = roman
         self.name: str = name
         self.objective: str = objective
         self.puzzle: str = puzzle
-        self.check: Optional["Check"] = check
+        self.check: "Check" = check
 
     def json_anonymous(self) -> ru.JSON:
         return {

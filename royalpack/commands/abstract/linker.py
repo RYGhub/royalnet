@@ -165,7 +165,7 @@ class LinkerCommand(rc.Command, metaclass=abc.ABCMeta):
             session = self.alchemy.Session()
             objects = await self.get_updatables(session)
 
-            for obj in objects:
+            for index, obj in enumerate(objects):
                 log.debug(f"Updating: {obj} ({self.name})")
 
                 async def change(attribute: str, value: Any):
@@ -182,9 +182,10 @@ class LinkerCommand(rc.Command, metaclass=abc.ABCMeta):
                 except Exception as e:
                     ru.sentry_exc(e)
 
-                delay = self.delay()
-                log.debug(f"Waiting for: {delay} seconds (delay)")
-                await aio.sleep(delay)
+                if index < len(objects) - 1:
+                    delay = self.delay()
+                    log.debug(f"Waiting for: {delay} seconds (delay)")
+                    await aio.sleep(delay)
 
             log.debug(f"Committing updates: {self.name}")
             await ru.asyncify(session.commit)

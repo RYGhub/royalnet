@@ -1,13 +1,19 @@
 from typing import *
 import abc
 import aiohttp
+import logging
+import royalnet.commands as rc
 
 if TYPE_CHECKING:
     from .trionfistatus import TrionfiStatus
 
 
+log = logging.getLogger(__name__)
+
+
 __all__ = [
     "Check",
+    "NullCheck",
     "CheckPlayedSteamGame",
     "CheckAchievementSteamGame",
 ]
@@ -15,7 +21,7 @@ __all__ = [
 
 class Check(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    async def check(self, status: "TrionfiStatus") -> bool:
+    async def check(self, status: "TrionfiStatus", key: str) -> bool:
         raise NotImplementedError()
 
     def __or__(self, other: "Check"):
@@ -25,25 +31,39 @@ class Check(metaclass=abc.ABCMeta):
         return CheckAnd(self, other)
 
 
+class NullCheck(Check):
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
+
+    async def check(self, status: "TrionfiStatus", key: str) -> bool:
+        return False
+
+
 class CheckPlayedSteamGame(Check):
     def __init__(self, appid: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.appid: int = appid
 
-    async def check(self, status: "TrionfiStatus") -> bool:
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.appid=})"
+
+    async def check(self, status: "TrionfiStatus", key: str) -> bool:
+        log.debug(f"{self}")
         async with aiohttp.ClientSession() as ah_session:
             # noinspection PyProtectedMember
             async with ah_session.get("https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/",
                                       params={
                                           "steamid": status._steamid,
-                                          "include_appinfo": True,
-                                          "include_played_free_games": True,
-                                          "include_free_sub": True,
+                                          "include_appinfo": "true",
+                                          "include_played_free_games": "true",
+                                          "include_free_sub": "true",
                                           "appids_filter": self.appid,
+                                          "key": key,
                                       }) as response:
                 try:
                     j = await response.json()
-                except Exception:
+                except Exception as e:
+                    log.error(f"{e}")
                     return False
 
                 games = j["response"]["games"]
@@ -61,19 +81,26 @@ class CheckAchievementSteamGame(Check):
         self.appid: int = appid
         self.achivement_name: str = achievement_name
 
-    async def check(self, status: "TrionfiStatus") -> bool:
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.appid=}, {self.achivement_name=})"
+
+    async def check(self, status: "TrionfiStatus", key: str) -> bool:
+        log.debug(f"{self}")
         async with aiohttp.ClientSession() as ah_session:
             # noinspection PyProtectedMember
             async with ah_session.get("http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/",
                                       params={
                                           "steamid": status._steamid,
                                           "appid": self.appid,
+                                          "key": key,
                                       }) as response:
                 try:
                     j = await response.json()
-                except Exception:
+                except Exception as e:
+                    log.error(f"{e}")
                     return False
                 if not j["playerstats"]["success"]:
+                    log.warning(f"{j}")
                     return False
 
                 achievements = j["playerstats"]["achievements"]
@@ -90,8 +117,12 @@ class CheckOr(Check):
         self.first: Check = first
         self.second: Check = second
 
-    async def check(self, status: "TrionfiStatus") -> bool:
-        return (await self.first.check(status)) or (await self.second.check(status))
+    def __repr__(self):
+        return f"{self.first} or {self.second}"
+
+    async def check(self, status: "TrionfiStatus", key: str) -> bool:
+        log.debug(f"{self}")
+        return (await self.first.check(status, key)) or (await self.second.check(status, key))
 
 
 class CheckAnd(Check):
@@ -100,5 +131,9 @@ class CheckAnd(Check):
         self.first: Check = first
         self.second: Check = second
 
-    async def check(self, status: "TrionfiStatus") -> bool:
-        return (await self.first.check(status)) and (await self.second.check(status))
+    def __repr__(self):
+        return f"{self.first} and {self.second}"
+
+    async def check(self, status: "TrionfiStatus", key: str) -> bool:
+        log.debug(f"{self}")
+        return (await self.first.check(status, key)) and (await self.second.check(status, key))

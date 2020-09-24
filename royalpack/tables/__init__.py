@@ -19,7 +19,7 @@ from .mmresponse import MMResponse
 from .cvstats import Cvstats
 from .treasure import Treasure
 from .osu import Osu
-from ..halloween2020.trionfistatus import Halloween2020
+from ..halloween2020.trionfistatus import TrionfiStatus
 
 # Enter the tables of your Pack here!
 available_tables = [
@@ -43,7 +43,7 @@ available_tables = [
     Cvstats,
     Treasure,
     Osu,
-    Halloween2020,
+    TrionfiStatus,
 ]
 
 # Don't change this, it should automatically generate __all__

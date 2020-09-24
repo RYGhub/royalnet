@@ -1,7 +1,8 @@
+from typing import *
 from .trionfoinfo import TrionfoInfo
 from .check import *
 
-trionfilist = (
+trionfilist: List[TrionfoInfo] = [
     TrionfoInfo(
         variable="zero",
         title="o",
@@ -9,7 +10,7 @@ trionfilist = (
         name="Il Folle",
         puzzle="UN VIAGGIO TI ATTENDE",
         objective="Partecipa ai Trionfi Reali.",
-        check=None,
+        check=NullCheck(),
     ),
     TrionfoInfo(
         variable="i",
@@ -18,7 +19,7 @@ trionfilist = (
         name="Il Mago",
         puzzle="L'ULTIMO GIORNO",
         objective="Trova una /spell che possa fare almeno 250 danni.",
-        check=None,
+        check=NullCheck(),
     ),
     TrionfoInfo(
         variable="ii",
@@ -75,7 +76,7 @@ trionfilist = (
         puzzle="SOPRA UN CARRO",
         objective="Gioca 5 incontri a [url=https://store.steampowered.com/app/326460/ShellShock_Live]ShellShock Live["
                   "/url].",
-        check=CheckPlayedSteamGame(326460, "play5")
+        check=CheckAchievementSteamGame(326460, "play5")
     ),
     TrionfoInfo(
         variable="viii",
@@ -103,7 +104,7 @@ trionfilist = (
         name="La Fortuna",
         puzzle="LA CASA DEI GIOCHI",
         objective="Chiedi a Royal Bot di predire il tuo futuro.",
-        check=None,
+        check=NullCheck(),
     ),
     TrionfoInfo(
         variable="xi",
@@ -209,6 +210,6 @@ trionfilist = (
         name="Il Mondo",
         puzzle="""44°35'45.0"N 11°02'58.9"E""",
         objective="Vinci la partita a Trionfi Reali.",
-        check=None,
+        check=NullCheck(),
     ),
-)
+]

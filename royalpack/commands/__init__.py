@@ -37,6 +37,7 @@ from .steampowered import SteampoweredCommand
 from .treasure import TreasureCommand
 from .trivia import TriviaCommand
 from .osu import OsuCommand
+from .trionfireali import TrionfirealiCommand
 
 # Enter the commands of your Pack here!
 available_commands = [
@@ -78,6 +79,7 @@ available_commands = [
     TreasureCommand,
     TriviaCommand,
     OsuCommand,
+    TrionfirealiCommand,
 ]
 
 # Don't change this, it should automatically generate __all__
