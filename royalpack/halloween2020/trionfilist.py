@@ -7,7 +7,7 @@ trionfilist = (
         title="o",
         roman="0",
         name="Il Folle",
-        puzzle="IL DESTINO TI ATTENDE",
+        puzzle="UN VIAGGIO TI ATTENDE",
         objective="Partecipa ai Trionfi Reali.",
         check=None,
     ),
@@ -25,7 +25,7 @@ trionfilist = (
         title="ii",
         roman="II",
         name="L'Alta Sacerdotessa",
-        puzzle="DEL DECIMO MESE",
+        puzzle="NEL DECIMO MESE",
         objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/881100]Noita[/url].",
         check=CheckPlayedSteamGame(881100),
     ),
@@ -43,7 +43,7 @@ trionfilist = (
         title="iv",
         roman="IV",
         name="L'Imperatore",
-        puzzle="ESEGUI QUESTI ORDINI",
+        puzzle="SEGUI GLI ORDINI",
         objective="Vinci una partita su [url=https://store.steampowered.com/app/611500]Quake Champions[/url].",
         check=CheckAchievementSteamGame(611500, "qc_victory")
     ),
@@ -52,14 +52,17 @@ trionfilist = (
         title="v",
         roman="V",
         name="Il Papa",
-        puzzle="ALLA SEDICESIMA ORA",
+        puzzle="ALLA DECIMASESTA ORA",
+        objective="Completa la prima zona di [url=https://store.steampowered.com/app/247080]Crypt of the Necrodancer["
+                  "/url] (con qualsiasi personaggio).",
+        check=CheckAchievementSteamGame(247080, "ACH_ZONE1_COMPLETE")
     ),
     TrionfoInfo(
         variable="vi",
         title="vi",
         roman="VI",
         name="Gli Amanti",
-        puzzle="PIÙ DIECI MINUTI",
+        puzzle="ANCORA TRENTA MINUTI",
         objective="Finisci l'Atto 3 di [url=https://store.steampowered.com/app/698780]Doki Doki Literature Club["
                   "/url].",
         check=CheckPlayedSteamGame(698780),
@@ -90,10 +93,8 @@ trionfilist = (
         roman="IX",
         name="L'Eremita",
         puzzle="SEGRETAMENTE",
-        objective="Sconfiggi tutti i boss del Basement almeno una volta su ["
-                  "url=https://store.steampowered.com/app/250900]The Binding "
-                  "of Isaac: Rebirth[/url].",
-        check=CheckAchievementSteamGame(250900, "13"),
+        objective="Gioca almeno mezz'ora ad [url=https://store.steampowered.com/app/945360]Among Us[/url] su Steam.",
+        check=CheckPlayedSteamGame(945360)
     ),
     TrionfoInfo(
         variable="x",
@@ -109,14 +110,17 @@ trionfilist = (
         title="xi",
         roman="XI",
         name="La Forza",
-        puzzle="PORTA STRUMENTI DI CONTROLLO"
+        puzzle="DELLA LIBERA ROCCAFORTE",
+        objective="Gioca almeno mezz'ora ad [url=https://store.steampowered.com/app/57300]Amnesia: The Dark Descent["
+                  "/url].",
+        check=CheckPlayedSteamGame(57300)
     ),
     TrionfoInfo(
         variable="xii",
         title="xii",
         roman="XII",
         name="L'Appeso",
-        puzzle="PREPARA LA CORDA ELETTRICA",
+        puzzle="PORTA CAVI E ARNESI",
         objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/381210]Dead by "
                   "Daylight.[/url]",
         check=CheckPlayedSteamGame(381210),
@@ -126,14 +130,16 @@ trionfilist = (
         title="xiii",
         roman="XIII",
         name="La Morte",
-        objective="Completa la campagna Dead Center di [url=]Left 4 Dead 2[/url].",
-        check=CheckAchievementSteamGame(550, "ACH_SURVIVE_MALL"),
+        puzzle="NON DIMENTICARE IL CIBO",
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/322330]Don't Starve Together[/url].",
+        check=CheckPlayedSteamGame(322330),
     ),
     TrionfoInfo(
         variable="xiv",
         title="xiv",
         roman="XIV",
         name="La Temperanza",
+        puzzle="NIENTE ALCOOL",
         objective="Raggiungi la Tenuta dell'Antenato su [url=https://store.steampowered.com/app/262060]Darkest Dungeon["
                   "/url].",
         check=CheckAchievementSteamGame(262060, "welcome_home"),
@@ -143,24 +149,27 @@ trionfilist = (
         title="xv",
         roman="XV",
         name="Il Diavolo",
-        objective="Completa la prima missione di [url=https://store.steampowered.com/app/379720]DOOM[/url]."
-        # DOOM E1M1 https://steamcommunity.com/stats/379720/achievements/
+        puzzle="GIOCA CON LUI",
+        objective="Completa la prima missione di [url=https://store.steampowered.com/app/379720]DOOM[/url].",
+        check=CheckAchievementSteamGame(379720, "ach_4")
     ),
     TrionfoInfo(
         variable="xvi",
         title="xvi",
         roman="XVI",
         name="La Torre",
-        objective="Sconfiggi un boss del secondo piano su [url=https://store.steampowered.com/app/646570/]"
+        puzzle="CONQUISTA LA CIMA",
+        objective="Sconfiggi un boss del primo piano su [url=https://store.steampowered.com/app/646570/]"
                   "Slay the Spire[/url].",
-        check=CheckAchievementSteamGame(646570, "AUTOMATON") or CheckAchievementSteamGame(646570, "COLLECTOR") or
-              CheckAchievementSteamGame(646570, "CHAMP")
+        check=CheckAchievementSteamGame(646570, "GUARDIAN") or CheckAchievementSteamGame(646570, "GHOST_GUARDIAN") or
+              CheckAchievementSteamGame(646570, "SLIME_BOSS")
     ),
     TrionfoInfo(
         variable="xvii",
         title="xvii",
         roman="XVII",
         name="Le Stelle",
+        puzzle="STAI IN COMPAGNIA",
         objective="Completa due missioni co-op online su ["
                   "url=https://store.steampowered.com/app/630/Alien_Swarm]Alien Swarm[/url].",
         check=CheckAchievementSteamGame(630, "ASW_PARA_HAT"),
@@ -170,6 +179,7 @@ trionfilist = (
         title="xviii",
         roman="XVIII",
         name="La Luna",
+        puzzle="FINO ALLA UNA",
         objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/388880]Oxenfree[/url].",
         check=CheckPlayedSteamGame(388880),
     ),
@@ -178,6 +188,7 @@ trionfilist = (
         title="xix",
         roman="XIX",
         name="Il Sole",
+        puzzle="IL TUO NOME SPLENDERÀ",
         objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/420530]OneShot[/url].",
         check=CheckPlayedSteamGame(420530),
     ),
@@ -186,6 +197,10 @@ trionfilist = (
         title="xx",
         roman="XX",
         name="Il Giudizio",
+        puzzle="E GIUDICHERÀ GLI ALTRI",
+        objective="Completa la campagna Dead Center di [url=https://store.steampowered.com/app/550]"
+                  "Left 4 Dead 2[/url].",
+        check=CheckAchievementSteamGame(550, "ACH_SURVIVE_MALL"),
     ),
     TrionfoInfo(
         variable="xxi",
@@ -193,7 +208,7 @@ trionfilist = (
         roman="XII",
         name="Il Mondo",
         puzzle="""44°35'45.0"N 11°02'58.9"E""",
-        objective="Risolvi il mistero dei Trionfi Reali.",
+        objective="Vinci la partita a Trionfi Reali.",
         check=None,
     ),
 )
