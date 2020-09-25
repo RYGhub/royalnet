@@ -40,5 +40,5 @@ class TrionfoInfo:
             "name": self.name,
             "objective": self.objective,
             "puzzle": self.puzzle if status is not None else None,
-            "completed_on": status
+            "completed_on": status.timestamp() if status is not None else None
         }

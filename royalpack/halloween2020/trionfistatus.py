@@ -1,6 +1,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declared_attr
+from .trionfilist import trionfilist
 
 
 class TrionfiStatus:
@@ -130,29 +131,6 @@ class TrionfiStatus:
 
     def json(self):
         return {
-            "total": self.total(),
-            "tarots": {
-                "zero": self.zero.timestamp() if self.zero else None,
-                "i": self.i.timestamp() if self.i else None,
-                "ii": self.ii.timestamp() if self.ii else None,
-                "iii": self.iii.timestamp() if self.iii else None,
-                "iv": self.iv.timestamp() if self.iv else None,
-                "v": self.v.timestamp() if self.v else None,
-                "vi": self.vi.timestamp() if self.vi else None,
-                "vii": self.vii.timestamp() if self.vii else None,
-                "viii": self.viii.timestamp() if self.viii else None,
-                "ix": self.ix.timestamp() if self.ix else None,
-                "x": self.x.timestamp() if self.x else None,
-                "xi": self.xi.timestamp() if self.xi else None,
-                "xii": self.xii.timestamp() if self.xii else None,
-                "xiii": self.xiii.timestamp() if self.xiii else None,
-                "xiv": self.xiv.timestamp() if self.xiv else None,
-                "xv": self.xv.timestamp() if self.xv else None,
-                "xvi": self.xvi.timestamp() if self.xvi else None,
-                "xvii": self.xvii.timestamp() if self.xvii else None,
-                "xviii": self.xviii.timestamp() if self.xviii else None,
-                "xix": self.xix.timestamp() if self.xix else None,
-                "xx": self.xx.timestamp() if self.xx else None,
-                "xxi": self.xxi.timestamp() if self.xxi else None,
-            }
+            "completed": self.total(),
+            "trionfi": {trionfo.variable: trionfo.json_user(self) for trionfo in trionfilist}
         }

@@ -36,7 +36,7 @@ trionfilist: List[TrionfoInfo] = [
         roman="III",
         name="L'Imperatrice",
         puzzle="RIMANI LIBERO",
-        objective="Gioca almeno mezz'ora [url=https://store.steampowered.com/app/245170]Skullgirls[/url].",
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/245170]Skullgirls[/url].",
         check=CheckPlayedSteamGame(245170),
     ),
     TrionfoInfo(
@@ -206,10 +206,10 @@ trionfilist: List[TrionfoInfo] = [
     TrionfoInfo(
         variable="xxi",
         title="xxi",
-        roman="XII",
+        roman="XXI",
         name="Il Mondo",
         puzzle="""44°35'45.0"N 11°02'58.9"E""",
-        objective="Vinci la partita a Trionfi Reali.",
+        objective="???",
         check=NullCheck(),
     ),
 ]
