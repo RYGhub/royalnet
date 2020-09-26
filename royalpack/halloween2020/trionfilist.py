@@ -9,7 +9,7 @@ trionfilist: List[TrionfoInfo] = [
         roman="0",
         name="Il Folle",
         puzzle="UN VIAGGIO TI ATTENDE",
-        objective="Partecipa ai Trionfi Reali.",
+        objective="Trova la pagina dei Trionfi Reali.",
         check=NullCheck(),
     ),
     TrionfoInfo(
@@ -18,7 +18,7 @@ trionfilist: List[TrionfoInfo] = [
         roman="I",
         name="Il Mago",
         puzzle="L'ULTIMO GIORNO",
-        objective="Trova una /spell che possa fare almeno 250 danni.",
+        objective="Scopri una magia che possa fare più di 250 danni.",
         check=NullCheck(),
     ),
     TrionfoInfo(
@@ -55,7 +55,7 @@ trionfilist: List[TrionfoInfo] = [
         name="Il Papa",
         puzzle="ALLA DECIMASESTA ORA",
         objective="Completa la prima zona di [url=https://store.steampowered.com/app/247080]Crypt of the Necrodancer["
-                  "/url] (con qualsiasi personaggio).",
+                  "/url] con qualsiasi personaggio.",
         check=CheckAchievementSteamGame(247080, "ACH_ZONE1_COMPLETE")
     ),
     TrionfoInfo(
@@ -64,7 +64,7 @@ trionfilist: List[TrionfoInfo] = [
         roman="VI",
         name="Gli Amanti",
         puzzle="ANCORA TRENTA MINUTI",
-        objective="Finisci l'Atto 3 di [url=https://store.steampowered.com/app/698780]Doki Doki Literature Club["
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/698780]Doki Doki Literature Club["
                   "/url].",
         check=CheckPlayedSteamGame(698780),
     ),
@@ -74,7 +74,7 @@ trionfilist: List[TrionfoInfo] = [
         roman="VII",
         name="Il Carro",
         puzzle="SOPRA UN CARRO",
-        objective="Gioca 5 incontri a [url=https://store.steampowered.com/app/326460/ShellShock_Live]ShellShock Live["
+        objective="Gioca 5 incontri di [url=https://store.steampowered.com/app/326460/ShellShock_Live]ShellShock Live["
                   "/url].",
         check=CheckAchievementSteamGame(326460, "play5")
     ),
@@ -209,7 +209,7 @@ trionfilist: List[TrionfoInfo] = [
         roman="XXI",
         name="Il Mondo",
         puzzle="""44°35'45.0"N 11°02'58.9"E""",
-        objective="???",
+        objective="Attraverso i Trionfi, il segreto ti sarà lentamente rivelato...",
         check=NullCheck(),
     ),
 ]
