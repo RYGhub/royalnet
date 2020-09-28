@@ -27,8 +27,8 @@ class TreasureCommand(rc.Command):
 
             treasure.redeemed_by = author
             await ru.asyncify(session.commit)
-        await FiorygiTransaction.spawn_fiorygi(data,
-                                               author,
-                                               treasure.value,
-                                               f'aver trovato il tesoro "{treasure.code}"')
-        await data.reply("🤑 Tesoro riscattato!")
+            await FiorygiTransaction.spawn_fiorygi(data,
+                                                   author,
+                                                   treasure.value,
+                                                   f'aver trovato il tesoro "{treasure.code}"')
+            await data.reply("🤑 Tesoro riscattato!")
