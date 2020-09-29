@@ -112,7 +112,7 @@ trionfilist: List[TrionfoInfo] = [
         title="xi",
         roman="XI",
         name="La Forza",
-        puzzle="DELLA LIBERA ROCCAFORTE",
+        puzzle="ALLA LIBERA ROCCAFORTE",
         objective="Gioca almeno mezz'ora ad [url=https://store.steampowered.com/app/57300]Amnesia: The Dark Descent["
                   "/url].",
         check=CheckPlayedSteamGame(57300)
