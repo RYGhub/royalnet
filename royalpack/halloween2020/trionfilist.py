@@ -18,8 +18,9 @@ trionfilist: List[TrionfoInfo] = [
         roman="I",
         name="Il Mago",
         puzzle="L'ULTIMO GIORNO",
-        objective="Scopri una magia che possa fare più di 250 danni.",
-        check=NullCheck(),
+        objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/42910]Magicka[/url] "
+                  "o [url=https://store.steampowered.com/app/238370]Magicka 2[/url].",
+        check=CheckPlayedSteamGame(42910) or CheckPlayedSteamGame(238370),
     ),
     TrionfoInfo(
         variable="ii",
@@ -209,7 +210,7 @@ trionfilist: List[TrionfoInfo] = [
         roman="XXI",
         name="Il Mondo",
         puzzle="""44°35'45.0"N 11°02'58.9"E""",
-        objective="Attraverso i Trionfi, il segreto ti sarà lentamente rivelato...",
+        objective="Attraverso i Trionfi, il segreto sarà rivelato...",
         check=NullCheck(),
     ),
 ]

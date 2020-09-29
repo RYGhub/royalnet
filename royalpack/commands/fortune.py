@@ -72,10 +72,6 @@ class FortuneCommand(rc.Command):
 
             r = random.Random(x=h)
 
-            if author is not None and len(author.steam) >= 0 and author.steam[0].trionfistatus is not None:
-                author.steam[0].trionfistatus.x = datetime.datetime.now()
-                await ru.asyncify(session.commit)
-
             message = r.sample(self._fortunes, 1)[0]
             await data.reply(message)
 

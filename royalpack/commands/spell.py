@@ -28,15 +28,6 @@ class SpellCommand(rc.Command):
                 rows.append(f"Multiattacco: [b]×{dmg.repeat}[/b]")
             rows.append("")
 
-            # Halloween 2020
-            possible_dmg = (dmg.dice_number * dmg.dice_type + dmg.constant) * dmg.repeat
-            if possible_dmg >= 250:
-                async with data.session_acm() as session:
-                    author = await data.find_author(session=session, required=False)
-                    if author is not None and author.halloween2020 is not None:
-                        author.halloween2020.i = datetime.datetime.now()
-                        await ru.asyncify(session.commit)
-
         if spell.healing_component:
             heal: rs.HealingComponent = spell.healing_component
             constant_str: str = f"{heal.constant:+d}" if heal.constant != 0 else ""
