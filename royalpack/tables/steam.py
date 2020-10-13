@@ -78,7 +78,7 @@ class Steam:
             "dota": self.dota.json() if self.dota is not None else None,
             "brawlhalla": self.brawlhalla.json() if self.brawlhalla is not None else None,
             "trionfistatus": self.trionfistatus.json() if (self.trionfistatus is not None and self.trionfistatus.zero
-                                                           is not None and self._steamid != 76561198034314260) else None,
+                                                           is not None) else None,
         }
 
     def __repr__(self):
