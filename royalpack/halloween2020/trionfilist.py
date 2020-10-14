@@ -19,7 +19,7 @@ trionfilist: List[TrionfoInfo] = [
         name="Il Mago",
         puzzle="L'ULTIMO GIORNO",
         objective="Gioca almeno mezz'ora a [url=https://store.steampowered.com/app/42910]Magicka[/url] "
-                  "o [url=https://store.steampowered.com/app/238370]Magicka 2[/url].",
+                  "(o Magicka 2).",
         check=CheckPlayedSteamGame(42910) or CheckPlayedSteamGame(238370),
     ),
     TrionfoInfo(
