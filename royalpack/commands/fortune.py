@@ -66,8 +66,8 @@ class FortuneCommand(rc.Command):
     async def run(self, args: rc.CommandArgs, data: rc.CommandData) -> None:
         async with data.session_acm() as session:
             author = await data.find_author(session=session, required=True)
-            if author.trionfistatus and author.trionfistatus.zero:
-                author.trionfistatus.x = datetime.datetime.now()
+            if len(author.steam) > 0 and author.steam[0].trionfistatus and author.steam[0].trionfistatus.zero:
+                author.steam[0].trionfistatus.x = datetime.datetime.now()
 
             today = datetime.date.today()
 
