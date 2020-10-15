@@ -51,13 +51,9 @@ class CheckPlayedSteamGame(Check):
         log.debug(f"{self}")
         async with aiohttp.ClientSession() as ah_session:
             # noinspection PyProtectedMember
-            async with ah_session.get("https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/",
+            async with ah_session.get("https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/",
                                       params={
                                           "steamid": status._steamid,
-                                          "include_appinfo": "true",
-                                          "include_played_free_games": "true",
-                                          "include_free_sub": "true",
-                                          "appids_filter": self.appid,
                                           "key": key,
                                       }) as response:
                 try:
