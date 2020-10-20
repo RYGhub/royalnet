@@ -2,7 +2,7 @@
 
 [tool.poetry]
     name = "royalpack"
-    version = "5.15.7"
+    version = "5.15.8"
     description = "A Royalnet command pack for the Royal Games community"
     authors = ["Stefano Pigozzi <ste.pigozzi@gmail.com>"]
     license = "AGPL-3.0+"
