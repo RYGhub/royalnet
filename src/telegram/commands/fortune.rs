@@ -8,7 +8,8 @@ use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
 use crate::telegram::commands::{CommandDialogue, CommandResult};
 
-const FORTUNES: [&str; 140] = [
+// Tutte le fortune devono essere positive, o almeno neutrali, per poter essere aggiunte.
+const FORTUNES: [&str; 160] = [
 	"😄 Oggi sarà una fantastica giornata!",
 	"😌 Oggi sarà una giornata molto chill e rilassante.",
 	"💰 Oggi sui tuoi alberi cresceranno più Stelline!",
@@ -149,6 +150,26 @@ const FORTUNES: [&str; 140] = [
 	"⛎ Oggi romperai la quarta parete!",
 	"🛕 Oggi raggiungerai la cima di un Pantheon!",
 	"🍽 Oggi la tua fabbrica produrrà più Iron Plate del normale!",
+	"🎲 Oggi tirerai iniziativa, e farai 18!",
+	"💊 Oggi una pillola ti darà il potere di mangiare fantasmi!",
+	"⚡️ Oggi un tuono colpirà un creeper!",
+	"🎈 Oggi delle scimmie ti difenderanno da dei palloncini!",
+	"⬆️ Oggi salirai di livello!",
+	"🍣 Oggi il sashimi avrà un limite ragionevolmente alto!",
+	"🖋 Oggi 'a penn' starà 'ngopp u' tavl!",
+	"💰 Oggi il tuo username avrà un valore più alto del solito!",
+	"☕️ Oggi un uomo entrerà in un caffè! (Splash.)",
+	"☕️ Oggi un uomo entrerà in un caffè! (Tlink.)",
+	"💥 Oggi la RYG cambierà governo!",
+	"🍛 Oggi il carry farà il curry!",
+	"❤️ Oggi ti sentirai pieno di DETERMINAZIONE!",
+	"🔄 Oggi cambierai provincia!",
+	"🎉 Oggi da qualche parte nel mondo sarà festa!",
+	"➡️ Oggi, nonostante gli imprevisti, riuscirai a passare dal Via!",
+	"🔎 Oggi accuserai il Professor Plum di aver commesso un omicidio in salotto con un candelabro!",
+	"🔫 Oggi schiverai un BANG!",
+	"🍻 Oggi una birra ti ridarà una vita!",
+	"🎶 Oggi Hatsune Miku si nasconderà nella tua Wi-Fi!",
 ];
 
 struct FortuneKey {
