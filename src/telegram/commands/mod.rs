@@ -1,12 +1,11 @@
 use anyhow::Error;
-use diesel::PgConnection;
 use teloxide::{Bot, dptree};
 use teloxide::dispatching::{DefaultKey, Dispatcher, HandlerExt, UpdateFilterExt};
 use teloxide::dispatching::dialogue::{InMemStorage, TraceStorage};
 use teloxide::types::{Message, Update};
-use teloxide::utils::command::BotCommands;
 
 mod start;
+mod fortune;
 
 #[derive(Debug, Clone, Default)]
 enum State {
@@ -14,10 +13,10 @@ enum State {
 	Default,
 }
 
-type Dialogue = teloxide::dispatching::dialogue::Dialogue<State, TraceStorage<InMemStorage<State>>>;
-type Result = anyhow::Result<()>;
+type CommandDialogue = teloxide::dispatching::dialogue::Dialogue<State, TraceStorage<InMemStorage<State>>>;
+type CommandResult = anyhow::Result<()>;
 
-async fn detect_command(bot: Bot, dialogue: Dialogue, message: Message) -> Result {
+async fn detect_command(bot: Bot, dialogue: CommandDialogue, message: Message) -> CommandResult {
 	let text = message.text();
 	if text.is_none() {
 		// Ignore non-textual messages
@@ -27,6 +26,7 @@ async fn detect_command(bot: Bot, dialogue: Dialogue, message: Message) -> Resul
 
 	match text {
 		"/start" => start::handler(bot, dialogue, message).await,
+		"/fortune" => fortune::handler(bot, dialogue, message).await,
 		_ => anyhow::bail!("Unknown command"),
 	}
 }

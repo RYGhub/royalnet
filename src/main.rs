@@ -1,5 +1,4 @@
-use anyhow::{Context, Result};
-use teloxide::dispatching::HandlerExt;
+use anyhow::{Result};
 
 pub(crate) mod database;
 mod telegram;
