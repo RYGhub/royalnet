@@ -57,7 +57,12 @@ pub async fn handler_specific(bot: &Bot, message: &Message, target: &str) -> Com
 		None => anyhow::bail!("Non è stato possibile trovare il comando specificato."),
 	};
 
-	let text = format!("❓ Il comando {}{}:\n\n{}", target.command, suffix, target.description);
+	let display_suffix = match message.chat.is_private() {
+		false => &suffix,
+		true => "",
+	};
+
+	let text = format!("❓ Il comando {}{}:\n\n{}", target.command, display_suffix, target.description);
 
 	let _reply = bot
 		.send_message(message.chat.id, text)
