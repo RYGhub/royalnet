@@ -1,7 +1,6 @@
 // See the following link for an example of how to use this file:
 // https://github.com/teloxide/teloxide/blob/master/crates/teloxide/examples/dispatching_features.rs
 
-use std::sync::Arc;
 use anyhow::{Context, Error};
 use teloxide::{Bot, dptree};
 use teloxide::dispatching::{DefaultKey, Dispatcher, HandlerExt, UpdateFilterExt};
@@ -13,12 +12,14 @@ use teloxide::utils::command::BotCommands;
 
 mod start;
 mod fortune;
+mod echo;
 
 #[derive(Debug, Clone, BotCommands)]
 #[command(rename_rule = "lowercase")]
 enum Command {
 	Start,
 	Fortune,
+	Echo(String)
 }
 
 async fn handle_command(bot: Bot, command: Command, message: Message) -> CommandResult {
@@ -27,6 +28,7 @@ async fn handle_command(bot: Bot, command: Command, message: Message) -> Command
 	match command {
 		Command::Start => start::handler(bot, message).await,
 		Command::Fortune => fortune::handler(bot, message).await,
+		Command::Echo(text) => echo::handler(bot, message, text).await,
 	}
 }
 
