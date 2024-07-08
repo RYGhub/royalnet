@@ -17,8 +17,11 @@ mod echo;
 #[derive(Debug, Clone, BotCommands)]
 #[command(rename_rule = "lowercase")]
 enum Command {
+	#[command(description = "Invia messaggio di introduzione.")]
 	Start,
+	#[command(description = "Mostra il tuo oroscopo di oggi.")]
 	Fortune,
+	#[command(description = "Ripeti il testo inviato.")]
 	Echo(String)
 }
 
