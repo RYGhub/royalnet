@@ -187,11 +187,11 @@ impl Hash for FortuneKey {
 	}
 }
 
-pub async fn handler(bot: Bot, message: Message) -> CommandResult {
+pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 	let today = chrono::Local::now().date_naive();
 
 	let author = message.from()
-		.context("Failed to get the user who sent the original message")?;
+		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 	let author_id = author.id;
 
 	let key = FortuneKey {today, author_id};
@@ -206,20 +206,20 @@ pub async fn handler(bot: Bot, message: Message) -> CommandResult {
 		.collect::<Vec<u8>>()
 		.try_into();
 	if hash.is_err() {
-		anyhow::bail!("Failed to select random seed");
+		anyhow::bail!("Non è stato possibile determinare il tuo oroscopo.");
 	}
 	let hash = hash.unwrap();
 
 	let mut rng = rand::rngs::SmallRng::from_seed(hash);
 
 	let fortune = FORTUNES.choose(&mut rng)
-		.context("Failed to choose a fortune")?;
+		.context("Non è stato possibile selezionare il tuo oroscopo.")?;
 
 	let _reply = bot
 		.send_message(message.chat.id, fortune.to_string())
 		.reply_to_message_id(message.id)
 		.await
-		.context("Failed to send message")?;
+		.context("Non è stato possibile inviare la risposta.")?;
 
 	Ok(())
 }

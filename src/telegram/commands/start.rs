@@ -5,9 +5,9 @@ use teloxide::requests::Requester;
 use teloxide::types::{Message};
 use super::{CommandResult};
 
-pub async fn handler(bot: Bot, message: Message) -> CommandResult {
+pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 	let author = message.from()
-		.context("Failed to get the user who sent the original message")?;
+		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 
 	let author_username = match author.username.as_ref() {
 		None => {
@@ -21,10 +21,10 @@ pub async fn handler(bot: Bot, message: Message) -> CommandResult {
 	let me = bot
 		.get_me()
 		.await
-		.context("Failed to get information about self")?;
+		.context("Non è stato possibile recuperare informazioni sul bot.")?;
 
 	let me_username = me.username.as_ref()
-		.context("Failed to get bot's username")?;
+		.context("Non è stato possibile determinare l'username del bot.")?;
 
 	let text = format!(
 		"👋 Ciao {author_username}! Sono @{me_username}, il robot tuttofare della RYG!\n\n\
@@ -36,7 +36,7 @@ pub async fn handler(bot: Bot, message: Message) -> CommandResult {
 		.send_message(message.chat.id, text)
 		.reply_to_message_id(message.id)
 		.await
-		.context("Failed to send message")?;
+		.context("Non è stato possibile inviare la risposta.")?;
 
 	Ok(())
 }

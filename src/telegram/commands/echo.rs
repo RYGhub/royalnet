@@ -5,7 +5,7 @@ use teloxide::requests::Requester;
 use teloxide::types::{Message};
 use super::{CommandResult};
 
-pub async fn handler(bot: Bot, message: Message, text: String) -> CommandResult {
+pub async fn handler(bot: &Bot, message: &Message, text: &str) -> CommandResult {
 	let text = format!(
 		"💬 {text}"
 	);
@@ -14,7 +14,7 @@ pub async fn handler(bot: Bot, message: Message, text: String) -> CommandResult 
 		.send_message(message.chat.id, text)
 		.reply_to_message_id(message.id)
 		.await
-		.context("Failed to send message")?;
+		.context("Non è stato possibile inviare la risposta.")?;
 
 	Ok(())
 }
