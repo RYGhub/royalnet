@@ -14,6 +14,7 @@ mod start;
 mod fortune;
 mod echo;
 mod help;
+mod whoami;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -25,7 +26,9 @@ pub(self) enum Command {
 	#[command(description = "Mostra il tuo oroscopo di oggi.")]
 	Fortune,
 	#[command(description = "Ripeti il testo inviato.")]
-	Echo(String)
+	Echo(String),
+	#[command(description = "Controlla a che account RYG è associato il tuo account Telegram.")]
+	WhoAmI,
 }
 
 async fn handle_command(bot: Bot, command: Command, message: Message) -> CommandResult {
@@ -39,6 +42,7 @@ async fn handle_command(bot: Bot, command: Command, message: Message) -> Command
 		},
 		Command::Fortune => fortune::handler(&bot, &message).await,
 		Command::Echo(text) => echo::handler(&bot, &message, &text).await,
+		Command::WhoAmI => whoami::handler(&bot, &message).await,
 	};
 
 	if result.is_ok() {
