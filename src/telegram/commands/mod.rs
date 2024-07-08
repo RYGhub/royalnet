@@ -1,53 +1,62 @@
-use anyhow::Error;
+// See the following link for an example of how to use this file:
+// https://github.com/teloxide/teloxide/blob/master/crates/teloxide/examples/dispatching_features.rs
+
+use std::sync::Arc;
+use anyhow::{Context, Error};
 use teloxide::{Bot, dptree};
 use teloxide::dispatching::{DefaultKey, Dispatcher, HandlerExt, UpdateFilterExt};
-use teloxide::dispatching::dialogue::{InMemStorage, TraceStorage};
+use teloxide::dptree::entry;
+use teloxide::payloads::SendMessageSetters;
+use teloxide::requests::Requester;
 use teloxide::types::{Message, Update};
+use teloxide::utils::command::BotCommands;
 
 mod start;
 mod fortune;
 
-#[derive(Debug, Clone, Default)]
-enum State {
-	#[default]
-	Default,
+#[derive(Debug, Clone, BotCommands)]
+#[command(rename_rule = "lowercase")]
+enum Command {
+	Start,
+	Fortune,
 }
 
-type CommandDialogue = teloxide::dispatching::dialogue::Dialogue<State, TraceStorage<InMemStorage<State>>>;
-type CommandResult = anyhow::Result<()>;
+async fn handle_command(bot: Bot, command: Command, message: Message) -> CommandResult {
+	log::trace!("Received command: {command:?}");
 
-async fn detect_command(bot: Bot, dialogue: CommandDialogue, message: Message) -> CommandResult {
-	let text = message.text();
-	if text.is_none() {
-		// Ignore non-textual messages
-		return Ok(())
-	}
-	let text = text.unwrap();
-
-	match text {
-		"/start" => start::handler(bot, dialogue, message).await,
-		"/fortune" => fortune::handler(bot, dialogue, message).await,
-		_ => anyhow::bail!("Unknown command"),
+	match command {
+		Command::Start => start::handler(bot, message).await,
+		Command::Fortune => fortune::handler(bot, message).await,
 	}
 }
 
-pub(super) fn dispatcher(bot: Bot) -> Dispatcher<Bot, Error, DefaultKey> {
+async fn unknown_command(bot: Bot, message: Message) -> CommandResult {
+	log::trace!("Received an unknown command.");
+
+	bot.send_message(message.chat.id, "⚠️ Comando sconosciuto.")
+		.reply_to_message_id(message.id)
+		.await
+		.context("Failed to send message")?;
+
+	Ok(())
+}
+
+pub fn dispatcher(bot: Bot) -> Dispatcher<Bot, Error, DefaultKey> {
 	Dispatcher::builder(
 		bot,
 		Update::filter_message()
-			.enter_dialogue::<Message, TraceStorage<InMemStorage<State>>, State>()
 			.branch(
-				dptree::case![State::Default]
-					.endpoint(detect_command)
+				entry()
+					.filter_command::<Command>()
+					.endpoint(handle_command)
 			)
+			.endpoint(unknown_command)
 	)
 		.dependencies(
-			dptree::deps![
-				TraceStorage::new(
-					InMemStorage::<State>::new()
-				)
-			]
+			dptree::deps![]  // No deps needed at the moment.
 		)
 		.enable_ctrlc_handler()
 		.build()
 }
+
+type CommandResult = anyhow::Result<()>;

@@ -6,7 +6,7 @@ use rand::seq::SliceRandom;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
-use crate::telegram::commands::{CommandDialogue, CommandResult};
+use crate::telegram::commands::{CommandResult};
 
 // Tutte le fortune devono essere positive, o almeno neutrali, per poter essere aggiunte.
 const FORTUNES: [&str; 160] = [
@@ -187,7 +187,7 @@ impl Hash for FortuneKey {
 	}
 }
 
-pub(super) async fn handler(bot: Bot, _dialogue: CommandDialogue, message: Message) -> CommandResult {
+pub async fn handler(bot: Bot, message: Message) -> CommandResult {
 	let today = chrono::Local::now().date_naive();
 
 	let author = message.from()

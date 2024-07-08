@@ -11,5 +11,5 @@ log = "0.4.22"
 micronfig = "0.3.0"
 pretty_env_logger = "0.5.0"
 rand = { version = "0.8.5", features = ["small_rng"] }
-teloxide = { version = "0.12.2", features = ["ctrlc_handler", "native-tls"], default-features = false }
+teloxide = { version = "0.12.2", features = ["ctrlc_handler", "native-tls", "macros"], default-features = false }
 tokio = { version = "1.38.0", features = ["macros", "rt-multi-thread"] }

@@ -3,9 +3,9 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message};
-use super::{CommandDialogue, CommandResult};
+use super::{CommandResult};
 
-pub(super) async fn handler(bot: Bot, _dialogue: CommandDialogue, message: Message) -> CommandResult {
+pub async fn handler(bot: Bot, message: Message) -> CommandResult {
 	let author = message.from()
 		.context("Failed to get the user who sent the original message")?;
 
