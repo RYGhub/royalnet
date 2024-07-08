@@ -5,6 +5,10 @@ use teloxide::requests::Requester;
 use teloxide::types::{Message};
 use super::{CommandResult};
 
+
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
+
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 	let author = message.from()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
@@ -28,8 +32,9 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 
 	let text = format!(
 		"👋 Ciao {author_username}! Sono @{me_username}, il robot tuttofare della RYG!\n\n\
+		Sto eseguendo la versione {VERSION}.\n\n\
 		Puoi vedere l'elenco delle mie funzionalità dal menu in basso.\n\n\
-		Cosa posso fare per te oggi?"
+		Cosa posso fare per te oggi?",
 	);
 
 	let _reply = bot
