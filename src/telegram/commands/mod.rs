@@ -13,12 +13,15 @@ use teloxide::utils::command::BotCommands;
 mod start;
 mod fortune;
 mod echo;
+mod help;
 
 #[derive(Debug, Clone, BotCommands)]
 #[command(rename_rule = "lowercase")]
-enum Command {
+pub(self) enum Command {
 	#[command(description = "Invia messaggio di introduzione.")]
 	Start,
+	#[command(description = "Visualizza l'elenco dei comandi disponibili.")]
+	Help,
 	#[command(description = "Mostra il tuo oroscopo di oggi.")]
 	Fortune,
 	#[command(description = "Ripeti il testo inviato.")]
@@ -30,6 +33,7 @@ async fn handle_command(bot: Bot, command: Command, message: Message) -> Command
 
 	match command {
 		Command::Start => start::handler(bot, message).await,
+		Command::Help => help::handler(bot, message).await,
 		Command::Fortune => fortune::handler(bot, message).await,
 		Command::Echo(text) => echo::handler(bot, message, text).await,
 	}
