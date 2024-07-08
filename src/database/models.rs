@@ -1,9 +1,9 @@
-use diesel::{Identifiable, Insertable, Queryable, Selectable};
+use diesel::{Identifiable, Insertable, Queryable, Selectable, Associations};
 use diesel::pg::Pg;
 use super::schema::{users, telegram, discord, steam};
 
 
-#[derive(Debug, Clone, Identifiable, Queryable, Selectable, Insertable)]
+#[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
 #[diesel(table_name = users)]
 #[diesel(check_for_backend(Pg))]
 pub struct RoyalnetUser {
@@ -12,7 +12,8 @@ pub struct RoyalnetUser {
 }
 
 
-#[derive(Debug, Clone, Identifiable, Queryable, Selectable, Insertable)]
+#[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
+#[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
 #[diesel(table_name = telegram)]
 #[diesel(primary_key(telegram_id))]
 #[diesel(check_for_backend(Pg))]
@@ -22,7 +23,8 @@ pub struct TelegramUser {
 }
 
 
-#[derive(Debug, Clone, Identifiable, Queryable, Selectable, Insertable)]
+#[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
+#[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
 #[diesel(table_name = discord)]
 #[diesel(primary_key(discord_id))]
 #[diesel(check_for_backend(Pg))]
@@ -32,7 +34,8 @@ pub struct DiscordUser {
 }
 
 
-#[derive(Debug, Clone, Identifiable, Queryable, Selectable, Insertable)]
+#[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
+#[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
 #[diesel(table_name = steam)]
 #[diesel(primary_key(steam_id))]
 #[diesel(check_for_backend(Pg))]
