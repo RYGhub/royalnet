@@ -1,6 +1,6 @@
 use std::hash::{Hash, Hasher};
 use anyhow::{Context};
-use chrono::Datelike;
+use chrono::{DateTime, Utc};
 use rand::SeedableRng;
 use rand::seq::SliceRandom;
 use teloxide::Bot;
@@ -78,22 +78,22 @@ const ANSWERS: [&str; 60] = [
     "❔ [RADIO] Mantengo la posizione.",
 ];
 
-struct FortuneKey {
-	now: chrono::NaiveDate,
+struct AnswerKey {
+	seed: chrono::DateTime<Utc>,
 }
 
-impl Hash for FortuneKey {
+impl Hash for AnswerKey {
 	fn hash<H: Hasher>(&self, state: &mut H) {
-		let now: i32 = self.today.num_days_from_ce();
+		let seed: i64 = self.seed.timestamp();
 
-		state.write_i32(now);
+		state.write_i64(seed);
 	}
 }
 
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
-	let now = chrono::Local::now().date_naive();
+	let seed = chrono::Utc::now();
 
-	let key = FortuneKey {now};
+	let key = AnswerKey {seed};
 
 	let mut hasher = std::hash::DefaultHasher::new();
 	key.hash(&mut hasher);

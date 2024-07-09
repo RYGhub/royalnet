@@ -46,7 +46,7 @@ async fn handle_command(bot: Bot, command: Command, message: Message) -> Command
 		Command::Fortune => fortune::handler(&bot, &message).await,
 		Command::Echo(text) => echo::handler(&bot, &message, &text).await,
 		Command::WhoAmI => whoami::handler(&bot, &message).await,
-		Command::Answer(question) => answer::handler(&bot, &message).await,
+		Command::Answer(_question) => answer::handler(&bot, &message).await,
 	};
 
 	if result.is_ok() {
