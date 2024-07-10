@@ -64,7 +64,7 @@ const ANSWERS: [&str; 60] = [
     "❔ Dunno.",
     "❔ Perché lo chiedi a me?",
     "❔ Ah, non lo so io!",
-    r"❔ ¯\_(ツ)_/¯",
+    r#"❔ ¯\_(ツ)_/¯"#,
     "❔ No idea.",
     "❔ Dunno.",
     "❔ Boooooh!",
