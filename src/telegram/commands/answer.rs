@@ -1,6 +1,5 @@
 use std::hash::{Hash, Hasher};
 use anyhow::{Context};
-use chrono::{DateTime, Utc};
 use rand::SeedableRng;
 use rand::seq::SliceRandom;
 use teloxide::Bot;
@@ -78,38 +77,8 @@ const ANSWERS: [&str; 60] = [
     "❔ [RADIO] Mantengo la posizione.",
 ];
 
-struct AnswerKey {
-	seed: chrono::DateTime<Utc>,
-}
-
-impl Hash for AnswerKey {
-	fn hash<H: Hasher>(&self, state: &mut H) {
-		let seed: i64 = self.seed.timestamp();
-
-		state.write_i64(seed);
-	}
-}
-
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
-	let seed = chrono::Utc::now();
-
-	let key = AnswerKey {seed};
-
-	let mut hasher = std::hash::DefaultHasher::new();
-	key.hash(&mut hasher);
-	let hash = hasher.finish()
-		.to_le_bytes()
-		.into_iter()
-		.cycle()
-		.take(32)
-		.collect::<Vec<u8>>()
-		.try_into();
-	if hash.is_err() {
-		anyhow::bail!("Non è stato possibile determinare una risposta.");
-	}
-	let hash = hash.unwrap();
-
-	let mut rng = rand::rngs::SmallRng::from_seed(hash);
+	let mut rng = rand::rngs::SmallRng::from_entropy();
 
 	let answer = ANSWERS.choose(&mut rng)
 		.context("Non è stato possibile selezionare una risposta.")?;
