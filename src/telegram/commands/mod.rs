@@ -105,7 +105,6 @@ pub fn dispatcher(bot: Bot) -> Dispatcher<Bot, Error, DefaultKey> {
 		.dependencies(
 			dptree::deps![]  // No deps needed at the moment.
 		)
-		.enable_ctrlc_handler()
 		.build()
 }
 
