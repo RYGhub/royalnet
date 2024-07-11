@@ -31,7 +31,7 @@ pub async fn handler_specific(bot: &Bot, message: &Message, target: &str) -> Com
 
 	let suffix = format!("@{me_username}");
 
-	let target = target.strip_prefix("/")
+	let target = target.strip_prefix('/')
 		.unwrap_or(target);
 
 	let target = target.strip_suffix(&suffix)
@@ -46,7 +46,7 @@ pub async fn handler_specific(bot: &Bot, message: &Message, target: &str) -> Com
 	let identify_command = |cmd: &&BotCommand| -> bool {
 		let command = &cmd.command;
 
-		let command = command.strip_prefix("/")
+		let command = command.strip_prefix('/')
 			.unwrap_or_else(|| command);
 
 		target == command
