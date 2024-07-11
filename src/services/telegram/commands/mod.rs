@@ -15,6 +15,7 @@ mod help;
 mod whoami;
 mod answer;
 mod reminder;
+mod roll;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -31,6 +32,8 @@ pub enum Command {
 	WhoAmI,
 	#[command(description = "Rispondi ad una domanda.")]
 	Answer(String),
+	#[command(description = "Tira un dado.")]
+	Roll(String),
 	#[command(description = "Ricorda la chat di qualcosa che avverrà in futuro. Non persiste ai riavvii del bot.")]
 	Reminder(reminder::ReminderArgs),
 }
@@ -63,6 +66,7 @@ impl Command {
 			Command::WhoAmI => whoami::handler(&bot, &message).await,
 			Command::Answer(_) => answer::handler(&bot, &message).await,
 			Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
+			Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
 		};
 
 		if result.is_ok() {
