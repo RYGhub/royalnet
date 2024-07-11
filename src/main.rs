@@ -2,6 +2,7 @@ use anyhow::Result;
 use crate::telegram::DispatchWithResult;
 
 pub(crate) mod database;
+pub(crate) mod utils;
 mod telegram;
 
 #[tokio::main]

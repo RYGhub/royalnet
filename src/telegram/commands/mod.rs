@@ -16,6 +16,7 @@ mod echo;
 mod help;
 mod whoami;
 mod answer;
+mod reminder;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -32,6 +33,8 @@ enum Command {
 	WhoAmI,
 	#[command(description = "Rispondi ad una domanda.")]
 	Answer(String),
+	#[command(description = "Ricorda la chat di qualcosa che avverrà in futuro.")]
+	Reminder(reminder::ReminderArgs),
 }
 
 async fn handle_command(bot: Bot, command: Command, message: Message) -> CommandResult {
@@ -47,6 +50,7 @@ async fn handle_command(bot: Bot, command: Command, message: Message) -> Command
 		Command::Echo(text) => echo::handler(&bot, &message, &text).await,
 		Command::WhoAmI => whoami::handler(&bot, &message).await,
 		Command::Answer(_) => answer::handler(&bot, &message).await,
+		Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
 	};
 
 	if result.is_ok() {
