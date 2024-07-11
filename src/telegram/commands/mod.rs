@@ -73,7 +73,7 @@ async fn handle_command(bot: Bot, command: Command, message: Message) -> Command
 async fn error_command(bot: &Bot, chat_id: ChatId, message_id: MessageId, error: &Error) -> CommandResult {
 	log::debug!("Command message {message_id:?} in {chat_id:?} errored out with `{error}`");
 
-	let text = format!("⚠️ {}", error.to_string());
+	let text = format!("⚠️ {error}");
 
 	let _reply = bot
 		.send_message(chat_id, text)
