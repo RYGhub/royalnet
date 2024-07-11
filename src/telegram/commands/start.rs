@@ -6,7 +6,7 @@ use teloxide::types::{Message};
 use super::{CommandResult};
 
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
