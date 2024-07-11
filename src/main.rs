@@ -1,4 +1,4 @@
-use anyhow::{Result};
+use anyhow::Result;
 use crate::telegram::DispatchWithResult;
 
 pub(crate) mod database;
@@ -17,11 +17,19 @@ async fn main() -> Result<()> {
 
     // Run all services concurrently
     log::info!("Starting services...");
-    tokio::try_join![
+    let result = tokio::try_join![
         telegram_awaitable,
     ];
 
     // This should never happen, but just in case...
-    log::error!("A service has exited, bailing out...");
-    anyhow::bail!("A service has exited.")
+    match result {
+        Err(error) => {
+            log::error!("A service has exited with an error, bailing out: {error:?}");
+            anyhow::bail!("A service has exited with an error.")
+        },
+        _ => {
+            log::error!("All service have exited successfully, bailing out...");
+            anyhow::bail!("All service have exited successfully.")
+        }
+    }
 }
