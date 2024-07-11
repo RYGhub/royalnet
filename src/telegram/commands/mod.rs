@@ -19,7 +19,7 @@ mod answer;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
-pub(self) enum Command {
+enum Command {
 	#[command(description = "Invia messaggio di introduzione.")]
 	Start,
 	#[command(description = "Visualizza l'elenco dei comandi disponibili, o mostra informazioni su uno specifico comando.")]
