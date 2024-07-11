@@ -6,7 +6,7 @@ use rand::seq::SliceRandom;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
-use crate::telegram::commands::{CommandResult};
+use crate::services::telegram::commands::{CommandResult};
 
 // Tutte le fortune devono essere positive, o almeno neutrali, per poter essere aggiunte.
 const FORTUNES: [&str; 164] = [

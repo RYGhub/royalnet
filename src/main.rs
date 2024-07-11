@@ -1,9 +1,11 @@
 use anyhow::Result;
-use crate::telegram::DispatchWithResult;
+use services::telegram;
+use crate::services::RoyalnetService;
 
 pub(crate) mod database;
 pub(crate) mod utils;
-mod telegram;
+mod services;
+
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -12,14 +14,13 @@ async fn main() -> Result<()> {
     log::debug!("Logging initialized successfully!");
 
     // Telegram setup
-    log::trace!("Setting up Telegram bot dispatcher...");
-    let mut telegram_dispatcher = telegram::dispatcher();
-    let telegram_awaitable = telegram_dispatcher.dispatch_with_result();
+    log::trace!("Setting up Telegram bot service...");
+    let telegram = telegram::init();
 
     // Run all services concurrently
     log::info!("Starting services...");
     let result = tokio::try_join![
-        telegram_awaitable,
+        telegram.run_royalnet(),
     ];
 
     // This should never happen, but just in case...

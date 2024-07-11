@@ -20,7 +20,7 @@ mod reminder;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
-enum Command {
+pub enum Command {
 	#[command(description = "Invia messaggio di introduzione.")]
 	Start,
 	#[command(description = "Visualizza l'elenco dei comandi disponibili, o mostra informazioni su uno specifico comando.")]
