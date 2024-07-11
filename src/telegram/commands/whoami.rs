@@ -1,10 +1,9 @@
 use anyhow::Context;
-use diesel::{QueryDsl, RunQueryDsl};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message};
-use crate::database::models::{RoyalnetUser, TelegramUser};
+use crate::database::models::{RoyalnetUser};
 use super::{CommandResult};
 
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
