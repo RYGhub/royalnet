@@ -33,7 +33,7 @@ pub enum Command {
 	WhoAmI,
 	#[command(description = "Rispondi ad una domanda.")]
 	Answer(String),
-	#[command(description = "Ricorda la chat di qualcosa che avverrà in futuro.")]
+	#[command(description = "Ricorda la chat di qualcosa che avverrà in futuro. Non persiste ai riavvii del bot.")]
 	Reminder(reminder::ReminderArgs),
 }
 
