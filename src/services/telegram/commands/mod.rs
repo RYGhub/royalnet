@@ -2,12 +2,10 @@
 // https://github.com/teloxide/teloxide/blob/master/crates/teloxide/examples/dispatching_features.rs
 
 use anyhow::{Context, Error, Result};
-use teloxide::{Bot, dptree};
-use teloxide::dispatching::{DefaultKey, Dispatcher, HandlerExt, UpdateFilterExt};
-use teloxide::dptree::entry;
+use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{ChatId, Message, MessageId, Update};
+use teloxide::types::{ChatId, Message, MessageId};
 use teloxide::utils::command::BotCommands;
 
 mod start;
@@ -50,43 +48,43 @@ impl Command {
 		log::trace!("Setting commands successful!");
 		Ok(())
 	}
-}
 
-async fn handle_command(bot: Bot, command: Command, message: Message) -> CommandResult {
-	log::trace!("Received command: {command:?}");
+	pub async fn handle(self, bot: Bot, message: Message) -> CommandResult {
+		log::trace!("Handling command: {self:?}");
 
-	let result = match command {
-		Command::Start => start::handler(&bot, &message).await,
-		Command::Help(target) => match target.as_str() {
-			"" => help::handler_all(&bot, &message).await,
-			_ => help::handler_specific(&bot, &message, &target).await,
-		},
-		Command::Fortune => fortune::handler(&bot, &message).await,
-		Command::Echo(text) => echo::handler(&bot, &message, &text).await,
-		Command::WhoAmI => whoami::handler(&bot, &message).await,
-		Command::Answer(_) => answer::handler(&bot, &message).await,
-		Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
-	};
+		let result = match self {
+			Command::Start => start::handler(&bot, &message).await,
+			Command::Help(target) => match target.as_str() {
+				"" => help::handler_all(&bot, &message).await,
+				_ => help::handler_specific(&bot, &message, &target).await,
+			},
+			Command::Fortune => fortune::handler(&bot, &message).await,
+			Command::Echo(text) => echo::handler(&bot, &message, &text).await,
+			Command::WhoAmI => whoami::handler(&bot, &message).await,
+			Command::Answer(_) => answer::handler(&bot, &message).await,
+			Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
+		};
 
-	if result.is_ok() {
-		return Ok(())
+		if result.is_ok() {
+			return Ok(())
+		}
+
+		let chat_id = message.chat.id;
+		let message_id = message.id;
+		let error = result.unwrap_err();
+
+		let result2 = error_command(&bot, chat_id, message_id, &error).await;
+
+		if result2.is_ok() {
+			return Ok(())
+		}
+
+		let error2 = result2.unwrap_err();
+
+		log::error!("Command message {message_id:?} in {chat_id:?} errored out with `{error}`, and it was impossible to handle the error because of `{error2}`\n\n{error2:?}");
+
+		Ok(())
 	}
-
-	let chat_id = message.chat.id;
-	let message_id = message.id;
-	let error = result.unwrap_err();
-
-	let result2 = error_command(&bot, chat_id, message_id, &error).await;
-
-	if result2.is_ok() {
-		return Ok(())
-	}
-
-	let error2 = result2.unwrap_err();
-
-	log::error!("Command message {message_id:?} in {chat_id:?} errored out with `{error}`, and it was impossible to handle the error because of `{error2}`\n\n{error2:?}");
-
-	Ok(())
 }
 
 async fn error_command(bot: &Bot, chat_id: ChatId, message_id: MessageId, error: &Error) -> CommandResult {
@@ -103,7 +101,7 @@ async fn error_command(bot: &Bot, chat_id: ChatId, message_id: MessageId, error:
 	Ok(())
 }
 
-async fn unknown_command(bot: Bot, message: Message) -> CommandResult {
+pub async fn unknown_command(bot: Bot, message: Message) -> CommandResult {
 	log::debug!("Received an unknown command.");
 
 	bot.send_message(message.chat.id, "⚠️ Comando sconosciuto.")
@@ -114,21 +112,4 @@ async fn unknown_command(bot: Bot, message: Message) -> CommandResult {
 	Ok(())
 }
 
-pub fn dispatcher(bot: Bot) -> Dispatcher<Bot, Error, DefaultKey> {
-	Dispatcher::builder(
-		bot,
-		Update::filter_message()
-			.branch(
-				entry()
-					.filter_command::<Command>()
-					.endpoint(handle_command)
-			)
-			.endpoint(unknown_command)
-	)
-		.dependencies(
-			dptree::deps![]  // No deps needed at the moment.
-		)
-		.build()
-}
-
-type CommandResult = anyhow::Result<()>;
+type CommandResult = Result<()>;
