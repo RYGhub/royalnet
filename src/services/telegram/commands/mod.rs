@@ -1,7 +1,7 @@
 // See the following link for an example of how to use this file:
 // https://github.com/teloxide/teloxide/blob/master/crates/teloxide/examples/dispatching_features.rs
 
-use anyhow::{Context, Error};
+use anyhow::{Context, Error, Result};
 use teloxide::{Bot, dptree};
 use teloxide::dispatching::{DefaultKey, Dispatcher, HandlerExt, UpdateFilterExt};
 use teloxide::dptree::entry;
@@ -35,6 +35,20 @@ pub enum Command {
 	Answer(String),
 	#[command(description = "Ricorda la chat di qualcosa che avverrà in futuro.")]
 	Reminder(reminder::ReminderArgs),
+}
+
+impl Command {
+	pub async fn set_commands(bot: &mut Bot) -> Result<()> {
+		log::trace!("Determining bot commands...");
+		let commands = Self::bot_commands();
+
+		log::trace!("Setting commands on {bot:?}: {commands:#?}");
+		let reply = bot.set_my_commands(commands).await
+			.context("Impossibile aggiornare l'elenco comandi del bot.")?;
+
+		log::trace!("Setting commands on {bot:?} successful: {reply:#?}");
+		Ok(())
+	}
 }
 
 async fn handle_command(bot: Bot, command: Command, message: Message) -> CommandResult {

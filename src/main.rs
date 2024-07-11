@@ -1,5 +1,4 @@
 use anyhow::Result;
-use services::telegram;
 use crate::services::RoyalnetService;
 
 pub(crate) mod database;
@@ -15,12 +14,12 @@ async fn main() -> Result<()> {
 
     // Telegram setup
     log::trace!("Setting up Telegram bot service...");
-    let telegram = telegram::init();
+    let telegram = services::telegram::BotService::from_config();
 
     // Run all services concurrently
     log::info!("Starting services...");
     let result = tokio::try_join![
-        telegram.run_royalnet(),
+        telegram.run(),
     ];
 
     // This should never happen, but just in case...
