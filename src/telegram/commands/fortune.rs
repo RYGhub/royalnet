@@ -9,7 +9,7 @@ use teloxide::prelude::{Message, Requester};
 use crate::telegram::commands::{CommandResult};
 
 // Tutte le fortune devono essere positive, o almeno neutrali, per poter essere aggiunte.
-const FORTUNES: [&str; 160] = [
+const FORTUNES: [&str; 164] = [
 	"😄 Oggi sarà una fantastica giornata!",
 	"😌 Oggi sarà una giornata molto chill e rilassante.",
 	"💰 Oggi sui tuoi alberi cresceranno più Stelline!",
@@ -170,6 +170,10 @@ const FORTUNES: [&str; 160] = [
 	"🔫 Oggi schiverai un BANG!",
 	"🍻 Oggi una birra ti ridarà una vita!",
 	"🎶 Oggi Hatsune Miku si nasconderà nella tua Wi-Fi!",
+	"🚽 Oggi delle telecamere combatteranno contro dei gabinetti!",
+  	"🌟 Oggi verrà scoperta una galassia grande quanto qualcuno della tua famiglia!",
+  	"🎶 Oggi Rick non rinuncerà mai a te!",
+  	"🏚 Oggi ristrutturerai una villa completando dei minigiochi match-3!",
 ];
 
 struct FortuneKey {
