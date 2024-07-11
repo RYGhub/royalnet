@@ -15,7 +15,7 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 
 	let author_username = match author.username.as_ref() {
 		None => {
-			format!("{}", &author.first_name)
+			author.first_name.clone()
 		},
 		Some(username) => {
 			format!("@{}", &username)
