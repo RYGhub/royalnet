@@ -42,11 +42,12 @@ impl Command {
 		log::trace!("Determining bot commands...");
 		let commands = Self::bot_commands();
 
-		log::trace!("Setting commands on {bot:?}: {commands:#?}");
-		let reply = bot.set_my_commands(commands).await
+		// This always returns true, for whatever reason
+		log::trace!("Setting commands: {commands:#?}");
+		let _ = bot.set_my_commands(commands).await
 			.context("Impossibile aggiornare l'elenco comandi del bot.")?;
 
-		log::trace!("Setting commands on {bot:?} successful: {reply:#?}");
+		log::trace!("Setting commands successful!");
 		Ok(())
 	}
 }
