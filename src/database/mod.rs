@@ -1,6 +1,6 @@
 use diesel::{Connection, ConnectionResult, PgConnection};
 
-pub(self) mod config;
+mod config;
 pub mod schema;
 pub mod models;
 
