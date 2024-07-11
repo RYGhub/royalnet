@@ -32,10 +32,10 @@ pub async fn handler_specific(bot: &Bot, message: &Message, target: &str) -> Com
 	let suffix = format!("@{me_username}");
 
 	let target = target.strip_prefix("/")
-		.unwrap_or_else(|| target);
+		.unwrap_or(target);
 
 	let target = target.strip_suffix(&suffix)
-		.unwrap_or_else(|| target);
+		.unwrap_or(target);
 
 	log::trace!("Stripped target command: {target:?}");
 
