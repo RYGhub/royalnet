@@ -53,11 +53,11 @@ RUN \
 
 RUN \
     if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
-        apt-get install --assume-yes libpq-dev:amd64; \
+        apt-get install --assume-yes libpq-dev:amd64 libssl-dev:amd64; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
-        apt-get install --assume-yes libpq-dev:arm64; \
+        apt-get install --assume-yes libpq-dev:arm64 libssl-dev:arm64; \
     elif [ "${TARGETPLATFORM}" = "linux/arm/v7" ]; then \
-        apt-get install --assume-yes libpq-dev:armhf; \
+        apt-get install --assume-yes libpq-dev:armhf libssl-dev:armhf; \
     fi
 
 COPY ./ ./
