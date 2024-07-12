@@ -17,6 +17,9 @@ keywords = [
     "gaming",
     "fun"
 ]
+categories = [
+    "games",
+]
 
 [dependencies]
 anyhow = "1.0.86"
