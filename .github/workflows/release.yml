@@ -7,7 +7,14 @@ on:
       - "v*"
   # Can also be triggered manually
   workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: "Semantic version number to use when building the image."
+        required: true
 
 jobs:
   ghcrio:
     uses: Steffo99/.github/.github/workflows/buildrelease-docker.yml@main
+    with:
+      version: ${{ inputs.version }}
