@@ -53,11 +53,11 @@ RUN \
 
 RUN \
     if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
-        apt-get install --assume-yes libpq-dev:amd64 libssl-dev:amd64; \
+        apt-get install --assume-yes libpq5:amd64 libpq-dev:amd64 openssl:amd64 libssl-dev:amd64; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
-        apt-get install --assume-yes libpq-dev:arm64 libssl-dev:arm64; \
+        apt-get install --assume-yes libpq5:arm64 libpq-dev:arm64 openssl:arm64 libssl-dev:arm64; \
     elif [ "${TARGETPLATFORM}" = "linux/arm/v7" ]; then \
-        apt-get install --assume-yes libpq-dev:armhf libssl-dev:armhf; \
+        apt-get install --assume-yes libpq5:armhf libpq-dev:armhf openssl:armhf libssl-dev:armhf; \
     fi
 
 COPY ./ ./
@@ -86,7 +86,7 @@ FROM --platform=${TARGETPLATFORM} rust:1-slim-bookworm AS final
 
 RUN apt-get update && \
     apt-get upgrade --assume-yes && \
-    apt-get install --assume-yes libpq5
+    apt-get install --assume-yes libpq5 openssl
 
 WORKDIR /usr/src/royalnet/
 COPY --from=builder \
