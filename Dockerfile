@@ -113,4 +113,4 @@ LABEL org.opencontainers.image.description="Fun software suite for the RYG commu
 LABEL org.opencontainers.image.licenses="EUPL-1.2"
 LABEL org.opencontainers.image.url="https://github.com/RYGhub/royalnet"
 LABEL org.opencontainers.image.authors="Stefano Pigozzi <me@steffo.eu>"
-ENV RUST_LOG "warn,royalnet=info"
+ENV RUST_LOG="warn,royalnet=info"
