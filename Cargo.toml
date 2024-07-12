@@ -20,6 +20,11 @@ keywords = [
 categories = [
     "games",
 ]
+exclude = [
+    "/.idea",
+    "/.media",
+    "/.env"
+]
 
 [dependencies]
 anyhow = "1.0.86"
