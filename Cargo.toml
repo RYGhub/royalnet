@@ -1,5 +1,6 @@
 [package]
 name = "royalnet"
+description = "Fun software suite for the RYG community"
 version = "0.3.1"
 edition = "2021"
 authors = [
