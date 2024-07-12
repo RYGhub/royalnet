@@ -8,6 +8,7 @@ use teloxide::requests::Requester;
 use teloxide::types::{Me, Message, Update};
 use super::RoyalnetService;
 
+#[allow(clippy::needless_pub_self)]
 pub(self) mod config;
 mod commands;
 
