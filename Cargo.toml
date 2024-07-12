@@ -5,6 +5,7 @@ edition = "2021"
 authors = [
     "Stefano Pigozzi <me@steffo.eu>"
 ]
+rust-version = "1.71.0"
 
 [dependencies]
 anyhow = "1.0.86"
