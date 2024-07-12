@@ -68,17 +68,17 @@ RUN \
         RUSTTARGET=x86_64-unknown-linux-gnu; \
         export TARGET_CC=/usr/bin/x86-64-linux-gnu-gcc; \
         export TARGET_AR=/usr/bin/x86-64-linux-gnu-ar; \
-        export PKG_CONFIG_PATH=/usr/x86-64-linux-gnu; \
+        export PKG_CONFIG_SYSROOT_DIR=/usr/lib/x86-64-linux-gnu; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
         RUSTTARGET=aarch64-unknown-linux-gnu; \
         export TARGET_CC=/usr/bin/aarch64-linux-gnu-gcc; \
         export TARGET_AR=/usr/bin/aarch64-linux-gnu-ar; \
-        export PKG_CONFIG_PATH=/usr/aarch64-linux-gnu; \
+        export PKG_CONFIG_SYSROOT_DIR=/usr/lib/aarch64-linux-gnu; \
     elif [ "${TARGETPLATFORM}" = "linux/arm/v7" ]; then \
         RUSTTARGET=armv7-unknown-linux-gnueabihf; \
         export TARGET_CC=/usr/bin/arm-linux-gnueabihf-gcc; \
         export TARGET_AR=/usr/bin/arm-linux-gnueabihf-ar; \
-        export PKG_CONFIG_PATH=/usr/arm-linux-gnueabihf; \
+        export PKG_CONFIG_SYSROOT_DIR=/usr/lib/arm-linux-gnueabihf; \
     fi && \
     cargo build --all-features --bins --release --target=${RUSTTARGET}
 
