@@ -7,6 +7,7 @@ authors = [
     "Stefano Pigozzi <me@steffo.eu>"
 ]
 rust-version = "1.71.0"
+readme = "README.md"
 
 [dependencies]
 anyhow = "1.0.86"
