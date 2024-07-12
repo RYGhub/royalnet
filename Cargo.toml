@@ -6,6 +6,7 @@ edition = "2021"
 authors = [
     "Stefano Pigozzi <me@steffo.eu>"
 ]
+repository = "https://github.com/RYGhub/royalnet"
 rust-version = "1.71.0"
 readme = "README.md"
 
