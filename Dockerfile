@@ -60,18 +60,6 @@ RUN \
         apt-get install --assume-yes libpq-dev:armhf; \
     fi
 
-COPY ./Cargo.toml ./Cargo.toml
-COPY ./Cargo.lock ./Cargo.lock
-RUN \
-    if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
-        RUSTTARGET=x86_64-unknown-linux-gnu; \
-    elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
-        RUSTTARGET=aarch64-unknown-linux-gnu; \
-    elif [ "${TARGETPLATFORM}" = "linux/arm/v7" ]; then \
-        RUSTTARGET=armv7-unknown-linux-gnueabihf; \
-    fi && \
-    cargo fetch --locked --target=${RUSTTARGET}
-
 COPY ./ ./
 
 # This has reached a new level of hack
