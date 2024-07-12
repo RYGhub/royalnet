@@ -10,7 +10,7 @@ on:
     inputs:
       version:
         type: string
-        description: "Semantic version number to use when building the image."
+        description: "Semantic version number to use when building the image. (v1.2.3)"
         required: true
 
 jobs:
