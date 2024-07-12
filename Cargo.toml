@@ -10,6 +10,13 @@ repository = "https://github.com/RYGhub/royalnet"
 rust-version = "1.71.0"
 readme = "README.md"
 license = "EUPL-1.2"
+keywords = [
+    "bot",
+    "telegram",
+    "ryg",
+    "gaming",
+    "fun"
+]
 
 [dependencies]
 anyhow = "1.0.86"
