@@ -16,7 +16,7 @@ RUN \
         if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
             dpkg --add-architecture amd64; \
             apt-get update; \
-            apt-get install --assume-yes gcc-x86-64-linux-gnu; \
+            apt-get install --assume-yes gcc-x86-64-linux-gnu x86-64-linux-gnu-pkg-config; \
             echo '[target.x86_64-unknown-linux-gnu]' >> .cargo/config.toml; \
             echo 'linker = "x86-64-linux-gnu-gcc"' >> .cargo/config.toml; \
             echo >> .cargo/config.toml; \
@@ -24,7 +24,7 @@ RUN \
         if [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
             dpkg --add-architecture arm64; \
             apt-get update; \
-            apt-get install --assume-yes gcc-aarch64-linux-gnu; \
+            apt-get install --assume-yes gcc-aarch64-linux-gnu aarch64-linux-gnu-pkg-config; \
             echo '[target.aarch64-unknown-linux-gnu]' >> .cargo/config.toml; \
             echo 'linker = "aarch64-linux-gnu-gcc"' >> .cargo/config.toml; \
             echo >> .cargo/config.toml; \
@@ -32,7 +32,7 @@ RUN \
         if [ "${TARGETPLATFORM}" = "linux/arm/v7" ]; then \
             dpkg --add-architecture armhf; \
             apt-get update; \
-            apt-get install --assume-yes gcc-arm-linux-gnueabihf; \
+            apt-get install --assume-yes gcc-arm-linux-gnueabihf arm-linux-gnueabihf-pkg-config; \
             echo '[target.armv7-unknown-linux-gnueabihf]' >> .cargo/config.toml; \
             echo 'linker = "arm-linux-gnueabihf-gcc"' >> .cargo/config.toml; \
             echo >> .cargo/config.toml; \
