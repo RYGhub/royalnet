@@ -4,7 +4,7 @@ use crate::services::RoyalnetService;
 pub(crate) mod database;
 pub(crate) mod utils;
 mod services;
-
+mod stratz;
 
 #[tokio::main]
 async fn main() -> Result<()> {
