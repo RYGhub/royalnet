@@ -1,0 +1,29 @@
+query GuildMatchesQuery($guild_id: Int!) {
+  guild(id: $guild_id) {
+    id
+    name
+    logo
+    matches(take: 10) {
+      id
+      lobbyType
+      gameMode
+      durationSeconds
+      endDateTime
+      players(steamAccountId: null) {
+        isVictory
+        isRadiant
+        imp
+        kills
+        deaths
+        assists
+        hero {
+          id
+          displayName
+        }
+        steamAccount {
+          name
+        }
+      }
+    }
+  }
+}
