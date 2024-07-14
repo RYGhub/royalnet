@@ -12,6 +12,12 @@ type Byte = u8;
 #[derive(Debug, Clone, Copy)]
 struct GuildId(pub i64);
 
+impl From<i64> for GuildId {
+	fn from(value: i64) -> Self {
+		Self(value)
+	}
+}
+
 #[derive(GraphQLQuery)]
 #[graphql(schema_path="src/stratz/schema.json", query_path="src/stratz/query_guild_matches.gql", response_derives="Debug, Clone")]
 struct GuildMatchesQuery;
