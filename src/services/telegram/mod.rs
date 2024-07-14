@@ -11,6 +11,7 @@ use super::RoyalnetService;
 #[allow(clippy::needless_pub_self)]
 pub(self) mod config;
 mod commands;
+pub(self) mod escape;
 
 pub struct BotService {
 	pub bot: Bot
