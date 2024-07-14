@@ -4,8 +4,10 @@ use anyhow::{Context, Error, Result};
 use regex::Regex;
 use teloxide::dispatching::{DefaultKey, Dispatcher, HandlerExt, UpdateFilterExt};
 use teloxide::dptree::entry;
+use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{Me, Message, Update};
+use teloxide::types::{Me, Message, ParseMode, Update};
+use crate::services::telegram::escape::EscapableInTelegramHTML;
 use super::RoyalnetService;
 
 #[allow(clippy::needless_pub_self)]
@@ -33,12 +35,19 @@ impl BotService {
 		let id = &me.user.id;
 
 		let text = format!(
-			"💠 Servizio Telegram avviato\n\
-				Royalnet v{version}\n\
-				@{username} ({id})",
+			"💠 <b>Servizio Telegram avviato</b>\n\
+				\n\
+				Royalnet <a href='https://github.com/RYGhub/royalnet/releases/tag/v{}'>v{}</a>\n\
+				\n\
+				@{} [<code>{}</code>]",
+			version.escape_telegram_html(),
+			version.escape_telegram_html(),
+			username.escape_telegram_html(),
+			id.to_string().escape_telegram_html(),
 		);
 
 		self.bot.send_message(chat_id, text)
+			.parse_mode(ParseMode::Html)
 			.await
 			.context("Invio della notifica di avvio non riuscito.")?;
 
