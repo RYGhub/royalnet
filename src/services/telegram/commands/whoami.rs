@@ -2,8 +2,9 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{Message};
+use teloxide::types::{Message, ParseMode};
 use crate::database::models::{RoyalnetUser};
+use crate::services::telegram::escape::EscapableInTelegramHTML;
 use super::{CommandResult};
 
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
@@ -34,11 +35,13 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 	let username = &royalnet_user.username;
 
 	let text = format!(
-		"👤 Nel database RYG, tu hai l'username «{username}»."
+		"👤 Nel database RYG, tu hai l'username <code>{}</code>.",
+		username.escape_telegram_html(),
 	);
 
 	let _reply = bot
 		.send_message(message.chat.id, text)
+		.parse_mode(ParseMode::Html)
 		.reply_to_message_id(message.id)
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;

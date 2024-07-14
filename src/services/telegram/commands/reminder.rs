@@ -3,10 +3,11 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{Message};
+use teloxide::types::{Message, ParseMode};
 use parse_datetime::parse_datetime_at_date;
 use once_cell::sync::Lazy;
 use regex::Regex;
+use crate::services::telegram::escape::EscapableInTelegramHTML;
 use super::{CommandResult};
 
 
@@ -55,14 +56,17 @@ impl FromStr for ReminderArgs {
 
 pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, reminder}: ReminderArgs) -> CommandResult {
 	let text = format!(
-		"🕒 Promemoria per {} impostato\n\
+		"🕒 <b>Promemoria impostato</b>\n\
+		<i>{}</i>\n\
+		\n\
 		{}",
-		target.format("%c"),
-		reminder
+		target.format("%c").to_string().escape_telegram_html(),
+		reminder.clone().escape_telegram_html()
 	);
 
 	let _reply = bot
 		.send_message(message.chat.id, text)
+		.parse_mode(ParseMode::Html)
 		.reply_to_message_id(message.id)
 		.await
 		.context("Non è stato possibile inviare la conferma.")?;
@@ -72,14 +76,17 @@ pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, remind
 	tokio::time::sleep(wait_duration).await;
 
 	let text = format!(
-		"🕒 Promemoria per {} attivato\n\
+		"🕒 <b>Promemoria attivato</b>\n\
+		<i>{}</i>\n\
+		\n\
 		{}",
-		target.format("%c"),
-		reminder
+		target.format("%c").to_string().escape_telegram_html(),
+		reminder.escape_telegram_html()
 	);
 
 	let _reply = bot
 		.send_message(message.chat.id, text)
+		.parse_mode(ParseMode::Html)
 		.reply_to_message_id(message.id)
 		.await
 		.context("Non è stato possibile inviare il promemoria.")?;

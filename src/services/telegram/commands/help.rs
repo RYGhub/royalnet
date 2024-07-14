@@ -2,17 +2,18 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{BotCommand, Message};
+use teloxide::types::{BotCommand, Message, ParseMode};
 use teloxide::utils::command::BotCommands;
 use super::{CommandResult};
 
 pub async fn handler_all(bot: &Bot, message: &Message) -> CommandResult {
 	let descriptions = super::Command::descriptions().to_string();
 
-	let text = format!("❓ Sono disponibili i seguenti comandi:\n\n{descriptions}");
+	let text = format!("❔ <b>Comandi disponibili</b>\n\n{descriptions}");
 
 	let _reply = bot
 		.send_message(message.chat.id, text)
+		.parse_mode(ParseMode::Html)
 		.reply_to_message_id(message.id)
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
@@ -62,10 +63,11 @@ pub async fn handler_specific(bot: &Bot, message: &Message, target: &str) -> Com
 		true => "",
 	};
 
-	let text = format!("❓ Il comando {}{}:\n\n{}", target.command, display_suffix, target.description);
+	let text = format!("❔ <b>Comando {}{}</b>\n\n{}", target.command, display_suffix, target.description);
 
 	let _reply = bot
 		.send_message(message.chat.id, text)
+		.parse_mode(ParseMode::Html)
 		.reply_to_message_id(message.id)
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
