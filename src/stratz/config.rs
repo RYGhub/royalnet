@@ -1,5 +1,5 @@
 use micronfig::config;
 
 config! {
-	STRATZ_TOKEN: String > i64
+	STRATZ_TOKEN: String,
 }
