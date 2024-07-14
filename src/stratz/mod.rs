@@ -10,7 +10,7 @@ type Long = i64;
 type Byte = u8;
 
 #[derive(Debug, Clone, Copy)]
-struct GuildId(pub i64);
+pub struct GuildId(pub i64);
 
 impl From<i64> for GuildId {
 	fn from(value: i64) -> Self {
