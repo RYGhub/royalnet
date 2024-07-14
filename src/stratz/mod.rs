@@ -1,4 +1,5 @@
 use graphql_client::GraphQLQuery;
+use reqwest::Client;
 
 pub(self) mod config;
 
@@ -40,7 +41,7 @@ pub use guild_matches_query::GuildMatchesQueryGuildMatchesPlayersHero as Hero;
 pub use guild_matches_query::GuildMatchesQueryGuildMatchesPlayersSteamAccount as Steam;
 
 /// Get the latest 10 matches of a certain Dota 2 guild.
-pub async fn query_guild_matches(client: reqwest::Client, guild_id: &GuildId) -> Result<GuildMatchesQueryResponse, QueryError> {
+pub async fn query_guild_matches(client: &Client, guild_id: &GuildId) -> Result<GuildMatchesQueryResponse, QueryError> {
 	log::trace!("Configuring query variables...");
 	let params = guild_matches_query::Variables {
 		guild_id: guild_id.0,
