@@ -45,7 +45,7 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
 
 
     let mut nums_rolled = Vec::<i32>::new();
-    for _i in 0..qty {
+    for _ in 0..qty {
         nums_rolled.push(rng.gen_range(1..die+1));
     }
     
