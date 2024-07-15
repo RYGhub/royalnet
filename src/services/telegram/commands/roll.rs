@@ -50,7 +50,7 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
     }
     
     
-    let mut answer: String = "🎲 [".to_string();
+    let mut answer = String::from("🎲 [");
     for i in 0..qty {
         if i > 0 { answer.push_str("+")}
         answer.push_str( &nums_rolled[i].to_string() );
