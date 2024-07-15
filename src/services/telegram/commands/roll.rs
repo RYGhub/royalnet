@@ -39,13 +39,7 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
     }
 
     if qty < 1  {
-        let _reply = bot
-		.send_message(message.chat.id, "La quantità di dadi da tirare deve essere un intero positivo. (lasciare vuoto per sottintendere 1)")
-		.reply_to_message_id(message.id)
-		.await
-		.context("Qty < 1")?;
-
-	    return Ok(())
+        anyhow::bail!("La quantità di dadi specificata deve essere un intero positivo.")
     }
 
 
