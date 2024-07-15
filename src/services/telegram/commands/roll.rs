@@ -35,13 +35,7 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
     }
 
     if die <= 0  {
-        let _reply = bot
-		.send_message(message.chat.id, "Specificare almeno un dado.")
-		.reply_to_message_id(message.id)
-		.await
-		.context("Dado = 0")?;
-
-	    return Ok(())
+		anyhow::bail!("Non è stato specificato nessun dado.")
     }
 
     if qty < 1  {
