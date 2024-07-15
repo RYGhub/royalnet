@@ -9,21 +9,44 @@ use regex::Regex;
 
 
 pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult {
-    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<mod>[+-][0-9]+)?"#);
+    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]?[0-9]*)?"#);
     let mut rng = rand::rngs::SmallRng::from_entropy();
     let mut qty = 1;
-    let mut die = 20;
+    let mut die = 0;
     let mut modifier = 0;
 
     match re?.captures(roll) {
         Some(caps) => {
-            qty = caps["qty"].parse()?;
-            die = caps["die"].parse()?;
-            modifier = caps["mod"].parse()?;
+            qty = caps["qty"].parse().unwrap_or(qty);
+            die = caps["die"].parse().unwrap_or(die);
+            modifier = caps["modifier"].parse().unwrap_or(modifier);
         }
         None => {}
     }
-    
+
+    if die <= 0  {
+        let _reply = bot
+		.send_message(message.chat.id, "Specificare almeno un dado.")
+		.reply_to_message_id(message.id)
+		.await
+		.context("Dado = 0")?;
+
+	    return Ok(())
+    }
+
+    if qty < 1  {
+        let _reply = bot
+		.send_message(message.chat.id, "La quantità di dadi da tirare deve essere un intero positivo. (lasciare vuoto per sottintendere 1)")
+		.reply_to_message_id(message.id)
+		.await
+		.context("Qty < 1")?;
+
+	    return Ok(())
+    }
+
+
+
+
 
     let mut nums_rolled = Vec::<i32>::new();
     for _i in 0..qty {
