@@ -9,8 +9,18 @@ use regex::Regex;
 
 
 pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult {
-    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]?[0-9]*)?"#);
     let mut rng = rand::rngs::SmallRng::from_entropy();
+    if rng.gen_range(1..1001) == 1 {
+        let _reply = bot
+		.send_message(message.chat.id, "🎶 Roll? Rick roll! https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+		.reply_to_message_id(message.id)
+		.await
+		.context("Non è stato possibile inviare la risposta.")?;
+
+	    return Ok(())
+    }
+
+    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]?[0-9]*)?"#);
     let mut qty = 1;
     let mut die = 0;
     let mut modifier = 0;
@@ -43,8 +53,6 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
 
 	    return Ok(())
     }
-
-
 
 
 
