@@ -1,6 +1,12 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    brooch_match (id) {
+        id -> Int8,
+    }
+}
+
+diesel::table! {
     discord (discord_id) {
         user_id -> Int4,
         discord_id -> Int8,
@@ -33,6 +39,7 @@ diesel::joinable!(steam -> users (user_id));
 diesel::joinable!(telegram -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
+    brooch_match,
     discord,
     steam,
     telegram,

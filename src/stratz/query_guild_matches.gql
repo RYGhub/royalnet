@@ -9,8 +9,8 @@ query GuildMatchesQuery($guild_id: Int!) {
       gameMode
       durationSeconds
       endDateTime
+      didRadiantWin
       players(steamAccountId: null) {
-        isVictory
         isRadiant
         imp
         kills
@@ -21,7 +21,16 @@ query GuildMatchesQuery($guild_id: Int!) {
           displayName
         }
         steamAccount {
+          id
           name
+        }
+        stats {
+          matchPlayerBuffEvent {
+            time
+            itemId
+            abilityId
+            stackCount
+          }
         }
       }
     }

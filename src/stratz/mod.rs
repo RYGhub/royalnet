@@ -1,5 +1,6 @@
 use graphql_client::GraphQLQuery;
 use reqwest::Client;
+use thiserror::Error;
 
 pub(self) mod config;
 
@@ -10,7 +11,7 @@ type Short = i16;
 type Long = i64;
 type Byte = u8;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct GuildId(pub i64);
 
 impl From<i64> for GuildId {
@@ -21,12 +22,14 @@ impl From<i64> for GuildId {
 
 #[derive(GraphQLQuery)]
 #[graphql(schema_path="src/stratz/schema.json", query_path="src/stratz/query_guild_matches.gql", response_derives="Debug, Clone")]
-struct GuildMatchesQuery;
+pub struct GuildMatchesQuery;
 
 
-#[derive(Debug, Clone)]
-enum QueryError {
+#[derive(Debug, Clone, Error)]
+pub enum QueryError {
+	#[error("GraphQL request failed")]
 	Requesting,
+	#[error("GraphQL response parsing failed")]
 	Parsing,
 }
 
