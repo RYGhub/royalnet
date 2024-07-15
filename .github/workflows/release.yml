@@ -1,0 +1,20 @@
+name: "Release new version"
+
+on:
+  # Creation of a new tag starting with v
+  push:
+    tags:
+      - "v*"
+  # Can also be triggered manually
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: "Semantic version number to use when building the image. (v1.2.3)"
+        required: true
+
+jobs:
+  ghcrio:
+    uses: Steffo99/.github/.github/workflows/buildrelease-docker.yml@main
+    with:
+      version: ${{ inputs.version }}

@@ -15,6 +15,8 @@ mod help;
 mod whoami;
 mod answer;
 mod reminder;
+mod dog;
+mod cat;
 mod roll;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
@@ -32,10 +34,14 @@ pub enum Command {
 	WhoAmI,
 	#[command(description = "Rispondi ad una domanda.")]
 	Answer(String),
-	#[command(description = "Tira un dado.")]
-	Roll(String),
 	#[command(description = "Ricorda la chat di qualcosa che avverrà in futuro. Non persiste ai riavvii del bot.")]
 	Reminder(reminder::ReminderArgs),
+	#[command(description = "Invia un cane casuale in chat.")]
+	Dog,
+	#[command(description = "Invia un gatto casuale in chat.")]
+	Cat,
+	#[command(description = "Tira un dado.")]
+	Roll(String),
 }
 
 impl Command {
@@ -66,7 +72,9 @@ impl Command {
 			Command::WhoAmI => whoami::handler(&bot, &message).await,
 			Command::Answer(_) => answer::handler(&bot, &message).await,
 			Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
-			Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
+			Command::Dog => dog::handler(&bot, &message).await,
+			Command::Cat => cat::handler(&bot, &message).await,
+      Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
 		};
 
 		if result.is_ok() {
