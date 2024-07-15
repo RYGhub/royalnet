@@ -21,18 +21,23 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
     }
 
     let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]?[0-9]*)?"#).unwrap();
-    let mut qty = 1;
-    let mut die = 0;
-    let mut modifier = 0;
+let qty = captures.name("qty") // Prova a vedere se c'è il gruppo "qty"
+		.map(|m| m.as_str())  // `map`: se c'è, trasforma il suo contenuto in stringa
+		.map(|m| m.parse::<u32>())  // `map`: se c'è, trasforma la stringa in un u32
+		.map(|m| m.context("La quantità di dadi da lanciare deve essere un numero intero positivo diverso da 0.")?)  // `map`: se c'è, ma il parsing ha dato errore, restituiscilo e fai terminare la funzione qui
+		.unwrap_or(1);  // `unwrap_or`: se c'è, restituisci il valore, altrimenti, defaulta a 1
 
-    match re?.captures(roll) {
-        Some(caps) => {
-            qty = caps["qty"].parse().unwrap_or(qty);
-            die = caps["die"].parse().unwrap_or(die);
-            modifier = caps["modifier"].parse().unwrap_or(modifier);
-        }
-        None => {}
-    }
+	let die = captures.name("die") // Prova a vedere se c'è il gruppo "die"
+		.unwrap()  // `unwrap`: possiamo asserire che il gruppo "die" sia sempre presente se la regex ha matchato
+		.as_str()  // trasforma il suo contenuto in stringa
+		.parse::<u32>()  // trasforma la stringa in un u32
+		.context("La dimensione del dado da lanciare deve essere un numero intero positivo.")?;  // se il parsing ha dato errore, restituiscilo e fai terminare la funzione qui
+
+	let modifier = captures.name("modifier") // Prova a vedere se c'è il gruppo "modifier"
+		.map(|m| m.as_str())  // `map`: se c'è, trasforma il suo contenuto in stringa
+		.map(|m| m.parse::<i32>())  // `map`: se c'è, trasforma la stringa in un i32
+		.map(|m| m.context("Il modificatore dei dadi lanciati deve essere un numero intero.")?)  // `map`: se c'è, ma il parsing ha dato errore, restituiscilo e fai terminare la funzione qui
+		.unwrap_or(0);  // `unwrap_or`: se c'è, restituisci il valore, altrimenti, defaulta a 0
 
     if die <= 0  {
 		anyhow::bail!("Non è stato specificato nessun dado.")
