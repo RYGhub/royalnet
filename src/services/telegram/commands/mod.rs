@@ -17,6 +17,7 @@ mod answer;
 mod reminder;
 mod dog;
 mod cat;
+mod roll;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -39,6 +40,8 @@ pub enum Command {
 	Dog,
 	#[command(description = "Invia un gatto casuale in chat.")]
 	Cat,
+	#[command(description = "Tira un dado.")]
+	Roll(String),
 }
 
 impl Command {
@@ -71,6 +74,7 @@ impl Command {
 			Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
 			Command::Dog => dog::handler(&bot, &message).await,
 			Command::Cat => cat::handler(&bot, &message).await,
+      Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
 		};
 
 		if result.is_ok() {
