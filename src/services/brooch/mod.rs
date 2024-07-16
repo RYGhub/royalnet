@@ -8,6 +8,7 @@ use diesel::PgConnection;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
+use teloxide::types::ChatId;
 use tokio::time::sleep;
 use crate::database;
 use crate::services::RoyalnetService;
@@ -18,6 +19,7 @@ mod config;
 
 pub struct BroochService {
 	pub guild_id: GuildId,
+	pub chat_id: ChatId,
 	pub bot: Bot,
 }
 
@@ -27,6 +29,7 @@ impl BroochService {
 	pub fn from_config() -> Self {
 		Self {
 			guild_id: config::BROOCH_WATCHED_GUILD_ID().clone(),
+			chat_id: config::BROOCH_NOTIFICATION_CHAT_ID().clone(),
 			bot: Bot::new(config::BROOCH_TELEGRAM_BOT_TOKEN().clone()),
 		}
 	}
@@ -75,8 +78,6 @@ impl BroochService {
 			);
 		}
 
-		let chat_id = config::BROOCH_NOTIFICATION_CHAT_ID();
-
 		let results: Vec<(i64, String)> = results
 			.into_iter()
 			.inspect(|f| match f {
@@ -91,7 +92,7 @@ impl BroochService {
 		for result in results {
 			let (match_id, text) = result;
 
-			let msg = self.bot.send_message(*chat_id, text)
+			let msg = self.bot.send_message(self.chat_id, text)
 				.parse_mode(teloxide::types::ParseMode::Html)
 				.disable_notification(true)
 				.disable_web_page_preview(true)
