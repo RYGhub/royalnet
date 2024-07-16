@@ -35,16 +35,32 @@ pub enum QueryError {
 
 type GuildMatchesQueryResponse = graphql_client::Response<guild_matches_query::ResponseData>;
 
+#[allow(unused_imports)]
 pub use guild_matches_query::LobbyTypeEnum as LobbyType;
+#[allow(unused_imports)]
 pub use guild_matches_query::GameModeEnumType as GameMode;
+#[allow(unused_imports)]
 pub use guild_matches_query::GuildMatchesQueryGuild as Guild;
+#[allow(unused_imports)]
 pub use guild_matches_query::GuildMatchesQueryGuildMatches as Match;
+#[allow(unused_imports)]
 pub use guild_matches_query::GuildMatchesQueryGuildMatchesPlayers as Player;
+#[allow(unused_imports)]
 pub use guild_matches_query::GuildMatchesQueryGuildMatchesPlayersHero as Hero;
+#[allow(unused_imports)]
 pub use guild_matches_query::GuildMatchesQueryGuildMatchesPlayersSteamAccount as Steam;
+#[allow(unused_imports)]
+pub use guild_matches_query::MatchPlayerRoleType as Role;
+#[allow(unused_imports)]
+pub use guild_matches_query::MatchLaneType as Lane;
+#[allow(unused_imports)]
+pub use guild_matches_query::GuildMatchesQueryGuildMatchesPlayersStatsMatchPlayerBuffEvent as Buff;
+
 
 /// Get the latest 10 matches of a certain Dota 2 guild.
 pub async fn query_guild_matches(client: &Client, guild_id: &GuildId) -> Result<GuildMatchesQueryResponse, QueryError> {
+	log::debug!("Querying guild matches with {client:?} for {guild_id:?}...");
+
 	log::trace!("Configuring query variables...");
 	let params = guild_matches_query::Variables {
 		guild_id: guild_id.0,
@@ -54,7 +70,8 @@ pub async fn query_guild_matches(client: &Client, guild_id: &GuildId) -> Result<
 	let body = GuildMatchesQuery::build_query(params);
 
 	log::trace!("Building API URL...");
-	let url = format!("{}?token={}", STRATZ_GRAPHQL_API_URL, config::STRATZ_TOKEN());
+	let url = format!("{}?jwt={}", STRATZ_GRAPHQL_API_URL, config::STRATZ_TOKEN());
+	log::trace!("STRATZ API URL is: {url:?}");
 
 	log::trace!("Making request...");
 	let response = client.post(url)
@@ -64,6 +81,6 @@ pub async fn query_guild_matches(client: &Client, guild_id: &GuildId) -> Result<
 		.json::<GuildMatchesQueryResponse>().await
 		.map_err(|_| QueryError::Parsing)?;
 
-	log::trace!("Request successful, returning...");
+	log::trace!("Request successful!");
 	Ok(response)
 }

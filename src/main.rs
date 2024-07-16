@@ -16,10 +16,15 @@ async fn main() -> Result<()> {
     log::trace!("Setting up Telegram bot service...");
     let telegram = services::telegram::BotService::from_config();
 
+    // Brooch setup
+    log::trace!("Setting up Brooch service...");
+    let brooch = services::brooch::BroochService::from_config();
+
     // Run all services concurrently
     log::info!("Starting services...");
     let result = tokio::try_join![
         telegram.run(),
+        brooch.run(),
     ];
 
     // This should never happen, but just in case...

@@ -1,8 +1,6 @@
 query GuildMatchesQuery($guild_id: Int!) {
   guild(id: $guild_id) {
     id
-    name
-    logo
     matches(take: 10) {
       id
       lobbyType
@@ -16,8 +14,9 @@ query GuildMatchesQuery($guild_id: Int!) {
         kills
         deaths
         assists
+        lane
+        role
         hero {
-          id
           displayName
         }
         steamAccount {
