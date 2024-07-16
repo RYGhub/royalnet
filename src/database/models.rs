@@ -1,6 +1,6 @@
 use diesel::{Identifiable, Insertable, Queryable, Selectable, Associations};
 use diesel::pg::Pg;
-use super::schema::{users, telegram, discord, steam};
+use super::schema::{users, telegram, discord, steam, brooch_match};
 
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
@@ -22,7 +22,6 @@ pub struct TelegramUser {
 	pub telegram_id: i64,
 }
 
-
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
 #[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
 #[diesel(table_name = discord)]
@@ -42,4 +41,12 @@ pub struct DiscordUser {
 pub struct SteamUser {
 	pub user_id: i32,
 	pub steam_id: i64,
+}
+
+
+#[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
+#[diesel(table_name = brooch_match)]
+#[diesel(check_for_backend(Pg))]
+pub struct BroochMatch {
+	pub id: i64,
 }
