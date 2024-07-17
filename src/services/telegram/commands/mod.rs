@@ -1,6 +1,7 @@
 // See the following link for an example of how to use this file:
 // https://github.com/teloxide/teloxide/blob/master/crates/teloxide/examples/dispatching_features.rs
 
+use std::sync::Arc;
 use anyhow::{Context, Error, Result};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
@@ -59,7 +60,7 @@ impl Command {
 		Ok(())
 	}
 
-	pub async fn handle(self, bot: Bot, message: Message, database: &DatabaseInterface) -> CommandResult {
+	pub async fn handle(self, bot: Bot, message: Message, database: Arc<DatabaseInterface>) -> CommandResult {
 		log::trace!("Handling command: {self:?}");
 
 		let result = match self {

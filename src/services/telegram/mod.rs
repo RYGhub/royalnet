@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use anyhow::Context;
 use teloxide::prelude::*;
 use teloxide::types::{Me, ParseMode};
@@ -105,7 +106,7 @@ impl TelegramService {
 		let regex = Regex::new(&format!(r"^/[a-z0-9_]+(?:@{bot_name})?(?:\s+.*)?$")).unwrap();
 		log::trace!("Pseudo-command regex is: {regex:?}");
 
-		let database = DatabaseInterface::new(self.database_url.clone());
+		let database = Arc::new(DatabaseInterface::new(self.database_url.clone()));
 
 		log::trace!("Building dispatcher...");
 		Dispatcher::builder(
