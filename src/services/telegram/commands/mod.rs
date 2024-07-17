@@ -7,6 +7,7 @@ use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{ChatId, Message, MessageId};
 use teloxide::utils::command::BotCommands;
+use crate::services::telegram::deps::interface_database::DatabaseInterface;
 
 mod start;
 mod fortune;
@@ -58,7 +59,7 @@ impl Command {
 		Ok(())
 	}
 
-	pub async fn handle(self, bot: Bot, message: Message) -> CommandResult {
+	pub async fn handle(self, bot: Bot, message: Message, database: &DatabaseInterface) -> CommandResult {
 		log::trace!("Handling command: {self:?}");
 
 		let result = match self {
@@ -69,7 +70,7 @@ impl Command {
 			},
 			Command::Fortune => fortune::handler(&bot, &message).await,
 			Command::Echo(text) => echo::handler(&bot, &message, &text).await,
-			Command::WhoAmI => whoami::handler(&bot, &message).await,
+			Command::WhoAmI => whoami::handler(&bot, &message, &database).await,
 			Command::Answer(_) => answer::handler(&bot, &message).await,
 			Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
 			Command::Dog => dog::handler(&bot, &message).await,

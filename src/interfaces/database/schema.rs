@@ -1,5 +1,6 @@
 // @generated automatically by Diesel CLI.
 
+#[cfg(feature = "service_brooch")]
 diesel::table! {
     brooch_match (id) {
         id -> Int8,

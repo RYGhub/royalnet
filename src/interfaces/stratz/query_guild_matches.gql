@@ -1,4 +1,4 @@
-query GuildMatchesQuery($guild_id: Int!) {
+query Query($guild_id: Int!) {
   guild(id: $guild_id) {
     id
     matches(take: 10) {
@@ -7,9 +7,9 @@ query GuildMatchesQuery($guild_id: Int!) {
       gameMode
       durationSeconds
       endDateTime
-      didRadiantWin
       players(steamAccountId: null) {
         isRadiant
+        isVictory
         imp
         kills
         deaths

@@ -1,0 +1,102 @@
+use std::future::Future;
+use crate::services::RoyalnetService;
+
+pub(self) mod config;
+
+pub struct RoyalnetInstance {
+	#[cfg(feature = "service_telegram")]
+	service_telegram: crate::services::telegram::TelegramService,
+
+	#[cfg(feature = "service_brooch")]
+	service_brooch: crate::services::brooch::BroochService,
+}
+
+impl RoyalnetInstance {
+	pub async fn new() -> Self {
+		let service_telegram = Self::setup_telegram_service().await;
+		let service_brooch = Self::setup_brooch_service();
+
+		Self {
+			service_telegram,
+			service_brooch,
+		}
+	}
+
+	pub async fn run(mut self) {
+		let future_telegram = async move {
+			Self::get_telegram_future(&mut self.service_telegram).await;
+		};
+		let future_brooch = async move {
+			Self::get_brooch_future(&mut self.service_brooch).await;
+		};
+
+		let task_telegram = tokio::spawn(future_telegram);
+		let task_brooch = tokio::spawn(future_brooch);
+
+		let _ = tokio::join!(
+			task_telegram,
+			task_brooch,
+		);
+	}
+
+	#[cfg(feature = "service_telegram")]
+	async fn setup_telegram_service() -> crate::services::telegram::TelegramService {
+		log::debug!("Setting up Telegram service...");
+
+		crate::services::telegram::TelegramService::new(
+			config::service_telegram::TELEGRAM_DATABASE_URL().clone(),
+			config::service_telegram::TELEGRAM_BOT_TOKEN().clone(),
+			config::service_telegram::TELEGRAM_NOTIFICATION_CHATID().clone(),
+		).await.expect("Unable to setup Telegram service.")
+	}
+
+	#[cfg(not(feature = "service_telegram"))]
+	async fn setup_telegram_service() -> () {
+		log::warn!("Telegram service is disabled.");
+
+		()
+	}
+
+	#[cfg(feature = "service_telegram")]
+	fn get_telegram_future(service: &mut crate::services::telegram::TelegramService) -> impl Future<Output = ()> + '_ {
+		service.run_loop()
+	}
+
+	#[cfg(not(feature = "service_telegram"))]
+	fn get_telegram_future(service: &mut crate::services::telegram::TelegramService) -> impl Future<Output = ()> + '_ {
+		async {}
+	}
+
+	#[cfg(feature = "service_brooch")]
+	fn setup_brooch_service() -> crate::services::brooch::BroochService {
+		log::debug!("Setting up Brooch service...");
+
+		crate::services::brooch::BroochService::new(
+			config::brooch::BROOCH_DATABASE_URL().clone(),
+			config::brooch::BROOCH_GRAPHQL_URL(),
+			config::brooch::BROOCH_STRATZ_TOKEN(),
+			config::brooch::BROOCH_WATCHED_GUILD_ID().clone(),
+			config::brooch::BROOCH_MIN_PLAYERS_TO_PROCESS().clone(),
+			config::brooch::BROOCH_TELEGRAM_BOT_TOKEN().clone(),
+			config::brooch::BROOCH_NOTIFICATION_CHAT_ID().clone(),
+			config::brooch::BROOCH_MAX_IMP_WAIT_SECS().clone(),
+		).expect("Unable to setup Brooch service.")
+	}
+
+	#[cfg(not(feature = "service_brooch"))]
+	fn setup_brooch_service() -> () {
+		log::warn!("Brooch service is disabled.");
+
+		()
+	}
+
+	#[cfg(feature = "service_brooch")]
+	fn get_brooch_future(service: &mut crate::services::brooch::BroochService) -> impl Future<Output = ()> + '_ {
+		service.run_loop()
+	}
+
+	#[cfg(not(feature = "service_brooch"))]
+	fn get_brooch_future(service: &mut crate::services::brooch::BroochService) -> impl Future<Output = ()> + '_ {
+		async {}
+	}
+}

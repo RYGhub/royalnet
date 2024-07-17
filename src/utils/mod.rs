@@ -1,3 +1,4 @@
 pub mod time;
 pub mod version;
-pub mod hacks;
+pub mod result;
+pub mod escape;

@@ -1,41 +1,20 @@
-use anyhow::Result;
-use crate::services::RoyalnetService;
+use crate::instance::RoyalnetInstance;
 
-pub(crate) mod database;
-pub(crate) mod utils;
+mod instance;
+mod interfaces;
 mod services;
-mod stratz;
+pub(crate) mod utils;
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() {
     // Logging setup
     pretty_env_logger::init();
     log::debug!("Logging initialized successfully!");
 
-    // Telegram setup
-    log::trace!("Setting up Telegram bot service...");
-    let telegram = services::telegram::BotService::from_config();
+    // Create instance
+    let instance = RoyalnetInstance::new().await;
 
-    // Brooch setup
-    log::trace!("Setting up Brooch service...");
-    let brooch = services::brooch::BroochService::from_config();
+    instance.run().await;
 
-    // Run all services concurrently
-    log::info!("Starting services...");
-    let result = tokio::try_join![
-        telegram.run(),
-        brooch.run(),
-    ];
-
-    // This should never happen, but just in case...
-    match result {
-        Err(error) => {
-            log::error!("A service has exited with an error, bailing out: {error:?}");
-            anyhow::bail!("A service has exited with an error.")
-        },
-        _ => {
-            log::error!("All service have exited successfully, bailing out...");
-            anyhow::bail!("All service have exited successfully.")
-        }
-    }
+    log::error!("No services configured.");
 }

@@ -1,7 +1,7 @@
 [package]
 name = "royalnet"
 description = "Fun software suite for the RYG community"
-version = "0.3.2"
+version = "0.4.0"
 edition = "2021"
 authors = [
     "Stefano Pigozzi <me@steffo.eu>"
@@ -26,23 +26,101 @@ exclude = [
     "/.env"
 ]
 
+#============#
+
 [dependencies]
-anyhow = "1.0.86"
-chrono = "0.4.38"
-diesel = { version = "2.2.1", features = ["postgres"] }
-log = { version = "0.4.22", features = ["release_max_level_debug"] }
-micronfig = "0.3.0"
-pretty_env_logger = "0.5.0"
-rand = { version = "0.8.5", features = ["small_rng"] }
-teloxide = { version = "0.12.2", features = ["ctrlc_handler", "native-tls", "macros"], default-features = false }
-tokio = { version = "1.38.0", features = ["macros", "rt-multi-thread", "time"] }
-parse_datetime = "0.6.0"
-regex = "1.10.5"
-once_cell = "1.19.0"
-reqwest = { version = "0.12.5", features = ["json"] }
-serde = { version = "1.0.204", features = ["derive"] }
-graphql_client = "0.14.0"
-thiserror = "1.0.62"
+
+[dependencies.anyhow]
+version = "1.0.86"
+
+[dependencies.thiserror]
+version = "1.0.62"
+
+[dependencies.tokio]
+version = "1.38.0"
+features = ["macros", "rt-multi-thread", "time"]
+
+[dependencies.log]
+version = "0.4.22"
+features = ["release_max_level_debug"]
+
+[dependencies.pretty_env_logger]
+version = "0.5.0"
+
+[dependencies.micronfig]
+version = "0.3.0"
+
+[dependencies.once_cell]
+version = "1.19.0"
+
+[dependencies.regex]
+version = "1.10.5"
+
+[dependencies.reqwest]
+version = "0.12.5"
+features = ["json"]
+
+[dependencies.serde]
+version = "1.0.204"
+features = ["derive"]
+
+[dependencies.diesel]
+version = "2.2.1"
+features = ["postgres"]
+optional = true
+
+[dependencies.teloxide]
+version = "0.12.2"
+default-features = false
+features = ["native-tls", "macros"]
+optional = true
+
+[dependencies.rand]
+version = "0.8.5"
+features = ["small_rng"]
+optional = true
+
+[dependencies.chrono]
+version = "0.4.38"
+optional = true
+
+[dependencies.parse_datetime]
+version = "0.6.0"
+optional = true
+
+[dependencies.graphql_client]
+version = "0.14.0"
+optional = true
+
+#============#
+
+[features]
+default = [
+    "interface_database",
+    "interface_stratz",
+    "service_brooch",
+    "service_telegram",
+]
+interface_database = [
+    "diesel"
+]
+interface_stratz = [
+    "graphql_client"
+]
+service_telegram = [
+    "interface_database",
+    "teloxide",
+    "rand",
+    "chrono",
+    "parse_datetime"
+]
+service_brooch = [
+    "interface_database",
+    "interface_stratz",
+    "graphql_client"
+]
+
+#============#
 
 [[bin]]
 name = "royalnet"

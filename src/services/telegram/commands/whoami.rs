@@ -3,23 +3,23 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message, ParseMode};
-use crate::database::models::{RoyalnetUser};
-use crate::services::telegram::escape::EscapableInTelegramHTML;
+use crate::interfaces::database::models::{RoyalnetUser};
+use crate::services::telegram::deps::interface_database::DatabaseInterface;
+use crate::utils::escape::EscapableInTelegramHTML;
 use super::{CommandResult};
 
-pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
+pub async fn handler(bot: &Bot, message: &Message, database: &DatabaseInterface) -> CommandResult {
 	let author = message.from()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 
-	let mut database = crate::database::connect().
-		context("Non è stato possibile connettersi al database RYG.")?;
+	let mut database = database.connect()?;
 
 	let royalnet_user: RoyalnetUser = {
 		use diesel::prelude::*;
 		use diesel::{ExpressionMethods, QueryDsl};
-		use crate::database::schema::telegram::dsl::*;
-		use crate::database::schema::users::dsl::*;
-		use crate::database::models::RoyalnetUser;
+		use crate::interfaces::database::schema::telegram::dsl::*;
+		use crate::interfaces::database::schema::users::dsl::*;
+		use crate::interfaces::database::models::RoyalnetUser;
 
 		telegram
 			.filter(telegram_id.eq::<i64>(

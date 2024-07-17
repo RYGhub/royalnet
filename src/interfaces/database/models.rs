@@ -44,6 +44,7 @@ pub struct SteamUser {
 }
 
 
+#[cfg(feature = "service_brooch")]
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
 #[diesel(table_name = brooch_match)]
 #[diesel(check_for_backend(Pg))]
