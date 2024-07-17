@@ -611,13 +611,13 @@ impl BroochService {
 
 		if let (Some(kills), Some(deaths), Some(assists)) = (kills, deaths, assists) {
 			lines.push(format!(
-				"— {} <b>{kills} K</b> / {deaths} D / {assists} A", self.emojify_kills_deaths_assists(kills, deaths, assists)
+				"— {} {kills} K / {deaths} D / {assists} A", self.emojify_kills_deaths_assists(kills, deaths, assists)
 			))
 		}
 
 		if let Some(imp) = imp {
 			lines.push(format!(
-				"— {} <b>{imp}</b> IMP", self.emojify_imp(imp)
+				"— {} {imp} IMP", self.emojify_imp(imp)
 			))
 		}
 
