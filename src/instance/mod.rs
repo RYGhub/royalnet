@@ -23,6 +23,8 @@ impl RoyalnetInstance {
 	}
 
 	pub async fn run(mut self) {
+		Self::run_pending_migrations();
+
 		let future_telegram = async move {
 			Self::get_telegram_future(&mut self.service_telegram).await;
 		};
@@ -39,6 +41,29 @@ impl RoyalnetInstance {
 		);
 	}
 
+	#[cfg(feature = "interface_database")]
+	fn run_pending_migrations() {
+		if !config::interface_database::DATABASE_AUTOMIGRATE() {
+			log::warn!("Database automigration is disabled.");
+			return
+		}
+
+		log::debug!("Automatically applying database migrations...");
+
+		let mut db = crate::interfaces::database::connect(
+			config::interface_database::DATABASE_URL()
+		).expect("Unable to connect to the database to apply migrations.");
+
+		crate::interfaces::database::migrate(&mut db)
+			.expect("Failed to automatically apply migrations to the database.");
+	}
+
+	#[cfg(not(feature = "interface_database"))]
+	fn run_pending_migrations() {
+		log::warn!("Database automigration is not compiled in.");
+		return
+	}
+
 	#[cfg(feature = "service_telegram")]
 	async fn setup_telegram_service() -> crate::services::telegram::TelegramService {
 		log::debug!("Setting up Telegram service...");
@@ -52,7 +77,7 @@ impl RoyalnetInstance {
 
 	#[cfg(not(feature = "service_telegram"))]
 	async fn setup_telegram_service() -> () {
-		log::warn!("Telegram service is disabled.");
+		log::warn!("Telegram service is not compiled in.");
 
 		()
 	}
@@ -85,7 +110,7 @@ impl RoyalnetInstance {
 
 	#[cfg(not(feature = "service_brooch"))]
 	fn setup_brooch_service() -> () {
-		log::warn!("Brooch service is disabled.");
+		log::warn!("Brooch service is not compiled in.");
 
 		()
 	}

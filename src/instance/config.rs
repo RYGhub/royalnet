@@ -1,6 +1,17 @@
 #![allow(unused_attributes, unused_qualifications, clippy::needless_pub_self)]
 
 
+#[cfg(feature = "interface_database")]
+pub mod interface_database {
+	use micronfig::config;
+
+	config! {
+		DATABASE_AUTOMIGRATE: String > bool,
+		DATABASE_URL: String,
+	}
+}
+
+
 #[cfg(feature = "service_telegram")]
 pub mod service_telegram {
 	use micronfig::config;
