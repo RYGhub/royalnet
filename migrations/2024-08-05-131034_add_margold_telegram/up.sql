@@ -1,0 +1,1 @@
+INSERT INTO telegram VALUES (13, 420948829);
