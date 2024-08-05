@@ -516,6 +516,22 @@ impl BroochService {
 		}
 	}
 
+	fn numberify_role_lane(role: &Option<Role>, lane: &Option<Lane>) -> u8 {
+		use Role::*;
+		use Lane::*;
+
+		match (role, lane) {
+			(         Some(CORE), Some(SAFE_LANE)) => 1,
+			(         Some(CORE),  Some(MID_LANE)) => 2,
+			(         Some(CORE),  Some(OFF_LANE)) => 3,
+			(                  _,   Some(ROAMING)) => 4,
+			(                  _,    Some(JUNGLE)) => 5,
+			(Some(LIGHT_SUPPORT),               _) => 6,
+			( Some(HARD_SUPPORT),               _) => 7,
+			(                  _,               _) => 8,
+		}
+	}
+
 	fn stringify_role_lane(&self, role: Role, lane: Lane) -> &'static str {
 		use Role::*;
 		use Lane::*;
@@ -641,7 +657,7 @@ impl BroochService {
 		let mode = self.get_match_mode(&r#match)?;
 		let duration = self.get_match_duration(&r#match)?;
 
-		let players = self.get_match_players(r#match)?;
+		let mut players = self.get_match_players(r#match)?;
 
 		if !self.should_process_match_players(&players) {
 			log::trace!("Skipping match, not enough players.");
@@ -652,6 +668,8 @@ impl BroochService {
 			log::trace!("Skipping match, IMP is not ready.");
 			return Ok((match_id, None))
 		}
+
+		players.sort_unstable_by_key(|a| Self::numberify_role_lane(&a.role, &a.lane));
 
 		let _side = self.get_match_side(&players)?;
 		let outcome = self.get_match_outcome(&players)?;
