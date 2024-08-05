@@ -9,5 +9,5 @@ CREATE TABLE diario (
 
     warning TEXT,
     quote TEXT NOT NULL,
-    context TEXT NOT NULL
+    context TEXT
 );
