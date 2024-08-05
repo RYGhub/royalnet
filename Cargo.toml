@@ -66,7 +66,7 @@ features = ["derive"]
 
 [dependencies.diesel]
 version = "2.2.1"
-features = ["postgres"]
+features = ["postgres", "chrono"]
 optional = true
 
 [dependencies.diesel_migrations]
@@ -108,6 +108,7 @@ default = [
 interface_database = [
     "diesel",
     "diesel_migrations",
+    "chrono",
 ]
 interface_stratz = [
     "graphql_client"
@@ -116,8 +117,8 @@ service_telegram = [
     "interface_database",
     "teloxide",
     "rand",
+    "parse_datetime",
     "chrono",
-    "parse_datetime"
 ]
 service_brooch = [
     "interface_database",

@@ -20,6 +20,7 @@ mod reminder;
 mod dog;
 mod cat;
 mod roll;
+mod diario;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -44,6 +45,8 @@ pub enum Command {
 	Cat,
 	#[command(description = "Tira un dado.")]
 	Roll(String),
+	#[command(description = "Salva una citazione nel diario RYG.")]
+	Diario(diario::DiarioArgs),
 }
 
 impl Command {
@@ -77,6 +80,7 @@ impl Command {
 			Command::Dog => dog::handler(&bot, &message).await,
 			Command::Cat => cat::handler(&bot, &message).await,
       Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
+			Command::Diario(args) => diario::handler(&bot, &message, args, &database).await,
 		};
 
 		if result.is_ok() {
