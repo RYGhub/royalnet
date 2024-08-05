@@ -1,9 +1,21 @@
 // @generated automatically by Diesel CLI.
 
-#[cfg(feature = "service_brooch")]
 diesel::table! {
     brooch_match (id) {
         id -> Int8,
+    }
+}
+
+diesel::table! {
+    diario (id) {
+        id -> Int4,
+        saver_id -> Nullable<Int4>,
+        saved_on -> Nullable<Timestamp>,
+        quoted_id -> Nullable<Int4>,
+        quoted_name -> Nullable<Varchar>,
+        warning -> Nullable<Text>,
+        quote -> Text,
+        context -> Text,
     }
 }
 
@@ -41,6 +53,7 @@ diesel::joinable!(telegram -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     brooch_match,
+    diario,
     discord,
     steam,
     telegram,
