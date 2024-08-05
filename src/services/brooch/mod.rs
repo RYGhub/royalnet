@@ -538,12 +538,12 @@ impl BroochService {
 		log::trace!("Emojifying IMP...");
 
 		match imp {
-			Short::MIN..=-50 => "🟧",
-			-49..=-25 => "🔶",
+			Short::MIN..=-49 => "🟧",
+			-48..=-25 => "🔶",
 			-24..=-1 => "🔸",
 			0..=24 => "🔹",
-			25..=49 => "🔷️",
-			50..=Short::MAX => "🟦",
+			25..=48 => "🔷️",
+			49..=Short::MAX => "🟦",
 		}
 	}
 
