@@ -15,7 +15,7 @@ diesel::table! {
         quoted_name -> Nullable<Varchar>,
         warning -> Nullable<Text>,
         quote -> Text,
-        context -> Text,
+        context -> Nullable<Text>,
     }
 }
 
