@@ -12,7 +12,7 @@ use crate::services::RoyalnetService;
 use crate::utils::result::AnyResult;
 use crate::interfaces::stratz::{Byte, guild_matches, Long, Short};
 use crate::interfaces::stratz::guild_matches::{GameMode, Lane, LobbyType, Match, Player, Role, Steam};
-use crate::utils::escape::EscapableInTelegramHTML;
+use crate::utils::telegramdisplay::TelegramEscape;
 
 #[derive(Debug, Clone)]
 pub struct BroochService {

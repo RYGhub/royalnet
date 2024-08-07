@@ -7,7 +7,7 @@ use teloxide::types::{Message, ParseMode};
 use parse_datetime::parse_datetime_at_date;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use crate::utils::escape::EscapableInTelegramHTML;
+use crate::utils::telegramdisplay::TelegramEscape;
 use super::{CommandResult};
 
 
