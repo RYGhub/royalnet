@@ -29,7 +29,7 @@ impl BroochService {
 	pub fn new(database_url: String, graphql_base_url: &str, stratz_token: &str, watched_guild_id: i64, min_players_to_process: usize, telegram_bot_token: String, notification_chat_id: ChatId, max_imp_wait: TimeDelta) -> AnyResult<Self> {
 		log::info!("Initializing a new Brooch service...");
 
-		let mut graphql_url = Url::parse(&graphql_base_url)
+		let mut graphql_url = Url::parse(graphql_base_url)
 			.context("URL GraphQL non valido.")?;
 		{
 			let mut graphql_url_params = graphql_url.query_pairs_mut();
