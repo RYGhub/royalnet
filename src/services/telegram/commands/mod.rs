@@ -122,7 +122,7 @@ async fn error_command(bot: &Bot, chat_id: ChatId, message_id: MessageId, error:
 pub async fn unknown_command(bot: Bot, message: Message) -> CommandResult {
 	log::debug!("Received an unknown command.");
 
-	bot.send_message(message.chat.id, "⚠️ Comando sconosciuto.")
+	bot.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
 		.reply_to_message_id(message.id)
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
