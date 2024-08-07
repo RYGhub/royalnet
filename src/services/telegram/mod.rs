@@ -12,8 +12,7 @@ use crate::utils::telegramdisplay::TelegramEscape;
 use super::RoyalnetService;
 
 mod commands;
-
-pub(self) mod deps;
+mod deps;
 
 #[derive(Debug, Clone)]
 pub struct TelegramService {
