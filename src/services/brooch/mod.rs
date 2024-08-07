@@ -26,6 +26,7 @@ pub struct BroochService {
 }
 
 impl BroochService {
+	#[allow(clippy::too_many_arguments)]
 	pub fn new(database_url: String, graphql_base_url: &str, stratz_token: &str, watched_guild_id: i64, min_players_to_process: usize, telegram_bot_token: String, notification_chat_id: ChatId, max_imp_wait: TimeDelta) -> AnyResult<Self> {
 		log::info!("Initializing a new Brooch service...");
 
