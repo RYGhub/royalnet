@@ -325,7 +325,7 @@ impl BroochService {
 
 		let imp_waited_too_long = *timedelta > self.max_imp_wait;
 
-		return imp_available_for_everyone || imp_waited_too_long
+		imp_available_for_everyone || imp_waited_too_long
 	}
 
 	fn get_match_side(&self, players: &[Player]) -> AnyResult<MatchSide> {
