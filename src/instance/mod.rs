@@ -71,7 +71,7 @@ impl RoyalnetInstance {
 		crate::services::telegram::TelegramService::new(
 			config::service_telegram::TELEGRAM_DATABASE_URL().clone(),
 			config::service_telegram::TELEGRAM_BOT_TOKEN().clone(),
-			config::service_telegram::TELEGRAM_NOTIFICATION_CHATID().clone(),
+			*config::service_telegram::TELEGRAM_NOTIFICATION_CHATID(),
 		).await.expect("Unable to setup Telegram service.")
 	}
 
@@ -100,11 +100,11 @@ impl RoyalnetInstance {
 			config::brooch::BROOCH_DATABASE_URL().clone(),
 			config::brooch::BROOCH_GRAPHQL_URL(),
 			config::brooch::BROOCH_STRATZ_TOKEN(),
-			config::brooch::BROOCH_WATCHED_GUILD_ID().clone(),
-			config::brooch::BROOCH_MIN_PLAYERS_TO_PROCESS().clone(),
+			*config::brooch::BROOCH_WATCHED_GUILD_ID(),
+			*config::brooch::BROOCH_MIN_PLAYERS_TO_PROCESS(),
 			config::brooch::BROOCH_TELEGRAM_BOT_TOKEN().clone(),
-			config::brooch::BROOCH_NOTIFICATION_CHAT_ID().clone(),
-			config::brooch::BROOCH_MAX_IMP_WAIT_SECS().clone(),
+			*config::brooch::BROOCH_NOTIFICATION_CHAT_ID(),
+			*config::brooch::BROOCH_MAX_IMP_WAIT_SECS(),
 		).expect("Unable to setup Brooch service.")
 	}
 

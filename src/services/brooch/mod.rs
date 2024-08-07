@@ -136,7 +136,7 @@ impl BroochService {
 	fn get_match_id(&self, r#match: &Match) -> AnyResult<Long> {
 		log::trace!("Getting match id...");
 
-		r#match.id.clone()
+		r#match.id
 			.context("La richiesta è riuscita, ma non è stato ricevuto da STRATZ l'ID della partita.")
 	}
 
@@ -428,7 +428,7 @@ impl BroochService {
 
 		log::trace!("Getting player's Steam name...");
 
-		let player_steam_id = player_steam.id.clone()
+		let player_steam_id = player_steam.id
 			.context("Non è stato ricevuto da STRATZ lo SteamID di almeno uno dei giocatori della partita.")?;
 
 		log::trace!("Computing the two possible SteamIDs...");
