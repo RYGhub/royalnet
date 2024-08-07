@@ -1,3 +1,4 @@
+use std::fmt::{Error, Write};
 use std::str::FromStr;
 use anyhow::Context;
 use once_cell::sync::Lazy;
@@ -9,7 +10,7 @@ use teloxide::types::{Message, ParseMode};
 use crate::interfaces::database::models::{DiarioAddition, DiarioEntry, RoyalnetUser};
 use crate::services::telegram::commands::CommandResult;
 use crate::services::telegram::deps::interface_database::DatabaseInterface;
-use crate::utils::escape::EscapableInTelegramHTML;
+use crate::utils::telegramdisplay::{TelegramEscape, TelegramWrite};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DiarioArgs {
@@ -48,44 +49,40 @@ impl FromStr for DiarioArgs {
 	}
 }
 
-pub fn stringify_entry(DiarioEntry { id, quoted_name, warning, quote, context, .. }: &DiarioEntry) -> String {
-	let id = match warning {
-		None => format!(
-			"<code>#{}</code>",
-			id,
-		),
-		Some(warning) => format!(
-			"<code>#{}</code>, <b>{}</b>",
-			id,
-			warning.escape_telegram_html(),
-		),
-	};
+impl TelegramWrite for DiarioEntry {
+	fn write_telegram<T>(&self, f: &mut T) -> Result<(), Error>
+		where T: Write
+	{
+		// Diario ID
+		write!(f, "<code>#{}</code>", self.id)?;
 
-	let quote = match warning {
-		None => format!(
-			"<blockquote>{}</blockquote>",
-			quote.escape_telegram_html(),
-		),
-		Some(_) => format!(
-			r#"<blockquote><span class="tg-spoiler">{}</span></blockquote>"#,
-			quote.escape_telegram_html(),
-		)
-	};
+		// Optional content warning
+		if let Some(warning) = self.to_owned().warning {
+			write!(f, ", <b>{}</b>", warning.escape_telegram_html())?;
+		}
 
-	let cite = match (quoted_name, context) {
-		(Some(name), Some(context)) => format!("—{name}, <i>{context}</i>"),
-		(Some(name), None) => format!("—{name}"),
-		(None, Some(context)) => format!("...<i>{context}</i>"),
-		(None, None) => "".to_string(),
-	};
+		// Newline
+		write!(f, "\n")?;
 
-	format!(
-		"\
-		{id}\n\
-		{quote}\n\
-		{cite}\
-		"
-	)
+		// Quote optionally covered by a spoiler tag
+		match self.warning.to_owned() {
+			None => write!(f, "<blockquote expandable>{}</blockquote>", self.clone().quote.escape_telegram_html())?,
+			Some(warning) => write!(f, "<blockquote expandable><tg-spoiler>{}</tg-spoiler></blockquote>", warning.escape_telegram_html())?,
+		}
+
+		// Newline
+		write!(f, "\n")?;
+
+		// Optional citation with optional context
+		match (self.quoted_name.to_owned(), self.context.to_owned()) {
+			(Some(name), Some(context)) => write!(f, "—{}, <i>{}</i>", name.escape_telegram_html(), context.escape_telegram_html())?,
+			(Some(name), None) => write!(f, "—{}", name.escape_telegram_html())?,
+			(None, Some(context)) => write!(f, "...<i>{}</i>", context.escape_telegram_html())?,
+			(None, None) => write!(f, "")?,
+		};
+
+		Ok(())
+	}
 }
 
 pub async fn handler(bot: &Bot, message: &Message, args: DiarioArgs, database: &DatabaseInterface) -> CommandResult {
@@ -131,12 +128,11 @@ pub async fn handler(bot: &Bot, message: &Message, args: DiarioArgs, database: &
 			.context("Non è stato possibile aggiungere la riga di diario al database RYG.")?
 	};
 
-	let entry = stringify_entry(&entry);
-
 	let text = format!(
 		"🖋 Riga aggiunta al diario!\n\
 		\n\
-		{entry}",
+		{}",
+		entry.to_string_telegram(),
 	);
 
 	let _reply = bot

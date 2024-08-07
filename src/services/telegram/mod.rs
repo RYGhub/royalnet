@@ -8,7 +8,7 @@ use teloxide::dptree::entry;
 use crate::services::telegram::commands::Command;
 use crate::services::telegram::deps::interface_database::DatabaseInterface;
 use crate::utils::result::{AnyError, AnyResult};
-use crate::utils::escape::EscapableInTelegramHTML;
+use crate::utils::telegramdisplay::TelegramEscape;
 use super::RoyalnetService;
 
 mod commands;

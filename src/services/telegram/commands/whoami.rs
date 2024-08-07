@@ -5,7 +5,7 @@ use teloxide::requests::Requester;
 use teloxide::types::{Message, ParseMode};
 use crate::interfaces::database::models::{RoyalnetUser};
 use crate::services::telegram::deps::interface_database::DatabaseInterface;
-use crate::utils::escape::EscapableInTelegramHTML;
+use crate::utils::telegramdisplay::TelegramEscape;
 use super::{CommandResult};
 
 pub async fn handler(bot: &Bot, message: &Message, database: &DatabaseInterface) -> CommandResult {
