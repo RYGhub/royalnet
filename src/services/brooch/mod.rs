@@ -115,7 +115,7 @@ impl BroochService {
 		let mut matches = guild.matches
 			.context("La richiesta è riuscita, ma non sono state ricevute informazioni sulle partite della gilda da STRATZ.")?
 			.into_iter()
-			.filter_map(|o| o)
+			.flatten()
 			.collect::<Vec<Match>>();
 
 		log::trace!("Received {} matches.", matches.len());
