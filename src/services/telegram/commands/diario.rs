@@ -62,7 +62,7 @@ impl TelegramWrite for DiarioEntry {
 		}
 
 		// Newline
-		write!(f, "\n")?;
+		writeln!(f)?;
 
 		// Quote optionally covered by a spoiler tag
 		match self.warning.to_owned() {
@@ -71,7 +71,7 @@ impl TelegramWrite for DiarioEntry {
 		}
 
 		// Newline
-		write!(f, "\n")?;
+		writeln!(f)?;
 
 		// Optional citation with optional context
 		match (self.quoted_name.to_owned(), self.context.to_owned()) {
