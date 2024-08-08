@@ -2,7 +2,7 @@ use std::fmt::{Error, Write};
 use std::str::FromStr;
 use anyhow::Context;
 use once_cell::sync::Lazy;
-use regex::{Captures, Regex};
+use regex::Regex;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::Requester;
