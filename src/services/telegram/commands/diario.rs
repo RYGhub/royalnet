@@ -67,7 +67,7 @@ impl TelegramWrite for DiarioEntry {
 		// Quote optionally covered by a spoiler tag
 		match self.warning.to_owned() {
 			None => write!(f, "<blockquote expandable>{}</blockquote>", self.clone().quote.escape_telegram_html())?,
-			Some(warning) => write!(f, "<blockquote expandable><tg-spoiler>{}</tg-spoiler></blockquote>", self.clone().quote.escape_telegram_html())?,
+			Some(_) => write!(f, "<blockquote expandable><tg-spoiler>{}</tg-spoiler></blockquote>", self.clone().quote.escape_telegram_html())?,
 		}
 
 		// Newline
