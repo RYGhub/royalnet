@@ -2,7 +2,7 @@ use std::fmt::{Error, Write};
 use std::str::FromStr;
 use anyhow::Context;
 use once_cell::sync::Lazy;
-use regex::Regex;
+use regex::{Captures, Regex};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::Requester;
@@ -26,26 +26,37 @@ impl FromStr for DiarioArgs {
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
 		static REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#" *(?:\[(?<warning>.+)])? *"(?<quote>.+)"[, ]*(?:[-–—]+(?<quoted>\w+)(?:, *(?<context>.+))?)?"#).unwrap());
 
-		let captures = REGEX.captures(s)
-			.context("Sintassi del comando incorretta.")?;
+		let captures = REGEX.captures(s);
 
-		let warning = captures.name("warning")
-			.map(|s| s.as_str().to_owned());
+		let args = match captures {
+			Some(captures) => {
+				let warning = captures.name("warning")
+					.map(|s| s.as_str().to_owned());
 
-		let quote = captures.name("quote")
-			.context("Citazione non specificata nel comando.")?
-			.as_str()
-			.to_owned();
+				let quote = captures.name("quote")
+					.context("Citazione non specificata nel comando.")?
+					.as_str()
+					.to_owned();
 
-		let quoted = captures.name("quoted")
-			.map(|s| s.as_str().to_owned());
+				let quoted = captures.name("quoted")
+					.map(|s| s.as_str().to_owned());
 
-		let context = captures.name("context")
-			.map(|s| s.as_str().to_owned());
+				let context = captures.name("context")
+					.map(|s| s.as_str().to_owned());
 
-		Ok(
-			Self { warning, quote, quoted, context }
-		)
+				DiarioArgs {warning, quote, quoted, context}
+			},
+			None => {
+				let warning = None;
+				let quote = s.to_string();
+				let quoted = None;
+				let context = None;
+
+				DiarioArgs {warning, quote, quoted, context}
+			},
+		};
+
+		Ok(args)
 	}
 }
 
