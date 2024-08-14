@@ -21,6 +21,7 @@ mod dog;
 mod cat;
 mod roll;
 mod diario;
+mod matchmaking;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -47,6 +48,8 @@ pub enum Command {
 	Roll(String),
 	#[command(description = "Salva una citazione nel diario RYG.")]
 	Diario(diario::DiarioArgs),
+	#[command(description = "Chiedi chi è disponibile per giocare a qualcosa.")]
+	Matchmaking(matchmaking::MatchmakingArgs),
 }
 
 impl Command {
@@ -81,6 +84,7 @@ impl Command {
 			Command::Cat => cat::handler(&bot, &message).await,
       Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
 			Command::Diario(args) => diario::handler(&bot, &message, args, &database).await,
+			Command::Matchmaking(args) => matchmaking::handler(&bot, &message, args, &database).await,
 		};
 
 		if result.is_ok() {
