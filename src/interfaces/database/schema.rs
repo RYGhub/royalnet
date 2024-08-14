@@ -27,6 +27,14 @@ diesel::table! {
 }
 
 diesel::table! {
+    matchmaking (id) {
+        id -> Int4,
+        text -> Varchar,
+        starts_at -> Timestamp,
+    }
+}
+
+diesel::table! {
     steam (steam_id) {
         user_id -> Int4,
         steam_id -> Int8,
@@ -55,6 +63,7 @@ diesel::allow_tables_to_appear_in_same_query!(
     brooch_match,
     diario,
     discord,
+    matchmaking,
     steam,
     telegram,
     users,
