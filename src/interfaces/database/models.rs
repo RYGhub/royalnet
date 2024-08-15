@@ -1,6 +1,6 @@
 use diesel::{Identifiable, Insertable, Queryable, Selectable, Associations};
 use diesel::pg::Pg;
-use super::schema::{users, telegram, discord, steam, brooch_match, diario};
+use super::schema::{users, telegram, discord, steam, brooch_match, diario, matchmaking};
 
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
@@ -75,4 +75,21 @@ pub struct DiarioEntry {
 	pub warning: Option<String>,
 	pub quote: String,
 	pub context: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Insertable)]
+#[diesel(table_name = matchmaking)]
+#[diesel(check_for_backend(Pg))]
+pub struct MatchmakingAddition {
+	pub text: String,
+	pub starts_at: chrono::NaiveDateTime,
+}
+
+#[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
+#[diesel(table_name = matchmaking)]
+#[diesel(check_for_backend(Pg))]
+pub struct MatchmakingEntry {
+	pub id: i32,
+	pub text: String,
+	pub starts_at: chrono::NaiveDateTime,
 }
