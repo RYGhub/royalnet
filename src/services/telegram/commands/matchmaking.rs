@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
 use std::fmt::{Error, Write};
-use std::ops::Add;
 use std::str::FromStr;
 use anyhow::Context;
 use once_cell::sync::Lazy;
@@ -63,8 +62,8 @@ impl TelegramWrite for MatchmakingData {
 		let now = chrono::Local::now().naive_local();
 
 		let emoji = match self.entry.starts_at.cmp(&now) {
-			Ordering::Greater => "🔜",
-			_ => "🔛",
+			Ordering::Greater => "🚩",
+			_ => "🔔",
 		};
 
 		let text = self.entry.text.clone().escape_telegram_html();
@@ -134,7 +133,7 @@ pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, databa
 		vec![button_cant, button_wont],
 	]);
 
-	let _reply = bot
+	let reply = bot
 		.send_message(message.chat.id, data.to_string_telegram())
 		.parse_mode(ParseMode::Html)
 		.reply_to_message_id(message.id)
@@ -145,6 +144,18 @@ pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, databa
 	let wait_duration = determine_wait(args.start);
 
 	tokio::time::sleep(wait_duration).await;
+
+	bot
+		.delete_message(reply.chat.id, reply.id)
+		.await
+		.context("Non è stato possibile eliminare il matchmaking.")?;
+
+	let _reply = bot
+		.send_message(message.chat.id, data.to_string_telegram())
+		.parse_mode(ParseMode::Html)
+		.reply_to_message_id(message.id)
+		.await
+		.context("Non è stato possibile inviare la notifica di inizio evento.")?;
 
 	Ok(())
 }
