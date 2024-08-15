@@ -1,5 +1,11 @@
 // @generated automatically by Diesel CLI.
 
+pub mod sql_types {
+    #[derive(diesel::query_builder::QueryId, Clone, diesel::sql_types::SqlType)]
+    #[diesel(postgres_type(name = "matchmaking_reply"))]
+    pub struct MatchmakingReply;
+}
+
 diesel::table! {
     brooch_match (id) {
         id -> Int8,
@@ -23,6 +29,18 @@ diesel::table! {
     discord (discord_id) {
         user_id -> Int4,
         discord_id -> Int8,
+    }
+}
+
+diesel::table! {
+    use diesel::sql_types::*;
+    use super::sql_types::MatchmakingReply;
+
+    matchmade (matchmaking_id, user_id) {
+        matchmaking_id -> Int4,
+        user_id -> Int4,
+        reply -> MatchmakingReply,
+        late_mins -> Int4,
     }
 }
 
@@ -56,6 +74,8 @@ diesel::table! {
 }
 
 diesel::joinable!(discord -> users (user_id));
+diesel::joinable!(matchmade -> matchmaking (matchmaking_id));
+diesel::joinable!(matchmade -> users (user_id));
 diesel::joinable!(steam -> users (user_id));
 diesel::joinable!(telegram -> users (user_id));
 
@@ -63,6 +83,7 @@ diesel::allow_tables_to_appear_in_same_query!(
     brooch_match,
     diario,
     discord,
+    matchmade,
     matchmaking,
     steam,
     telegram,
