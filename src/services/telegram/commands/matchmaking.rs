@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 use std::fmt::{Error, Write};
+use std::ops::Add;
 use std::str::FromStr;
 use anyhow::Context;
 use once_cell::sync::Lazy;
@@ -76,6 +77,15 @@ impl TelegramWrite for MatchmakingData {
 	}
 }
 
+const DATA_YES: &str = "yes";
+const DATA_5MIN: &str = "5min";
+const DATA_15MIN: &str = "15min";
+const DATA_60MIN: &str = "60min";
+const DATA_MAYBE: &str = "maybe";
+const DATA_DONTW: &str = "dontw";
+const DATA_CANT: &str = "cant";
+const DATA_WONT: &str = "wont";
+
 pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, database: &DatabaseInterface) -> CommandResult {
 	let mut database = database.connect()?;
 
@@ -97,23 +107,31 @@ pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, databa
 
 	let data = MatchmakingData { entry };
 
+	let prefix = format!("matchmaking:{}", data.entry.id);
+
+	let button = move |text: &str, data: &str| -> InlineKeyboardButton {
+		InlineKeyboardButton::new(
+			text,
+			InlineKeyboardButtonKind::CallbackData(
+				format!("{}:{}", prefix, data)
+			)
+		)
+	};
+
+	let button_yes = button("🔵 Ci sarò!", DATA_YES);
+	let button_5min = button("🕐 +5 min", DATA_5MIN);
+	let button_15min = button("🕒 +15 min", DATA_15MIN);
+	let button_60min = button("🕤 +60 min", DATA_60MIN);
+	let button_maybe = button("❔ Forse...", DATA_MAYBE);
+	let button_dontw = button("❓ Non aspettatemi.", DATA_DONTW);
+	let button_cant = button("🔺 Non posso...", DATA_CANT);
+	let button_wont = button("🔻 Non mi interessa.", DATA_WONT);
+
 	let im = InlineKeyboardMarkup::new(vec![
-		vec![
-			InlineKeyboardButton::new("🔵 Ci sarò!", InlineKeyboardButtonKind::CallbackData("ok".to_string())),
-		],
-		vec![
-			InlineKeyboardButton::new("🕐 +5 min", InlineKeyboardButtonKind::CallbackData("1".to_string())),
-			InlineKeyboardButton::new("🕒 +15 min", InlineKeyboardButtonKind::CallbackData("3".to_string())),
-			InlineKeyboardButton::new("🕤 +60 min", InlineKeyboardButtonKind::CallbackData("9".to_string())),
-		],
-		vec![
-			InlineKeyboardButton::new("❔ Forse...", InlineKeyboardButtonKind::CallbackData("mbw".to_string())),
-			InlineKeyboardButton::new("❓ Non aspettatemi.", InlineKeyboardButtonKind::CallbackData("mb".to_string())),
-		],
-		vec![
-			InlineKeyboardButton::new("🔺 Non posso.", InlineKeyboardButtonKind::CallbackData("cant".to_string())),
-			InlineKeyboardButton::new("🔻 Non voglio.", InlineKeyboardButtonKind::CallbackData("no".to_string())),
-		],
+		vec![button_yes],
+		vec![button_5min, button_15min, button_60min],
+		vec![button_maybe, button_dontw],
+		vec![button_cant, button_wont],
 	]);
 
 	let _reply = bot
