@@ -149,3 +149,14 @@ pub struct Matchmade {
 	pub reply: MatchmakingReply,
 	pub late_mins: i32,
 }
+
+#[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
+#[diesel(belongs_to(MatchmakingEntry, foreign_key = matchmaking_id))]
+#[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
+#[diesel(table_name = matchmade)]
+#[diesel(primary_key(matchmaking_id, user_id))]
+#[diesel(check_for_backend(Pg))]
+pub struct MatchMessageTelegram {
+	pub matchmaking_id: i32,
+	pub telegram_message_id: i32,
+}

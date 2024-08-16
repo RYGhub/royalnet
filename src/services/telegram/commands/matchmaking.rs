@@ -9,7 +9,7 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup, ParseMode};
-use crate::interfaces::database::models::{Matchmade, MatchmakingAddition, MatchmakingEntry, MatchmakingReply, RoyalnetUser, TelegramUser};
+use crate::interfaces::database::models::{Matchmade, MatchmakingAddition, MatchmakingEntry, MatchmakingReply, MatchMessageTelegram, RoyalnetUser, TelegramUser};
 use crate::services::telegram::commands::CommandResult;
 use crate::services::telegram::deps::interface_database::DatabaseInterface;
 use crate::utils::telegramdisplay::{TelegramEscape, TelegramWrite};
@@ -192,6 +192,22 @@ pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, databa
 		.reply_markup(im)
 		.await
 		.context("Non è stato possibile inviare il matchmaking.")?;
+
+	let mmm = MatchMessageTelegram {
+		matchmaking_id: data.entry.id,
+		telegram_message_id: reply.id.0,
+	};
+
+	let mmm = {
+		use diesel::prelude::*;
+		use diesel::dsl::*;
+		use crate::interfaces::database::schema::matchmessage_telegram::dsl::*;
+
+		insert_into(matchmessage_telegram)
+			.values(&addition)
+			.get_result::<MatchMessageTelegram>(&mut database)
+			.context("Non è stato possibile aggiungere il messaggio Telegram al database RYG.")?
+	};
 
 	let wait_duration = determine_wait(args.start);
 

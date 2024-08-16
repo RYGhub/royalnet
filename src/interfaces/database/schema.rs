@@ -34,12 +34,12 @@ diesel::table! {
 
 diesel::table! {
     use diesel::sql_types::*;
-    use super::sql_types::MatchmakingReplyType;
+    use super::sql_types::MatchmakingReply;
 
     matchmade (matchmaking_id, user_id) {
         matchmaking_id -> Int4,
         user_id -> Int4,
-        reply -> MatchmakingReplyType,
+        reply -> MatchmakingReply,
         late_mins -> Int4,
     }
 }
@@ -49,6 +49,13 @@ diesel::table! {
         id -> Int4,
         text -> Varchar,
         starts_at -> Timestamp,
+    }
+}
+
+diesel::table! {
+    matchmessage_telegram (matchmaking_id, telegram_message_id) {
+        matchmaking_id -> Int4,
+        telegram_message_id -> Int8,
     }
 }
 
@@ -85,6 +92,7 @@ diesel::allow_tables_to_appear_in_same_query!(
     discord,
     matchmade,
     matchmaking,
+    matchmessage_telegram,
     steam,
     telegram,
     users,
