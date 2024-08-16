@@ -9,7 +9,7 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup, ParseMode};
-use crate::interfaces::database::models::{MatchmakingAddition, MatchmakingEntry};
+use crate::interfaces::database::models::{Matchmade, MatchmakingAddition, MatchmakingEntry, MatchmakingReply, RoyalnetUser, TelegramUser};
 use crate::services::telegram::commands::CommandResult;
 use crate::services::telegram::deps::interface_database::DatabaseInterface;
 use crate::utils::telegramdisplay::{TelegramEscape, TelegramWrite};
@@ -52,6 +52,49 @@ impl FromStr for MatchmakingArgs {
 #[derive(Debug, Clone, PartialEq)]
 pub struct MatchmakingData {
 	entry: MatchmakingEntry,
+	replies: Vec<(Matchmade, RoyalnetUser, TelegramUser)>,
+}
+
+impl TelegramWrite for (Matchmade, RoyalnetUser, TelegramUser) {
+	fn write_telegram<T>(&self, f: &mut T) -> Result<(), Error>
+	where
+		T: Write
+	{
+		let emoji = match self.0.reply {
+			MatchmakingReply::Yes => "🔵",
+			MatchmakingReply::Late => match self.0.late_mins {
+				i32::MIN..=5 => "🕐",
+				6..=10 => "🕑",
+				11..=15 => "🕒",
+				16..=20 => "🕓",
+				21..=25 => "🕔",
+				26..=30 => "🕕",
+				31..=35 => "🕖",
+				36..=40 => "🕗",
+				41..=45 => "🕘",
+				46..=50 => "🕙",
+				51..=55 => "🕚",
+				56..=i32::MAX => "🕛",
+			},
+			MatchmakingReply::Maybe => "❔",
+			MatchmakingReply::DontWait => "❓",
+			MatchmakingReply::Cant => "🔺",
+			MatchmakingReply::Wont => "🔻",
+		};
+
+		let telegram_id = self.2.telegram_id;
+		let username = &self.1.username;
+
+		write!(f, "{emoji} <a href=\"tg://user?id={telegram_id}\">{username}</a>")?;
+
+		if self.0.reply == MatchmakingReply::Late {
+			let late_mins = &self.0.late_mins;
+
+			write!(f, " (+{late_mins} mins)")?;
+		}
+
+		Ok(())
+	}
 }
 
 impl TelegramWrite for MatchmakingData {
@@ -67,10 +110,17 @@ impl TelegramWrite for MatchmakingData {
 		};
 
 		let text = self.entry.text.clone().escape_telegram_html();
-		write!(f, "{} <b>{}</b>\n", &emoji, &text)?;
+		writeln!(f, "{} <b>{}</b>", &emoji, &text)?;
 
 		let start = self.entry.starts_at.format("%c").to_string().escape_telegram_html();
-		write!(f, "<i>{}</i>\n", &start)?;
+		writeln!(f, "<i>{}</i>", &start)?;
+
+		writeln!(f)?;
+
+		for reply in self.replies.iter() {
+			reply.write_telegram(f)?;
+			writeln!(f)?;
+		}
 
 		Ok(())
 	}
@@ -104,7 +154,9 @@ pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, databa
 			.context("Non è stato possibile aggiungere il matchmaking al database RYG.")?
 	};
 
-	let data = MatchmakingData { entry };
+	let replies = vec![];
+
+	let data = MatchmakingData { entry, replies };
 
 	let prefix = format!("matchmaking:{}", data.entry.id);
 
@@ -120,7 +172,7 @@ pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, databa
 	let button_yes = button("🔵 Ci sarò!", DATA_YES);
 	let button_5min = button("🕐 +5 min", DATA_5MIN);
 	let button_15min = button("🕒 +15 min", DATA_15MIN);
-	let button_60min = button("🕤 +60 min", DATA_60MIN);
+	let button_60min = button("🕛 +60 min", DATA_60MIN);
 	let button_maybe = button("❔ Forse...", DATA_MAYBE);
 	let button_dontw = button("❓ Non aspettatemi.", DATA_DONTW);
 	let button_cant = button("🔺 Non posso...", DATA_CANT);
@@ -149,6 +201,30 @@ pub async fn handler(bot: &Bot, message: &Message, args: MatchmakingArgs, databa
 		.delete_message(reply.chat.id, reply.id)
 		.await
 		.context("Non è stato possibile eliminare il matchmaking.")?;
+
+	let entry = {
+		use diesel::prelude::*;
+		use crate::interfaces::database::schema::matchmaking::dsl::*;
+
+		matchmaking
+			.filter(id.eq(data.entry.id))
+			.get_result::<MatchmakingEntry>(&mut database)
+			.context("Non è stato possibile trovare il matchmaking nel database RYG.")?
+	};
+
+	let replies = {
+		use diesel::prelude::*;
+		use crate::interfaces::database::schema::{matchmade, users, telegram};
+
+		matchmade::table
+			.filter(matchmade::matchmaking_id.eq(entry.id))
+			.inner_join(users::table.on(matchmade::user_id.eq(users::id)))
+			.inner_join(telegram::table.on(users::id.eq(telegram::user_id)))
+			.get_results::<(Matchmade, RoyalnetUser, TelegramUser)>(&mut database)
+			.context("Non è stato possibile trovare le risposte al matchmaking nel database RYG.")?
+	};
+
+	let data = MatchmakingData { entry, replies };
 
 	let _reply = bot
 		.send_message(message.chat.id, data.to_string_telegram())
