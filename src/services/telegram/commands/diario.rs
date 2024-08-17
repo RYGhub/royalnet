@@ -7,10 +7,11 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::Requester;
 use teloxide::types::{Message, ParseMode};
-use crate::interfaces::database::models::{DiarioAddition, DiarioEntry, RoyalnetUser};
+use crate::interfaces::database::models::{Diario, DiarioAddition, RoyalnetUser};
 use crate::services::telegram::commands::CommandResult;
-use crate::services::telegram::deps::interface_database::DatabaseInterface;
-use crate::utils::telegramdisplay::{TelegramEscape, TelegramWrite};
+use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
+use crate::utils::escape::TelegramEscape;
+use crate::utils::write::TelegramWrite;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DiarioArgs {
@@ -60,7 +61,7 @@ impl FromStr for DiarioArgs {
 	}
 }
 
-impl TelegramWrite for DiarioEntry {
+impl TelegramWrite for Diario {
 	fn write_telegram<T>(&self, f: &mut T) -> Result<(), Error>
 		where T: Write
 	{
@@ -96,7 +97,7 @@ impl TelegramWrite for DiarioEntry {
 	}
 }
 
-pub async fn handler(bot: &Bot, message: &Message, args: DiarioArgs, database: &DatabaseInterface) -> CommandResult {
+pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: &DatabaseInterface) -> CommandResult {
 	let author = message.from()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 
@@ -122,10 +123,10 @@ pub async fn handler(bot: &Bot, message: &Message, args: DiarioArgs, database: &
 
 	let addition = DiarioAddition {
 		saver_id: Some(royalnet_user.id),
-		warning: args.warning,
-		quote: args.quote,
-		quoted_name: args.quoted,
-		context: args.context,
+		warning: args.warning.clone(),
+		quote: args.quote.clone(),
+		quoted_name: args.quoted.clone(),
+		context: args.context.clone(),
 	};
 
 	let entry = {
@@ -135,7 +136,7 @@ pub async fn handler(bot: &Bot, message: &Message, args: DiarioArgs, database: &
 
 		insert_into(diario)
 			.values(&addition)
-			.get_result::<DiarioEntry>(&mut database)
+			.get_result::<Diario>(&mut database)
 			.context("Non è stato possibile aggiungere la riga di diario al database RYG.")?
 	};
 

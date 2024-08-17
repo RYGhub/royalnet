@@ -1,4 +1,6 @@
-pub fn determine_wait(target_chrono: chrono::DateTime<chrono::Local>) -> tokio::time::Duration {
+use chrono::{DateTime, Local};
+
+pub fn determine_wait(target_chrono: &DateTime<Local>) -> tokio::time::Duration {
 	let now_chrono = chrono::Local::now();
 
 	let duration_chrono = target_chrono.signed_duration_since(now_chrono);

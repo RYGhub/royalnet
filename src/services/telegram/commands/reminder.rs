@@ -7,9 +7,9 @@ use teloxide::types::{Message, ParseMode};
 use parse_datetime::parse_datetime_at_date;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use crate::utils::telegramdisplay::TelegramEscape;
+use crate::utils::escape::TelegramEscape;
 use crate::utils::time::determine_wait;
-use super::{CommandResult};
+use super::CommandResult;
 
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -46,7 +46,7 @@ impl FromStr for ReminderArgs {
 	}
 }
 
-pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, reminder}: ReminderArgs) -> CommandResult {
+pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, reminder }: &ReminderArgs) -> CommandResult {
 	let text = format!(
 		"🕒 <b>Promemoria impostato</b>\n\
 		<i>{}</i>\n\

@@ -6,22 +6,22 @@ use anyhow::{Context, Error, Result};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{ChatId, Message, MessageId};
+use teloxide::types::Message;
 use teloxide::utils::command::BotCommands;
-use crate::services::telegram::deps::interface_database::DatabaseInterface;
+use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 
-mod start;
-mod fortune;
-mod echo;
-mod help;
-mod whoami;
-mod answer;
-mod reminder;
-mod dog;
-mod cat;
-mod roll;
-mod diario;
-mod matchmaking;
+pub mod start;
+pub mod fortune;
+pub mod echo;
+pub mod help;
+pub mod whoami;
+pub mod answer;
+pub mod reminder;
+pub mod dog;
+pub mod cat;
+pub mod roll;
+pub mod diario;
+pub mod matchmaking;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -66,72 +66,89 @@ impl Command {
 		Ok(())
 	}
 
-	pub async fn handle(self, bot: Bot, message: Message, database: Arc<DatabaseInterface>) -> CommandResult {
-		log::trace!("Handling command: {self:?}");
+	pub async fn handle_self(self, bot: Bot, message: Message, database: Arc<DatabaseInterface>) -> CommandResult {
+		log::trace!(
+			"Handling command in {:?} with id {:?} and contents {:?}",
+			&message.chat.id,
+			&message.id,
+			self
+		);
 
-		let result = match self {
+		let result1 = match self {
 			Command::Start => start::handler(&bot, &message).await,
-			Command::Help(target) => match target.as_str() {
+			Command::Help(ref target) => match target.as_str() {
 				"" => help::handler_all(&bot, &message).await,
-				_ => help::handler_specific(&bot, &message, &target).await,
+				_ => help::handler_specific(&bot, &message, target).await,
 			},
 			Command::Fortune => fortune::handler(&bot, &message).await,
-			Command::Echo(text) => echo::handler(&bot, &message, &text).await,
+			Command::Echo(ref text) => echo::handler(&bot, &message, text).await,
 			Command::WhoAmI => whoami::handler(&bot, &message, &database).await,
 			Command::Answer(_) => answer::handler(&bot, &message).await,
-			Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
+			Command::Reminder(ref args) => reminder::handler(&bot, &message, args).await,
 			Command::Dog => dog::handler(&bot, &message).await,
 			Command::Cat => cat::handler(&bot, &message).await,
-      Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
-			Command::Diario(args) => diario::handler(&bot, &message, args, &database).await,
-			Command::Matchmaking(args) => matchmaking::handler(&bot, &message, args, &database).await,
+      		Command::Roll(ref roll) => roll::handler(&bot, &message, roll).await,
+			Command::Diario(ref args) => diario::handler(&bot, &message, args, &database).await,
+			Command::Matchmaking(ref args) => matchmaking::handler(&bot, &message, args, &database).await,
 		};
 
-		if result.is_ok() {
-			return Ok(())
-		}
+		let result2 = match result1.as_ref() {
+			Ok(_) => return Ok(()),
+			Err(e1) => self.handle_error(&bot, &message, e1).await
+		};
 
-		let chat_id = message.chat.id;
-		let message_id = message.id;
-		let error = result.unwrap_err();
+		let e1 = result1.unwrap_err();
 
-		let result2 = error_command(&bot, chat_id, message_id, &error).await;
-
-		if result2.is_ok() {
-			return Ok(())
-		}
-
-		let error2 = result2.unwrap_err();
-
-		log::error!("Command message {message_id:?} in {chat_id:?} errored out with `{error}`, and it was impossible to handle the error because of `{error2}`\n\n{error2:?}");
+		match result2 {
+			Ok(_) => return Ok(()),
+			Err(e2) => self.handle_fatal(&bot, &message, &e1, &e2).await
+		}?;
 
 		Ok(())
 	}
-}
 
-async fn error_command(bot: &Bot, chat_id: ChatId, message_id: MessageId, error: &Error) -> CommandResult {
-	log::debug!("Command message {message_id:?} in {chat_id:?} errored out with `{error}`");
+	pub async fn handle_unknown(bot: Bot, message: Message) -> CommandResult {
+		log::debug!("Received an unknown command or an invalid syntax.");
 
-	let text = format!("⚠️ {error}");
+		let _reply = bot
+			.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
+			.reply_to_message_id(message.id)
+			.await
+			.context("Non è stato possibile inviare la risposta.")?;
 
-	let _reply = bot
-		.send_message(chat_id, text)
-		.reply_to_message_id(message_id)
-		.await
-		.context("Non è stato possibile inviare la risposta.")?;
+		Ok(())
+	}
 
-	Ok(())
-}
+	async fn handle_error(&self, bot: &Bot, message: &Message, error: &Error) -> CommandResult {
+		log::debug!(
+			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`",
+			&message.chat.id,
+			&message.id,
+			self,
+			error,
+		);
 
-pub async fn unknown_command(bot: Bot, message: Message) -> CommandResult {
-	log::debug!("Received an unknown command.");
+		let _reply = bot
+			.send_message(message.chat.id, format!("⚠️ {error}"))
+			.reply_to_message_id(message.id)
+			.await
+			.context("Non è stato possibile inviare la risposta.")?;
 
-	bot.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
-		.reply_to_message_id(message.id)
-		.await
-		.context("Non è stato possibile inviare la risposta.")?;
+		Ok(())
+	}
 
-	Ok(())
+	async fn handle_fatal(&self, _bot: &Bot, message: &Message, error1: &Error, error2: &Error) -> CommandResult {
+		log::error!(
+			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`, and it was impossible to handle the error because of `{:?}`",
+			&message.chat.id,
+			&message.id,
+			self,
+			error1,
+			error2,
+		);
+
+		Ok(())
+	}
 }
 
 type CommandResult = Result<()>;

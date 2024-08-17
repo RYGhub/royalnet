@@ -3,8 +3,7 @@ use diesel::{Identifiable, Insertable, Queryable, Selectable, Associations, From
 use diesel::deserialize::FromSql;
 use diesel::pg::{Pg, PgValue};
 use diesel::serialize::{IsNull, ToSql};
-use crate::interfaces::database::schema::sql_types::MatchmakingReplyType;
-use super::schema::{users, telegram, discord, steam, brooch_match, diario, matchmaking, matchmade};
+use super::schema::*;
 
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
@@ -70,7 +69,7 @@ pub struct DiarioAddition {
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
 #[diesel(table_name = diario)]
 #[diesel(check_for_backend(Pg))]
-pub struct DiarioEntry {
+pub struct Diario {
 	pub id: i32,
 	pub saver_id: Option<i32>,
 	pub saved_on: Option<chrono::NaiveDateTime>,
@@ -82,25 +81,25 @@ pub struct DiarioEntry {
 }
 
 #[derive(Debug, Clone, PartialEq, Insertable)]
-#[diesel(table_name = matchmaking)]
+#[diesel(table_name = matchmaking_events)]
 #[diesel(check_for_backend(Pg))]
-pub struct MatchmakingAddition {
+pub struct MatchmakingEventAddition {
 	pub text: String,
 	pub starts_at: chrono::NaiveDateTime,
 }
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
-#[diesel(table_name = matchmaking)]
+#[diesel(table_name = matchmaking_events)]
 #[diesel(check_for_backend(Pg))]
-pub struct MatchmakingEntry {
+pub struct MatchmakingEvent {
 	pub id: i32,
 	pub text: String,
 	pub starts_at: chrono::NaiveDateTime,
 }
 
 #[derive(Debug, Clone, PartialEq, FromSqlRow, AsExpression)]
-#[diesel(sql_type = MatchmakingReplyType)]
-pub enum MatchmakingReply {
+#[diesel(sql_type = sql_types::MatchmakingChoice)]
+pub enum MatchmakingChoice {
 	Yes,
 	Late,
 	Maybe,
@@ -109,54 +108,54 @@ pub enum MatchmakingReply {
 	Wont,
 }
 
-impl ToSql<MatchmakingReplyType, Pg> for MatchmakingReply {
+impl ToSql<sql_types::MatchmakingChoice, Pg> for MatchmakingChoice {
 	fn to_sql(&self, out: &mut diesel::serialize::Output<Pg>) -> diesel::serialize::Result {
 		match *self {
-			MatchmakingReply::Yes => out.write_all(b"yes")?,
-			MatchmakingReply::Late => out.write_all(b"late")?,
-			MatchmakingReply::Maybe => out.write_all(b"maybe")?,
-			MatchmakingReply::DontWait => out.write_all(b"dontw")?,
-			MatchmakingReply::Cant => out.write_all(b"cant")?,
-			MatchmakingReply::Wont => out.write_all(b"wont")?,
+			Self::Yes => out.write_all(b"yes")?,
+			Self::Late => out.write_all(b"late")?,
+			Self::Maybe => out.write_all(b"maybe")?,
+			Self::DontWait => out.write_all(b"dontw")?,
+			Self::Cant => out.write_all(b"cant")?,
+			Self::Wont => out.write_all(b"wont")?,
 		};
 		Ok(IsNull::No)
 	}
 }
 
-impl FromSql<MatchmakingReplyType, Pg> for MatchmakingReply {
+impl FromSql<sql_types::MatchmakingChoice, Pg> for MatchmakingChoice {
 	fn from_sql(raw: PgValue) -> diesel::deserialize::Result<Self> {
 		match raw.as_bytes() {
-			b"yes" => Ok(MatchmakingReply::Yes),
-			b"late" => Ok(MatchmakingReply::Late),
-			b"maybe" => Ok(MatchmakingReply::Maybe),
-			b"dontw" => Ok(MatchmakingReply::DontWait),
-			b"cant" => Ok(MatchmakingReply::Cant),
-			b"wont" => Ok(MatchmakingReply::Wont),
+			b"yes" => Ok(Self::Yes),
+			b"late" => Ok(Self::Late),
+			b"maybe" => Ok(Self::Maybe),
+			b"dontw" => Ok(Self::DontWait),
+			b"cant" => Ok(Self::Cant),
+			b"wont" => Ok(Self::Wont),
 			_ => Err("Unknown MatchmakingReply".into())
 		}
 	}
 }
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
-#[diesel(belongs_to(MatchmakingEntry, foreign_key = matchmaking_id))]
+#[diesel(belongs_to(MatchmakingEvent, foreign_key = matchmaking_id))]
 #[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
-#[diesel(table_name = matchmade)]
+#[diesel(table_name = matchmaking_replies)]
 #[diesel(primary_key(matchmaking_id, user_id))]
 #[diesel(check_for_backend(Pg))]
-pub struct Matchmade {
+pub struct MatchmakingReply {
 	pub matchmaking_id: i32,
 	pub user_id: i32,
-	pub reply: MatchmakingReply,
+	pub choice: MatchmakingChoice,
 	pub late_mins: i32,
 }
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
-#[diesel(belongs_to(MatchmakingEntry, foreign_key = matchmaking_id))]
-#[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
-#[diesel(table_name = matchmade)]
-#[diesel(primary_key(matchmaking_id, user_id))]
+#[diesel(belongs_to(MatchmakingEvent, foreign_key = matchmaking_id))]
+#[diesel(table_name = matchmaking_messages_telegram)]
+#[diesel(primary_key(matchmaking_id, telegram_chat_id, telegram_message_id))]
 #[diesel(check_for_backend(Pg))]
-pub struct MatchMessageTelegram {
+pub struct MatchmakingMessageTelegram {
 	pub matchmaking_id: i32,
+	pub telegram_chat_id: i64,
 	pub telegram_message_id: i32,
 }

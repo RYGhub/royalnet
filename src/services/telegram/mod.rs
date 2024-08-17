@@ -1,3 +1,8 @@
+mod commands;
+mod dependencies;
+mod keyboard_callbacks;
+mod utils;
+
 use std::sync::Arc;
 use anyhow::Context;
 use teloxide::prelude::*;
@@ -5,14 +10,12 @@ use teloxide::types::{Me, ParseMode};
 use regex::Regex;
 use teloxide::dispatching::DefaultKey;
 use teloxide::dptree::entry;
-use crate::services::telegram::commands::Command;
-use crate::services::telegram::deps::interface_database::DatabaseInterface;
+use commands::Command;
+use dependencies::interface_database::DatabaseInterface;
+use keyboard_callbacks::KeyboardCallback;
+use crate::utils::escape::TelegramEscape;
 use crate::utils::result::{AnyError, AnyResult};
-use crate::utils::telegramdisplay::TelegramEscape;
 use super::RoyalnetService;
-
-mod commands;
-mod deps;
 
 #[derive(Debug, Clone)]
 pub struct TelegramService {
@@ -110,28 +113,43 @@ impl TelegramService {
 		log::trace!("Building dispatcher...");
 		Dispatcher::builder(
 			self.bot.clone(),
-			// Only process message updates
-			Update::filter_message()
-				// Pseudo-commands
-				.branch(entry()
-					// Only process commands matching the pseudo-command regex
-					.filter(move |message: Message| -> bool {
-						message
-							.text()
-							.is_some_and(|text| regex.is_match(text))
-					})
-					// Commands
-					.branch(
-						entry()
+			// When an update is received
+			entry()
+				// Messages
+				.branch(Update::filter_message()
+					// Pseudo-commands
+					.branch(entry()
+						// Only process commands matching the pseudo-command regex
+						.filter(move |message: Message| -> bool {
+							message
+								.text()
+								.is_some_and(|text| regex.is_match(text))
+						})
+						// Commands
+						.branch(entry()
 							// Only process commands matching a valid command, and parse their arguments
 							.filter_command::<Command>()
 							// Delegate handling
-							.endpoint(Command::handle)
+							.endpoint(Command::handle_self)
+						)
+						// No valid command was found
+						.endpoint(Command::handle_unknown)
 					)
-					// No valid command was found
-					.endpoint(commands::unknown_command)
 				)
-		)
+				// Inline keyboard
+				.branch(Update::filter_callback_query()
+					// Known callbacks
+					.branch(entry()
+						// Only process queries that match
+						.filter_map(move |query: CallbackQuery| query.data
+							// Parse the data string as a KeyboardCallback
+							.and_then(|data| data.parse::<KeyboardCallback>().ok())
+						)
+						.endpoint(KeyboardCallback::handle_self)
+					)
+					.endpoint(KeyboardCallback::handle_unknown)
+				)
+			)
 			.dependencies(
 				dptree::deps![
 					database
