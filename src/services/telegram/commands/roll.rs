@@ -20,7 +20,7 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
 	    return Ok(())
     }
 
-    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]?[0-9]*)?"#).unwrap();
+    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]+[0-9]+)?"#).unwrap();
 
 	let captures = re.captures(roll)
 		.context("Sintassi dei dadi non corretta.")?;
