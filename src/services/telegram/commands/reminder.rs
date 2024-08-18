@@ -3,22 +3,14 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{Message, ParseMode};
+use teloxide::types::{Message, ParseMode, ReplyParameters};
 use parse_datetime::parse_datetime_at_date;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use crate::utils::telegramdisplay::TelegramEscape;
-use super::{CommandResult};
+use crate::utils::telegram_string::TelegramEscape;
+use crate::utils::time::sleep_chrono;
+use super::CommandResult;
 
-
-fn determine_wait(target_chrono: chrono::DateTime<chrono::Local>) -> tokio::time::Duration {
-	let now_chrono = chrono::Local::now();
-
-	let duration_chrono = target_chrono.signed_duration_since(now_chrono);
-	let seconds = duration_chrono.num_seconds();
-
-	tokio::time::Duration::from_secs(seconds as u64)
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReminderArgs {
@@ -54,7 +46,7 @@ impl FromStr for ReminderArgs {
 	}
 }
 
-pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, reminder}: ReminderArgs) -> CommandResult {
+pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, reminder }: &ReminderArgs) -> CommandResult {
 	let text = format!(
 		"🕒 <b>Promemoria impostato</b>\n\
 		<i>{}</i>\n\
@@ -67,13 +59,11 @@ pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, remind
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
-		.context("Non è stato possibile inviare la conferma.")?;
+		.context("Non è stato possibile inviare la conferma del promemoria.")?;
 
-	let wait_duration = determine_wait(target);
-
-	tokio::time::sleep(wait_duration).await;
+	sleep_chrono(target).await;
 
 	let text = format!(
 		"🕒 <b>Promemoria attivato</b>\n\
@@ -87,7 +77,7 @@ pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, remind
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare il promemoria.")?;
 

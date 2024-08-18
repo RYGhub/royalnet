@@ -5,7 +5,7 @@ use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
 use crate::services::telegram::commands::{CommandResult};
 use regex::Regex;
-
+use teloxide::types::ReplyParameters;
 
 pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult {
     let mut rng = rand::rngs::SmallRng::from_entropy();
@@ -13,14 +13,14 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
     if rng.gen_range(1..1001) == 1 {
         let _reply = bot
 			.send_message(message.chat.id, "🎶 Roll? Rick roll! https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-			.reply_to_message_id(message.id)
+			.reply_parameters(ReplyParameters::new(message.id))
 			.await
 			.context("Non è stato possibile inviare la risposta.")?;
 
 	    return Ok(())
     }
 
-    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]?[0-9]*)?"#).unwrap();
+    let re = Regex::new(r#"(?P<qty>[0-9]*)?d(?P<die>[0-9]+)(?P<modifier>[+-]+[0-9]+)?"#).unwrap();
 
 	let captures = re.captures(roll)
 		.context("Sintassi dei dadi non corretta.")?;
@@ -79,7 +79,7 @@ pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult 
 	
 	let _reply = bot
 		.send_message(message.chat.id, answer)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
 

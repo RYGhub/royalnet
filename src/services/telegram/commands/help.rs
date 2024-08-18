@@ -2,7 +2,7 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{BotCommand, Message, ParseMode};
+use teloxide::types::{BotCommand, Message, ParseMode, ReplyParameters};
 use teloxide::utils::command::BotCommands;
 use super::{CommandResult};
 
@@ -14,7 +14,7 @@ pub async fn handler_all(bot: &Bot, message: &Message) -> CommandResult {
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
 
@@ -68,7 +68,7 @@ pub async fn handler_specific(bot: &Bot, message: &Message, target: &str) -> Com
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
 

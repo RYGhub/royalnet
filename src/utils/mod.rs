@@ -1,4 +1,4 @@
 pub mod time;
 pub mod version;
-pub mod result;
-pub mod telegramdisplay;
+pub mod anyhow_result;
+pub mod telegram_string;

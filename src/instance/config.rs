@@ -11,7 +11,6 @@ pub mod interface_database {
 	}
 }
 
-
 #[cfg(feature = "service_telegram")]
 pub mod service_telegram {
 	use micronfig::config;
@@ -40,14 +39,17 @@ pub mod brooch {
 	}
 }
 
+#[cfg(feature = "service_telegram")]
 pub struct ChatIdConversionHack(i64);
 
+#[cfg(feature = "service_telegram")]
 impl From<i64> for ChatIdConversionHack {
 	fn from(value: i64) -> Self {
 		Self(value)
 	}
 }
 
+#[cfg(feature = "service_telegram")]
 impl From<ChatIdConversionHack> for teloxide::types::ChatId {
 	fn from(value: ChatIdConversionHack) -> Self {
 		Self(value.0)

@@ -2,14 +2,14 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{Message, ParseMode};
-use crate::interfaces::database::models::{RoyalnetUser};
-use crate::services::telegram::deps::interface_database::DatabaseInterface;
-use crate::utils::telegramdisplay::TelegramEscape;
-use super::{CommandResult};
+use teloxide::types::{Message, ParseMode, ReplyParameters};
+use crate::interfaces::database::models::RoyalnetUser;
+use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
+use crate::utils::telegram_string::TelegramEscape;
+use super::CommandResult;
 
 pub async fn handler(bot: &Bot, message: &Message, database: &DatabaseInterface) -> CommandResult {
-	let author = message.from()
+	let author = message.from.as_ref()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 
 	let mut database = database.connect()?;
@@ -19,7 +19,6 @@ pub async fn handler(bot: &Bot, message: &Message, database: &DatabaseInterface)
 		use diesel::{ExpressionMethods, QueryDsl};
 		use crate::interfaces::database::schema::telegram::dsl::*;
 		use crate::interfaces::database::schema::users::dsl::*;
-		use crate::interfaces::database::models::RoyalnetUser;
 
 		telegram
 			.filter(telegram_id.eq::<i64>(
@@ -42,7 +41,7 @@ pub async fn handler(bot: &Bot, message: &Message, database: &DatabaseInterface)
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
 

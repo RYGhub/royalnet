@@ -3,22 +3,26 @@ use crate::services::RoyalnetService;
 
 pub(self) mod config;
 
+#[derive(Debug, Clone)]
 pub struct RoyalnetInstance {
 	#[cfg(feature = "service_telegram")]
 	service_telegram: crate::services::telegram::TelegramService,
 
+	#[cfg(not(feature = "service_telegram"))]
+	service_telegram: (),
+
 	#[cfg(feature = "service_brooch")]
 	service_brooch: crate::services::brooch::BroochService,
+
+	#[cfg(not(feature = "service_brooch"))]
+	service_brooch: (),
 }
 
 impl RoyalnetInstance {
 	pub async fn new() -> Self {
-		let service_telegram = Self::setup_telegram_service().await;
-		let service_brooch = Self::setup_brooch_service();
-
 		Self {
-			service_telegram,
-			service_brooch,
+			service_telegram: Self::setup_telegram_service().await,
+			service_brooch: Self::setup_brooch_service().await,
 		}
 	}
 
@@ -50,12 +54,16 @@ impl RoyalnetInstance {
 
 		log::debug!("Automatically applying database migrations...");
 
+		log::trace!("Connecting to the database...");
 		let mut db = crate::interfaces::database::connect(
 			config::interface_database::DATABASE_URL()
 		).expect("Unable to connect to the database to apply migrations.");
 
+		log::trace!("Applying migrations...");
 		crate::interfaces::database::migrate(&mut db)
 			.expect("Failed to automatically apply migrations to the database.");
+
+		log::trace!("Migration successful!");
 	}
 
 	#[cfg(not(feature = "interface_database"))]
@@ -88,12 +96,12 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_telegram"))]
-	fn get_telegram_future(service: &mut crate::services::telegram::TelegramService) -> impl Future<Output = ()> + '_ {
+	fn get_telegram_future(_service: &mut ()) -> impl Future<Output = ()> + '_ {
 		async {}
 	}
 
 	#[cfg(feature = "service_brooch")]
-	fn setup_brooch_service() -> crate::services::brooch::BroochService {
+	async fn setup_brooch_service() -> crate::services::brooch::BroochService {
 		log::debug!("Setting up Brooch service...");
 
 		crate::services::brooch::BroochService::new(
@@ -109,7 +117,7 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_brooch"))]
-	fn setup_brooch_service() -> () {
+	async fn setup_brooch_service() -> () {
 		log::warn!("Brooch service is not compiled in.");
 
 		()
@@ -121,7 +129,7 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_brooch"))]
-	fn get_brooch_future(service: &mut crate::services::brooch::BroochService) -> impl Future<Output = ()> + '_ {
+	fn get_brooch_future(_service: &mut ()) -> impl Future<Output = ()> + '_ {
 		async {}
 	}
 }

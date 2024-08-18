@@ -2,25 +2,30 @@
 // https://github.com/teloxide/teloxide/blob/master/crates/teloxide/examples/dispatching_features.rs
 
 use std::sync::Arc;
-use anyhow::{Context, Error, Result};
+use anyhow::{Context, Error};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{ChatId, Message, MessageId};
+use teloxide::types::{Message, ReplyParameters};
 use teloxide::utils::command::BotCommands;
-use crate::services::telegram::deps::interface_database::DatabaseInterface;
+use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
+use crate::utils::anyhow_result::AnyResult;
 
-mod start;
-mod fortune;
-mod echo;
-mod help;
-mod whoami;
-mod answer;
-mod reminder;
-mod dog;
-mod cat;
-mod roll;
-mod diario;
+pub mod start;
+pub mod fortune;
+pub mod echo;
+pub mod help;
+pub mod whoami;
+pub mod answer;
+pub mod reminder;
+pub mod dog;
+pub mod cat;
+pub mod roll;
+pub mod diario;
+pub mod matchmaking;
+
+
+type CommandResult = AnyResult<()>;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -47,87 +52,123 @@ pub enum Command {
 	Roll(String),
 	#[command(description = "Salva una citazione nel diario RYG.")]
 	Diario(diario::DiarioArgs),
+	#[command(description = "Chiedi chi è disponibile per giocare a qualcosa.")]
+	Matchmaking(matchmaking::MatchmakingArgs),
 }
 
 impl Command {
-	pub async fn set_commands(bot: &mut Bot) -> Result<()> {
+	/// Update the [commands menu](https://core.telegram.org/bots/features#commands) of the bot.
+	pub async fn set_commands(bot: &mut Bot) -> AnyResult<()> {
+		log::debug!("Setting bot commands...");
+
 		log::trace!("Determining bot commands...");
 		let commands = Self::bot_commands();
 
-		// This always returns true, for whatever reason
 		log::trace!("Setting commands: {commands:#?}");
-		let _ = bot.set_my_commands(commands).await
-			.context("Impossibile aggiornare l'elenco comandi del bot.")?;
+		bot.set_my_commands(commands).await
+			.context("Non è stato possibile aggiornare la lista comandi del bot.")?;
 
 		log::trace!("Setting commands successful!");
 		Ok(())
 	}
 
-	pub async fn handle(self, bot: Bot, message: Message, database: Arc<DatabaseInterface>) -> CommandResult {
-		log::trace!("Handling command: {self:?}");
+	pub async fn handle_self(self, bot: Bot, message: Message, database: Arc<DatabaseInterface>) -> CommandResult {
+		log::debug!("Handling command...");
 
-		let result = match self {
-			Command::Start => start::handler(&bot, &message).await,
-			Command::Help(target) => match target.as_str() {
-				"" => help::handler_all(&bot, &message).await,
-				_ => help::handler_specific(&bot, &message, &target).await,
-			},
-			Command::Fortune => fortune::handler(&bot, &message).await,
-			Command::Echo(text) => echo::handler(&bot, &message, &text).await,
-			Command::WhoAmI => whoami::handler(&bot, &message, &database).await,
-			Command::Answer(_) => answer::handler(&bot, &message).await,
-			Command::Reminder(args) => reminder::handler(&bot, &message, args).await,
-			Command::Dog => dog::handler(&bot, &message).await,
-			Command::Cat => cat::handler(&bot, &message).await,
-      Command::Roll(roll) => roll::handler(&bot, &message, &roll).await,
-			Command::Diario(args) => diario::handler(&bot, &message, args, &database).await,
-		};
+		log::trace!(
+			"Handling {:?} in {:?} with {:?}...",
+			self,
+			&message.chat.id,
+			&message.id,
+		);
 
-		if result.is_ok() {
-			return Ok(())
-		}
+		// FIXME: Quick hack to fix single thread
+		log::trace!("Spawning task for future...");
+		let _task = tokio::spawn(async move {
+			log::trace!("Delegating command handling to handler...");
+			let result1 = match self {
+				Command::Start => start::handler(&bot, &message).await,
+				Command::Help(ref target) => match target.as_str() {
+					"" => help::handler_all(&bot, &message).await,
+					_ => help::handler_specific(&bot, &message, target).await,
+				},
+				Command::Fortune => fortune::handler(&bot, &message).await,
+				Command::Echo(ref text) => echo::handler(&bot, &message, text).await,
+				Command::WhoAmI => whoami::handler(&bot, &message, &database).await,
+				Command::Answer(_) => answer::handler(&bot, &message).await,
+				Command::Reminder(ref args) => reminder::handler(&bot, &message, args).await,
+				Command::Dog => dog::handler(&bot, &message).await,
+				Command::Cat => cat::handler(&bot, &message).await,
+				Command::Roll(ref roll) => roll::handler(&bot, &message, roll).await,
+				Command::Diario(ref args) => diario::handler(&bot, &message, args, &database).await,
+				Command::Matchmaking(ref args) => matchmaking::handler(&bot, &message, args, &database).await,
+			};
 
-		let chat_id = message.chat.id;
-		let message_id = message.id;
-		let error = result.unwrap_err();
+			log::trace!("Delegating error handling to error handler...");
+			let result2 = match result1.as_ref() {
+				Ok(_) => return,
+				Err(e1) => self.handle_error(&bot, &message, e1).await
+			};
 
-		let result2 = error_command(&bot, chat_id, message_id, &error).await;
+			let e1 = result1.unwrap_err();
 
-		if result2.is_ok() {
-			return Ok(())
-		}
+			log::trace!("Delegating fatal error handling to fatal error handler...");
+			let _result3 = match result2 {
+				Ok(_) => return,
+				Err(e2) => self.handle_fatal(&bot, &message, &e1, &e2).await
+			};
 
-		let error2 = result2.unwrap_err();
+			log::trace!("Successfully handled command!");
+		});
 
-		log::error!("Command message {message_id:?} in {chat_id:?} errored out with `{error}`, and it was impossible to handle the error because of `{error2}`\n\n{error2:?}");
+		log::trace!("Successfully spawned task!");
+		Ok(())
+	}
+
+	pub async fn handle_unknown(bot: Bot, message: Message) -> CommandResult {
+		log::debug!("Received an unknown command or an invalid syntax: {:?}", message.text());
+		
+		log::trace!("Sending error message...");
+		let _reply = bot
+			.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
+			.reply_parameters(ReplyParameters::new(message.id))
+			.await
+			.context("Non è stato possibile inviare il messaggio di errore.")?;
+
+		log::trace!("Successfully handled unknown command!");
+		Ok(())
+	}
+
+	async fn handle_error(&self, bot: &Bot, message: &Message, error: &Error) -> CommandResult {
+		log::debug!(
+			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`",
+			&message.chat.id,
+			&message.id,
+			self,
+			error,
+		);
+		
+		log::trace!("Sending error message...");
+		let _reply = bot
+			.send_message(message.chat.id, format!("⚠️ {error}"))
+			.reply_parameters(ReplyParameters::new(message.id))
+			.await
+			.context("Non è stato possibile inviare il messaggio di errore.")?;
+
+		log::trace!("Successfully handled errored command!");
+		Ok(())
+	}
+
+	async fn handle_fatal(&self, _bot: &Bot, message: &Message, error1: &Error, error2: &Error) -> CommandResult {
+		log::error!(
+			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`, and it was impossible to handle the error because of `{:?}`",
+			&message.chat.id,
+			&message.id,
+			self,
+			error1,
+			error2,
+		);
 
 		Ok(())
 	}
 }
-
-async fn error_command(bot: &Bot, chat_id: ChatId, message_id: MessageId, error: &Error) -> CommandResult {
-	log::debug!("Command message {message_id:?} in {chat_id:?} errored out with `{error}`");
-
-	let text = format!("⚠️ {error}");
-
-	let _reply = bot
-		.send_message(chat_id, text)
-		.reply_to_message_id(message_id)
-		.await
-		.context("Non è stato possibile inviare la risposta.")?;
-
-	Ok(())
-}
-
-pub async fn unknown_command(bot: Bot, message: Message) -> CommandResult {
-	log::debug!("Received an unknown command.");
-
-	bot.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
-		.reply_to_message_id(message.id)
-		.await
-		.context("Non è stato possibile inviare la risposta.")?;
-
-	Ok(())
-}
-
-type CommandResult = Result<()>;
