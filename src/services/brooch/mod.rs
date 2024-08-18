@@ -1,18 +1,21 @@
 use std::cmp::PartialEq;
 use std::time::Duration;
 use anyhow::Context;
-use chrono::{DateTime, TimeDelta, TimeZone, Utc};
-use diesel::PgConnection;
+use chrono::{DateTime, Local, TimeDelta, TimeZone};
+use diesel::{PgConnection};
 use reqwest::Url;
-use teloxide::prelude::*;
+use teloxide::Bot;
+use teloxide::payloads::SendMessageSetters;
+use teloxide::requests::Requester;
+use teloxide::types::{ChatId, LinkPreviewOptions, Message};
 use tokio::time::sleep;
 use crate::interfaces::database;
-use crate::interfaces::database::models::brooch_match::BroochMatch;
+use crate::interfaces::database::models::{BroochMatch, DotaMatchId, TelegramUserId};
 use crate::services::RoyalnetService;
-use crate::utils::result::AnyResult;
-use crate::interfaces::stratz::{Byte, guild_matches, Long, Short};
+use crate::utils::anyhow_result::AnyResult;
+use crate::interfaces::stratz::{Byte, guild_matches, Short};
 use crate::interfaces::stratz::guild_matches::{GameMode, Lane, LobbyType, Match, Player, Role, Steam};
-use crate::utils::escape::TelegramEscape;
+use crate::utils::telegram_string::TelegramEscape;
 
 #[derive(Debug, Clone)]
 pub struct BroochService {
@@ -27,7 +30,18 @@ pub struct BroochService {
 
 impl BroochService {
 	#[allow(clippy::too_many_arguments)]
-	pub fn new(database_url: String, graphql_base_url: &str, stratz_token: &str, watched_guild_id: i64, min_players_to_process: usize, telegram_bot_token: String, notification_chat_id: ChatId, max_imp_wait: TimeDelta) -> AnyResult<Self> {
+	pub fn new(
+		database_url: String,
+		graphql_base_url: &str,
+		stratz_token: &str,
+		watched_guild_id: i64,
+		min_players_to_process: usize,
+		telegram_bot_token: String,
+		notification_chat_id: ChatId,
+		max_imp_wait: TimeDelta
+	)
+		-> AnyResult<Self>
+	{
 		log::info!("Initializing a new Brooch service...");
 
 		let mut graphql_url = Url::parse(graphql_base_url)
@@ -134,58 +148,54 @@ impl BroochService {
 		Ok(matches)
 	}
 
-	fn get_match_id(&self, r#match: &Match) -> AnyResult<Long> {
+	fn get_match_id(&self, r#match: &Match) -> AnyResult<DotaMatchId> {
 		log::trace!("Getting match id...");
 
-		r#match.id
-			.context("La richiesta è riuscita, ma non è stato ricevuto da STRATZ l'ID della partita.")
-	}
-
-	fn get_database_match(&self, database: &mut PgConnection, match_id: Long) -> AnyResult<Option<BroochMatch>> {
-		log::trace!("Getting match {match_id} from the database...");
-
-		let match_royalnet = {
-			use diesel::prelude::*;
-			use diesel::{ExpressionMethods, QueryDsl};
-			use crate::interfaces::database::schema::brooch_match::dsl::*;
-
-			brooch_match
-				.filter(id.eq(match_id))
-				.select(BroochMatch::as_select())
-				.get_result(database)
-				.optional()
-				.context("Non è stato possibile recuperare la partita restituita da STRATZ dal database RYG.")?
-		};
-
-		Ok(match_royalnet)
-	}
-
-	fn should_process_match_exists(&self, database: &mut PgConnection, match_id: Long) -> AnyResult<bool> {
-		log::trace!("Determining whether {match_id} should be processed...");
-
 		Ok(
-			self.get_database_match(database, match_id)?
-				.is_none()
+			r#match.id
+				.context("La richiesta è riuscita, ma non è stato ricevuto da STRATZ l'ID della partita.")?
+				.into()
 		)
 	}
 
-	fn get_match_datetime(&self, r#match: &Match) -> AnyResult<DateTime<Utc>> {
+	fn get_database_match(&self, database: &mut PgConnection, match_id: DotaMatchId) -> AnyResult<Option<BroochMatch>> {
+		use crate::interfaces::database::query_prelude::*;
+		use crate::interfaces::database::schema::brooch_match;
+
+		log::trace!("Getting {match_id:?} from the database...");
+
+		brooch_match::table
+			.filter(brooch_match::id.eq(match_id))
+			.get_result::<BroochMatch>(database)
+			.optional()
+			.context("Non è stato possibile recuperare la partita restituita da STRATZ dal database RYG.")
+	}
+
+	fn should_process_match_exists(&self, database: &mut PgConnection, match_id: DotaMatchId) -> AnyResult<bool> {
+		log::trace!("Determining whether {match_id:?} should be processed...");
+
+		self.get_database_match(database, match_id)
+			.map(|m| m.is_none())
+			.context("Non è stato possibile determinare se la partita restituita da STRATZ fosse stata già processata.")
+	}
+
+	fn get_match_datetime(&self, r#match: &Match) -> AnyResult<DateTime<Local>> {
 		log::trace!("Getting match datetime...");
 
 		let match_date = r#match.end_date_time
 			.context("Non è stato ricevuto da STRATZ il momento di termine della partita.")?;
 
-		log::trace!("Converting match datetime to DateTime<Utc> object...");
+		log::trace!("Converting match datetime to local datetime...");
 
-		Utc.timestamp_opt(match_date, 0)
+		Local.timestamp_opt(match_date, 0)
 			.earliest()
 			.context("È stato ricevuto da STRATZ un momento di termine della partita non valido.")
 	}
 
-	fn get_match_timedelta(&self, datetime: &DateTime<Utc>) -> TimeDelta {
+	fn get_match_timedelta(&self, datetime: &DateTime<Local>) -> TimeDelta {
 		log::trace!("Getting current time...");
 
-		let now = Utc::now();
+		let now = Local::now();
 
 		log::trace!("Getting match timedelta...");
 
@@ -421,11 +431,11 @@ impl BroochService {
 			.context("Non è stato ricevuto da STRATZ il display name di almeno uno dei giocatori della partita.")
 	}
 
-	fn get_player_telegram_id(&self, database: &mut PgConnection, player_steam: Steam) -> AnyResult<Option<i64>> {
+	fn get_player_telegram_id(&self, database: &mut PgConnection, player_steam: Steam) -> AnyResult<Option<TelegramUserId>> {
 		use diesel::prelude::*;
 		use diesel::{ExpressionMethods, QueryDsl};
 		use crate::interfaces::database::schema::{steam, users, telegram};
-		use crate::interfaces::database::models::telegram::TelegramUser;
+		use crate::interfaces::database::models::TelegramUser;
 
 		log::trace!("Getting player's Steam name...");
 
@@ -461,7 +471,7 @@ impl BroochService {
 					steam::steam_id.eq(player_steam_id_y1)
 				)
 				.select(TelegramUser::as_select())
-				.get_result(database)
+				.get_result::<TelegramUser>(database)
 				.optional()
 				.context("Non è stato possibile connettersi al database RYG.")?
 				.map(|t| t.telegram_id)
@@ -608,9 +618,10 @@ impl BroochService {
 				hero_name.escape_telegram_html(),
 			)),
 			Some(telegram_id) => lines.push(format!(
-				"<u><a href=\"tg://user?id={telegram_id}\"><b>{}</b></a> ({})</u>",
-				name.escape_telegram_html(),
-				hero_name.escape_telegram_html(),
+				"<u><a href=\"tg://user?id={}\"><b>{}</b></a> ({})</u>",
+				telegram_id.to_string().escape_telegram_html(),
+				name.to_string().escape_telegram_html(),
+				hero_name.to_string().escape_telegram_html(),
 			)),
 		}
 
@@ -641,7 +652,7 @@ impl BroochService {
 		Ok(lines.join("\n"))
 	}
 
-	fn stringify_match(&self, database: &mut PgConnection, r#match: Match) -> AnyResult<(Long, Option<String>)> {
+	fn stringify_match(&self, database: &mut PgConnection, r#match: Match) -> AnyResult<(DotaMatchId, Option<String>)> {
 		log::debug!("Stringifying match...");
 
 		let match_id = self.get_match_id(&r#match)?;
@@ -699,37 +710,28 @@ impl BroochService {
 		}
 
 		lines.push(format!(
-			"Partita <code>{match_id}</code> · <a href=\"https://stratz.com/matches/{match_id}\">Apri su STRATZ</a>"
+			"Partita <code>{}</code>",
+			match_id,
 		));
 
 		Ok((match_id, Some(lines.join("\n"))))
 	}
 
-	async fn send_notification(&self, text: &str) -> AnyResult<Message> {
+	async fn send_notification(&self, match_id: DotaMatchId, text: &str) -> AnyResult<Message> {
 		log::debug!("Sending notification...");
 
 		self.telegram_bot.send_message(self.notification_chat_id, text)
 			.parse_mode(teloxide::types::ParseMode::Html)
 			.disable_notification(true)
-			.disable_web_page_preview(true)
+			.link_preview_options(LinkPreviewOptions {
+				is_disabled: false,
+				url: Some(format!("https://stratz.com/matches/{}", match_id)),
+				prefer_small_media: true,
+				prefer_large_media: false,
+				show_above_text: false,
+			})
 			.await
 			.context("Impossibile inviare la notifica di una partita.")
-	}
-
-	fn flag_match_id(&self, database: &mut PgConnection, match_id: Long) -> AnyResult<BroochMatch> {
-		use diesel::prelude::*;
-		use crate::interfaces::database::schema::brooch_match::dsl::*;
-		use crate::interfaces::database::models::{};
-
-		log::debug!("Flagging as parsed match id: {match_id}");
-
-		let match_royalnet = BroochMatch { id: match_id };
-
-		diesel::insert_into(brooch_match)
-			.values(&match_royalnet)
-			.returning(BroochMatch::as_returning())
-			.get_result(database)
-			.context("Impossibile marcare la partita come processata nel database RYG.")
 	}
 
 	async fn iteration(&self) -> AnyResult<()> {
@@ -746,14 +748,14 @@ impl BroochService {
 		let results = matches
 			.into_iter()
 			.map(|r#match| self.stringify_match(&mut database, r#match))
-			.collect::<Vec<AnyResult<(Long, Option<String>)>>>();
+			.collect::<Vec<AnyResult<(DotaMatchId, Option<String>)>>>();
 
 		for result in results {
 			let (match_id, message) = result?;
 
 			if let Some(message) = message {
-				self.send_notification(&message).await?;
-				self.flag_match_id(&mut database, match_id)?;
+				self.send_notification(match_id, &message).await?;
+				BroochMatch::flag(&mut database, match_id)?;
 			}
 		}
 		

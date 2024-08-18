@@ -1,19 +1,15 @@
 use anyhow::Context;
-use diesel::PgConnection;
 use teloxide::Bot;
 use teloxide::payloads::AnswerCallbackQuerySetters;
 use teloxide::requests::Requester;
 use teloxide::types::CallbackQuery;
-use crate::interfaces::database::models::matchmaking_choice::MatchmakingChoice;
-use crate::interfaces::database::models::matchmaking_messages_telegram::MatchmakingMessageTelegram;
-use crate::interfaces::database::models::matchmaking_replies::MatchmakingReply;
-use crate::interfaces::database::models::users::RoyalnetUser;
+use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingId, MatchmakingMessageTelegram, MatchmakingReply, MatchmakingTelegramKeyboardCallback, RoyalnetUser};
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::services::telegram::keyboard_callbacks::KeyboardCallbackResult;
-use crate::services::telegram::utils::matchmaking::MatchmakingTelegramKeyboardCallback;
-use crate::utils::result::AnyResult;
 
-pub async fn handler(bot: &Bot, query: CallbackQuery, matchmaking_id: i32, callback: MatchmakingTelegramKeyboardCallback, database: &DatabaseInterface) -> KeyboardCallbackResult {
+pub async fn handler(bot: &Bot, query: CallbackQuery, matchmaking_id: MatchmakingId, callback: MatchmakingTelegramKeyboardCallback, database: &DatabaseInterface) -> KeyboardCallbackResult {
+	use MatchmakingTelegramKeyboardCallback::*;
+
 	let mut database = database.connect()
 		.context("Non è stato possibile connettersi al database RYG.")?;
 
@@ -21,45 +17,29 @@ pub async fn handler(bot: &Bot, query: CallbackQuery, matchmaking_id: i32, callb
 		.context("Non è stato possibile recuperare il tuo utente Telegram dal database RYG.")?;
 
 	match callback {
-		MatchmakingTelegramKeyboardCallback::Yes => {
-			MatchmakingReply::put(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Yes)?;
-		}
-		MatchmakingTelegramKeyboardCallback::Plus5Min => {
-			MatchmakingReply::put_delay(&mut database, matchmaking_id, royalnet_user.id, 5)?;
-		}
-		MatchmakingTelegramKeyboardCallback::Plus15Min => {
-			MatchmakingReply::put_delay(&mut database, matchmaking_id, royalnet_user.id, 15)?;
-		}
-		MatchmakingTelegramKeyboardCallback::Plus60Min => {
-			MatchmakingReply::put_delay(&mut database, matchmaking_id, royalnet_user.id, 60)?;
-		}
-		MatchmakingTelegramKeyboardCallback::Maybe => {
-			MatchmakingReply::put(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Maybe)?;
-		}
-		MatchmakingTelegramKeyboardCallback::DontWait => {
-			MatchmakingReply::put(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::DontWait)?;
-		}
-		MatchmakingTelegramKeyboardCallback::Cant => {
-			MatchmakingReply::put(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Cant)?;
-		}
-		MatchmakingTelegramKeyboardCallback::Wont => {
-			MatchmakingReply::put(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Wont)?;
-		}
-	}
+		Yes => MatchmakingReply::set(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Yes)?,
+		Plus5Min => MatchmakingReply::add_late_minutes(&mut database, matchmaking_id, royalnet_user.id, 5)?,
+		Plus15Min => MatchmakingReply::add_late_minutes(&mut database, matchmaking_id, royalnet_user.id, 15)?,
+		Plus60Min => MatchmakingReply::add_late_minutes(&mut database, matchmaking_id, royalnet_user.id, 60)?,
+		Maybe => MatchmakingReply::set(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Maybe)?,
+		DontWait => MatchmakingReply::set(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::DontWait)?,
+		Cant => MatchmakingReply::set(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Cant)?,
+		Wont => MatchmakingReply::set(&mut database, matchmaking_id, royalnet_user.id, MatchmakingChoice::Wont)?,
+	};
 
-	MatchmakingMessageTelegram::update_all(&mut database, matchmaking_id, bot)
-		.await?;
+	let messages_telegram = MatchmakingMessageTelegram::get_all(&mut database, matchmaking_id)
+		.context("Non è stato possibile recuperare i messaggi di matchmaking inviati su Telegram.")?;
+
+	for message_telegram in messages_telegram {
+		message_telegram.make_text_and_send_edit(&mut database, bot)
+			.await
+			.context("Non è stato possibile aggiornare un messaggio di matchmaking su Telegram.")?;
+	}
 
 	let _ = bot.answer_callback_query(query.id)
 		.text("Ricevuto!")
-		.await?;
+		.await
+		.context("Non è stato possibile rispondere alla pressione del bottone su Telegram.")?;
 
 	Ok(())
-}
-
-
-impl MatchmakingTelegramKeyboardCallback {
-	fn handle(database: &mut PgConnection, matchmaking_id ) -> AnyResult<MatchmakingReply> {
-		
-	}
 }

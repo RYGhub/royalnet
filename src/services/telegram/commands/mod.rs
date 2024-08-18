@@ -6,10 +6,10 @@ use anyhow::{Context, Error};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::Message;
+use teloxide::types::{Message, ReplyParameters};
 use teloxide::utils::command::BotCommands;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
-use crate::utils::result::AnyResult;
+use crate::utils::anyhow_result::AnyResult;
 
 pub mod start;
 pub mod fortune;
@@ -139,9 +139,9 @@ impl Command {
 		log::trace!("Sending error message...");
 		let _reply = bot
 			.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
-			.reply_to_message_id(message.id)
+			.reply_parameters(ReplyParameters::new(message.id))
 			.await
-			.context("Non è stato possibile inviare la risposta.")?;
+			.context("Non è stato possibile inviare il messaggio di errore.")?;
 
 		log::trace!("Successfully handled unknown command!");
 		Ok(())
@@ -159,9 +159,9 @@ impl Command {
 		log::trace!("Sending error message...");
 		let _reply = bot
 			.send_message(message.chat.id, format!("⚠️ {error}"))
-			.reply_to_message_id(message.id)
+			.reply_parameters(ReplyParameters::new(message.id))
 			.await
-			.context("Non è stato possibile inviare la risposta.")?;
+			.context("Non è stato possibile inviare il messaggio di errore.")?;
 
 		log::trace!("Successfully handled errored command!");
 		Ok(())

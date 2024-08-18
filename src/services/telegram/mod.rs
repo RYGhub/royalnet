@@ -13,8 +13,8 @@ use teloxide::dptree::entry;
 use commands::Command;
 use dependencies::interface_database::DatabaseInterface;
 use keyboard_callbacks::KeyboardCallback;
-use crate::utils::escape::TelegramEscape;
-use crate::utils::result::{AnyError, AnyResult};
+use crate::utils::anyhow_result::{AnyError, AnyResult};
+use crate::utils::telegram_string::TelegramEscape;
 use super::RoyalnetService;
 
 #[derive(Debug, Clone)]

@@ -7,12 +7,12 @@ use teloxide::Bot;
 use teloxide::payloads::AnswerCallbackQuerySetters;
 use teloxide::prelude::CallbackQuery;
 use teloxide::requests::Requester;
-use crate::services::telegram::utils::matchmaking::{MatchmakingTelegramKeyboardCallback};
+use crate::interfaces::database::models::{MatchmakingId, MatchmakingTelegramKeyboardCallback};
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum KeyboardCallback {
-	Matchmaking(i32, MatchmakingTelegramKeyboardCallback),
+	Matchmaking(MatchmakingId, MatchmakingTelegramKeyboardCallback),
 }
 
 impl FromStr for KeyboardCallback {
@@ -25,7 +25,7 @@ impl FromStr for KeyboardCallback {
 		let (id, data) = data.split_once(":")
 			.context("Impossibile dividere il payload in id e dati.")?;
 
-		let id: i32 = id.parse()
+		let id: MatchmakingId = id.parse()
 			.context("Impossibile convertire l'id a un numero.")?;
 
 		match keyword {
@@ -49,7 +49,7 @@ impl KeyboardCallback {
 		log::trace!(
 			"Handling {:?} in {:?} with {:?}...",
 			self,
-			&query.message.as_ref().map(|q| q.chat.id),
+			&query.message.as_ref().map(|q| q.chat().id),
 			&query.id,
 		);
 

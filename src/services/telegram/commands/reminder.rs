@@ -3,12 +3,12 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{Message, ParseMode};
+use teloxide::types::{Message, ParseMode, ReplyParameters};
 use parse_datetime::parse_datetime_at_date;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use crate::utils::escape::TelegramEscape;
-use crate::utils::time::determine_wait;
+use crate::utils::telegram_string::TelegramEscape;
+use crate::utils::time::sleep_chrono;
 use super::CommandResult;
 
 
@@ -59,13 +59,11 @@ pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, remind
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
-		.context("Non è stato possibile inviare la conferma.")?;
+		.context("Non è stato possibile inviare la conferma del promemoria.")?;
 
-	let wait_duration = determine_wait(target);
-
-	tokio::time::sleep(wait_duration).await;
+	sleep_chrono(target).await;
 
 	let text = format!(
 		"🕒 <b>Promemoria attivato</b>\n\
@@ -79,7 +77,7 @@ pub async fn handler(bot: &Bot, message: &Message, ReminderArgs { target, remind
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare il promemoria.")?;
 

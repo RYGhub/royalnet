@@ -5,10 +5,11 @@ use parse_datetime::parse_datetime_at_date;
 use regex::Regex;
 use teloxide::Bot;
 use teloxide::prelude::Message;
-use crate::interfaces::database::models::matchmaking_events::MatchmakingEvent;
+use crate::interfaces::database::models::MatchmakingEvent;
+use crate::interfaces::database::models::MatchmakingMessageTelegram;
 use crate::services::telegram::commands::CommandResult;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
-use crate::utils::time::determine_wait;
+use crate::utils::time::sleep_chrono;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MatchmakingArgs {
@@ -50,19 +51,19 @@ pub async fn handler(bot: &Bot, message: &Message, args: &MatchmakingArgs, datab
 	let event = MatchmakingEvent::create(&mut database, &args.text, &args.start)
 		.context("Non è stato possibile creare un nuovo matchmaking.")?;
 
-	let reply = event.poll_telegram(&mut database, bot, message.chat.id, Some(message.id))
+	let mm1 = MatchmakingMessageTelegram::send_new_and_create(&mut database, event.id, bot, message.chat.id, Some(message.id))
 		.await
 		.context("Non è stato possibile postare il matchmaking.")?;
 
-	tokio::time::sleep(determine_wait(&args.start)).await;
+	sleep_chrono(&args.start).await;
 
-	reply.delete(&mut database, bot)
-		.await
-		.context("Non è stato possibile eliminare il matchmaking.")?;
-
-	event.notify_telegram(&mut database, bot, message.chat.id, Some(message.id))
+	let _mm2 = MatchmakingMessageTelegram::send_new_and_create(&mut database, event.id, bot, message.chat.id, Some(message.id))
 		.await
 		.context("Non è stato possibile confermare il matchmaking.")?;
+
+	mm1.destroy_and_send_delete(&mut database, bot)
+		.await
+		.context("Non è stato possibile eliminare il matchmaking.")?;
 
 	Ok(())
 }

@@ -87,7 +87,6 @@ optional = true
 
 [dependencies.chrono]
 version = "0.4.38"
-optional = true
 
 [dependencies.parse_datetime]
 version = "0.6.0"
@@ -109,7 +108,6 @@ default = [
 interface_database = [
     "diesel",
     "diesel_migrations",
-    "chrono",
 ]
 interface_stratz = [
     "graphql_client"
@@ -119,7 +117,6 @@ service_telegram = [
     "teloxide",
     "rand",
     "parse_datetime",
-    "chrono",
 ]
 service_brooch = [
     "interface_database",

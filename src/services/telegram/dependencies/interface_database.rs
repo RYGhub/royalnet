@@ -1,6 +1,6 @@
 use anyhow::Context;
 use diesel::PgConnection;
-use crate::utils::result::AnyResult;
+use crate::utils::anyhow_result::AnyResult;
 
 #[derive(Debug, Clone)]
 pub struct DatabaseInterface {

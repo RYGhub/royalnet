@@ -1,8 +1,8 @@
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 use diesel::pg::Pg;
-
+use crate::newtype_sql;
 use super::super::schema::discord;
-use super::users::RoyalnetUser;
+use super::users::{RoyalnetUser, RoyalnetUserId};
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable, Associations)]
 #[diesel(belongs_to(RoyalnetUser, foreign_key = user_id))]
@@ -10,6 +10,8 @@ use super::users::RoyalnetUser;
 #[diesel(primary_key(discord_id))]
 #[diesel(check_for_backend(Pg))]
 pub struct DiscordUser {
-	pub user_id: i32,
-	pub discord_id: i64,
+	pub user_id: RoyalnetUserId,
+	pub discord_id: DiscordUserId,
 }
+
+newtype_sql!(pub DiscordUserId: diesel::sql_types::Int8 as i64);

@@ -1,10 +1,18 @@
-use chrono::{DateTime, Local};
+pub fn chrono_to_tokio_duration(duration: chrono::TimeDelta) -> Option<tokio::time::Duration> {
+	let nanos = duration.num_nanoseconds()?;
 
-pub fn determine_wait(target_chrono: &DateTime<Local>) -> tokio::time::Duration {
-	let now_chrono = chrono::Local::now();
+	Some(
+		tokio::time::Duration::from_nanos(nanos as u64)
+	)
+}
 
-	let duration_chrono = target_chrono.signed_duration_since(now_chrono);
-	let seconds = duration_chrono.num_seconds() + 1;
+pub async fn sleep_chrono(until: &chrono::DateTime<chrono::Local>) {
+	let now = chrono::Local::now();
 
-	tokio::time::Duration::from_secs(seconds as u64)
+	let duration = until.signed_duration_since(now);
+
+	let duration = chrono_to_tokio_duration(duration)
+		.expect("Nanoseconds to not overflow u64");
+
+	tokio::time::sleep(duration).await;
 }

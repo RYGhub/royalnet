@@ -1,9 +1,10 @@
 use anyhow::Context;
-use diesel::{Identifiable, Insertable, PgConnection, Queryable, Selectable};
+use diesel::{AsExpression, FromSqlRow, Identifiable, Insertable, PgConnection, Queryable, QueryId, Selectable};
 use diesel::deserialize::FromSql;
 use diesel::pg::{Pg, PgValue};
 use diesel::serialize::ToSql;
-use crate::utils::result::AnyResult;
+use crate::newtype_sql;
+use crate::utils::anyhow_result::AnyResult;
 use super::super::schema::matchmaking_events;
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
@@ -23,7 +24,7 @@ impl MatchmakingEvent {
 		insert_into(matchmaking_events::table)
 			.values(&(
 				matchmaking_events::text.eq(text),
-				matchmaking_events::starts_at.eq(starts_at),
+				matchmaking_events::starts_at.eq(starts_at.naive_utc()),
 			))
 			.get_result::<Self>(database)
 			.context("Non è stato possibile aggiungere il matchmaking al database RYG.")
@@ -38,34 +39,16 @@ impl MatchmakingEvent {
 			.get_result::<Self>(database)
 			.context("Non è stato possibile recuperare il matchmaking dal database RYG.")
 	}
-}
 
-#[repr(transparent)]
-#[derive(Debug, Clone, PartialEq)]
-pub struct MatchmakingId(pub(crate) i32);
-
-impl From<i32> for MatchmakingId {
-	fn from(value: i32) -> Self {
-		Self(value)
+	pub fn has_started(&self) -> bool {
+		self.starts_at.lt(&chrono::Local::now().naive_utc())
 	}
 }
 
-impl From<MatchmakingId> for i32 {
-	fn from(value: MatchmakingId) -> Self {
-		value.0
-	}
-}
+newtype_sql!(pub MatchmakingId: diesel::sql_types::Int4 as i32);
 
-impl ToSql<i32, Pg> for MatchmakingId {
-	fn to_sql(&self, out: &mut diesel::serialize::Output<Pg>) -> diesel::serialize::Result {
-		self.0
-			.to_sql(out)
-	}
-}
-
-impl FromSql<i32, Pg> for MatchmakingId {
-	fn from_sql(raw: PgValue) -> diesel::deserialize::Result<Self> {
-		i32::from_sql(raw)
-			.map(Self)
+impl MatchmakingId {
+	pub fn callback_data(&self, data: &str) -> String {
+		format!("matchmaking:{}:{}", &self.0, data)
 	}
 }

@@ -6,13 +6,12 @@ use regex::Regex;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::Requester;
-use teloxide::types::{Message, ParseMode};
-use crate::interfaces::database::models::diario::{Diario, DiarioAddition};
-use crate::interfaces::database::models::users::RoyalnetUser;
+use teloxide::types::{Message, ParseMode, ReplyParameters};
+use crate::interfaces::database::models::Diario;
+use crate::interfaces::database::models::RoyalnetUser;
 use crate::services::telegram::commands::CommandResult;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
-use crate::utils::escape::TelegramEscape;
-use crate::utils::write::TelegramWrite;
+use crate::utils::telegram_string::{TelegramEscape, TelegramWrite};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DiarioArgs {
@@ -99,7 +98,7 @@ impl TelegramWrite for Diario {
 }
 
 pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: &DatabaseInterface) -> CommandResult {
-	let author = message.from()
+	let author = message.from.as_ref()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 
 	let mut database = database.connect()?;
@@ -109,7 +108,7 @@ pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: 
 		use diesel::{ExpressionMethods, QueryDsl};
 		use crate::interfaces::database::schema::telegram::dsl::*;
 		use crate::interfaces::database::schema::users::dsl::*;
-		use crate::interfaces::database::models::users::RoyalnetUser;
+		use crate::interfaces::database::models::RoyalnetUser;
 
 		telegram
 			.filter(telegram_id.eq::<i64>(
@@ -122,21 +121,18 @@ pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: 
 			.context("Non è stato possibile recuperare il tuo utente Telegram dal database RYG.")?
 	};
 
-	let addition = DiarioAddition {
-		saver_id: Some(royalnet_user.id),
-		warning: args.warning.clone(),
-		quote: args.quote.clone(),
-		quoted_name: args.quoted.clone(),
-		context: args.context.clone(),
-	};
-
 	let entry = {
-		use diesel::prelude::*;
-		use diesel::dsl::*;
-		use crate::interfaces::database::schema::diario::dsl::*;
+		use crate::interfaces::database::query_prelude::*;
+		use schema::diario;
 
-		insert_into(diario)
-			.values(&addition)
+		insert_into(diario::table)
+			.values(&(
+				diario::saver_id.eq(Some(royalnet_user.id)),
+				diario::warning.eq(args.warning.clone()),
+				diario::quote.eq(args.quote.clone()),
+				diario::quoted_name.eq(args.quoted.clone()),
+				diario::context.eq(args.context.clone()),
+			))
 			.get_result::<Diario>(&mut database)
 			.context("Non è stato possibile aggiungere la riga di diario al database RYG.")?
 	};
@@ -151,7 +147,7 @@ pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: 
 	let _reply = bot
 		.send_message(message.chat.id, text)
 		.parse_mode(ParseMode::Html)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		// teloxide does not support blockquotes yet and errors out on parsing the response
 		// .context("Non è stato possibile inviare la risposta.")?

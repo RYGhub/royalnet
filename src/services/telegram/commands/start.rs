@@ -2,12 +2,12 @@ use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{Message};
+use teloxide::types::{Message, ReplyParameters};
 use super::{CommandResult};
 
 
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
-	let author = message.from()
+	let author = message.from.as_ref()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 
 	let author_username = match author.username.as_ref() {
@@ -38,7 +38,7 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 
 	let _reply = bot
 		.send_message(message.chat.id, text)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
 

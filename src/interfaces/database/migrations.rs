@@ -2,7 +2,7 @@ use anyhow::anyhow;
 use diesel::migration::MigrationVersion;
 use diesel::PgConnection;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
-use crate::utils::result::AnyResult;
+use crate::utils::anyhow_result::AnyResult;
 
 const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 

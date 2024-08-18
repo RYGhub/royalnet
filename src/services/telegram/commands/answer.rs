@@ -4,6 +4,7 @@ use rand::seq::SliceRandom;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
+use teloxide::types::ReplyParameters;
 use crate::services::telegram::commands::{CommandResult};
 
 // Cerchiamo di tenere bilanciate le tre colonne, o almeno le prime due.
@@ -84,7 +85,7 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 
 	let _reply = bot
 		.send_message(message.chat.id, answer.to_string())
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
 

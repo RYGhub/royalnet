@@ -3,7 +3,7 @@ use reqwest::Url;
 use teloxide::Bot;
 use teloxide::payloads::SendPhotoSetters;
 use teloxide::requests::Requester;
-use teloxide::types::{InputFile, Message};
+use teloxide::types::{InputFile, Message, ReplyParameters};
 use serde::Deserialize;
 use super::{CommandResult};
 
@@ -34,7 +34,7 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 
 	let _reply = bot
 		.send_photo(message.chat.id, input)
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare un gatto in risposta a questo messaggio.")?;
 

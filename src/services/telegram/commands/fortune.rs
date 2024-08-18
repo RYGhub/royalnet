@@ -6,6 +6,7 @@ use rand::seq::SliceRandom;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
+use teloxide::types::ReplyParameters;
 use crate::services::telegram::commands::{CommandResult};
 
 // Tutte le fortune devono essere positive, o almeno neutrali, per poter essere aggiunte.
@@ -194,7 +195,7 @@ impl Hash for FortuneKey {
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 	let today = chrono::Local::now().date_naive();
 
-	let author = message.from()
+	let author = message.from.as_ref()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 	let author_id = author.id;
 
@@ -221,7 +222,7 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 
 	let _reply = bot
 		.send_message(message.chat.id, fortune.to_string())
-		.reply_to_message_id(message.id)
+		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
 
