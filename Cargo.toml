@@ -101,10 +101,10 @@ optional = true
 
 [features]
 default = [
-    "interface_database",
+    # "interface_database",
     # "interface_stratz",
     # "service_brooch",
-    "service_telegram",
+    # "service_telegram",
 ]
 interface_database = [
     "diesel",
