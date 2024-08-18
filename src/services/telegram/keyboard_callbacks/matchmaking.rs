@@ -1,37 +1,24 @@
 use anyhow::Context;
+use diesel::PgConnection;
 use teloxide::Bot;
 use teloxide::payloads::AnswerCallbackQuerySetters;
 use teloxide::requests::Requester;
 use teloxide::types::CallbackQuery;
-use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingMessageTelegram, MatchmakingReply, RoyalnetUser};
+use crate::interfaces::database::models::matchmaking_choice::MatchmakingChoice;
+use crate::interfaces::database::models::matchmaking_messages_telegram::MatchmakingMessageTelegram;
+use crate::interfaces::database::models::matchmaking_replies::MatchmakingReply;
+use crate::interfaces::database::models::users::RoyalnetUser;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::services::telegram::keyboard_callbacks::KeyboardCallbackResult;
 use crate::services::telegram::utils::matchmaking::MatchmakingTelegramKeyboardCallback;
+use crate::utils::result::AnyResult;
 
-pub async fn handler(bot: &Bot, query: CallbackQuery, matchmaking_id: i32, callback: &MatchmakingTelegramKeyboardCallback, database: &DatabaseInterface) -> KeyboardCallbackResult {
-	log::info!("{:?}", &callback);
+pub async fn handler(bot: &Bot, query: CallbackQuery, matchmaking_id: i32, callback: MatchmakingTelegramKeyboardCallback, database: &DatabaseInterface) -> KeyboardCallbackResult {
+	let mut database = database.connect()
+		.context("Non è stato possibile connettersi al database RYG.")?;
 
-	let author = query.from;
-
-	let mut database = database.connect()?;
-
-	let royalnet_user: RoyalnetUser = {
-		use diesel::prelude::*;
-		use diesel::{ExpressionMethods, QueryDsl};
-		use crate::interfaces::database::schema::telegram::dsl::*;
-		use crate::interfaces::database::schema::users::dsl::*;
-		use crate::interfaces::database::models::RoyalnetUser;
-
-		telegram
-			.filter(telegram_id.eq::<i64>(
-				author.id.0.try_into()
-					.context("Non è stato possibile processare il tuo ID Telegram per via di un overflow.")?
-			))
-			.inner_join(users)
-			.select(RoyalnetUser::as_select())
-			.get_result(&mut database)
-			.context("Non è stato possibile recuperare il tuo utente Telegram dal database RYG.")?
-	};
+	let royalnet_user = RoyalnetUser::from_telegram_userid(&mut database, query.from.id)
+		.context("Non è stato possibile recuperare il tuo utente Telegram dal database RYG.")?;
 
 	match callback {
 		MatchmakingTelegramKeyboardCallback::Yes => {
@@ -68,4 +55,11 @@ pub async fn handler(bot: &Bot, query: CallbackQuery, matchmaking_id: i32, callb
 		.await?;
 
 	Ok(())
+}
+
+
+impl MatchmakingTelegramKeyboardCallback {
+	fn handle(database: &mut PgConnection, matchmaking_id ) -> AnyResult<MatchmakingReply> {
+		
+	}
 }

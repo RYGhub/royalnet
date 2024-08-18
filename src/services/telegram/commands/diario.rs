@@ -7,7 +7,8 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::Requester;
 use teloxide::types::{Message, ParseMode};
-use crate::interfaces::database::models::{Diario, DiarioAddition, RoyalnetUser};
+use crate::interfaces::database::models::diario::{Diario, DiarioAddition};
+use crate::interfaces::database::models::users::RoyalnetUser;
 use crate::services::telegram::commands::CommandResult;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::utils::escape::TelegramEscape;
@@ -108,7 +109,7 @@ pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: 
 		use diesel::{ExpressionMethods, QueryDsl};
 		use crate::interfaces::database::schema::telegram::dsl::*;
 		use crate::interfaces::database::schema::users::dsl::*;
-		use crate::interfaces::database::models::RoyalnetUser;
+		use crate::interfaces::database::models::users::RoyalnetUser;
 
 		telegram
 			.filter(telegram_id.eq::<i64>(

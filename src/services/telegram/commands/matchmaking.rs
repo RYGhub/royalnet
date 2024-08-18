@@ -5,7 +5,7 @@ use parse_datetime::parse_datetime_at_date;
 use regex::Regex;
 use teloxide::Bot;
 use teloxide::prelude::Message;
-use crate::interfaces::database::models::{MatchmakingEvent};
+use crate::interfaces::database::models::matchmaking_events::MatchmakingEvent;
 use crate::services::telegram::commands::CommandResult;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::utils::time::determine_wait;

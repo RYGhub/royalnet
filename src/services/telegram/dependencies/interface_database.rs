@@ -14,6 +14,6 @@ impl DatabaseInterface {
 
 	pub fn connect(&self) -> AnyResult<PgConnection> {
 		crate::interfaces::database::connect(&self.database_url)
-			.context("Impossibile connettersi al database RYG")
+			.context("Impossibile connettersi al database RYG.")
 	}
 }

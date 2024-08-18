@@ -4,13 +4,18 @@ use std::ops::Add;
 use std::str::FromStr;
 use anyhow::Context;
 use diesel::dsl::insert_into;
-use diesel::{PgConnection};
+use diesel::PgConnection;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::payloads::EditMessageTextSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{ChatId, InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup, Message, MessageId, ParseMode};
-use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingEvent, MatchmakingMessageTelegram, MatchmakingReply, RoyalnetUser, TelegramUser};
+use crate::interfaces::database::models::matchmaking_choice::MatchmakingChoice;
+use crate::interfaces::database::models::matchmaking_events::MatchmakingEvent;
+use crate::interfaces::database::models::matchmaking_messages_telegram::MatchmakingMessageTelegram;
+use crate::interfaces::database::models::matchmaking_replies::MatchmakingReply;
+use crate::interfaces::database::models::telegram::TelegramUser;
+use crate::interfaces::database::models::users::RoyalnetUser;
 use crate::utils::escape::TelegramEscape;
 use crate::utils::result::AnyResult;
 use crate::utils::write::TelegramWrite;
@@ -255,12 +260,12 @@ impl MatchmakingMessageTelegram {
 	pub async fn update(&self, database: &mut PgConnection, bot: &Bot) -> AnyResult<()> {
 		let text = Self::make_text_telegram(database, self.matchmaking_id)?;
 
-		bot
+		// Ignore failures due to the message not changing.
+		let _result = bot
 			.edit_message_text(ChatId(self.telegram_chat_id), MessageId(self.telegram_message_id), text)
 			.parse_mode(ParseMode::Html)
 			.reply_markup(Self::make_reply_markup_telegram(self.matchmaking_id))
-			.await
-			.context("Non è stato possibile aggiornare il messaggio Telegram rappresentante il matchmaking.")?;
+			.await;
 
 		Ok(())
 	}
@@ -308,10 +313,6 @@ pub enum MatchmakingTelegramKeyboardCallback {
 	DontWait,
 	Cant,
 	Wont,
-}
-
-impl MatchmakingTelegramKeyboardCallback {
-
 }
 
 impl FromStr for MatchmakingTelegramKeyboardCallback {

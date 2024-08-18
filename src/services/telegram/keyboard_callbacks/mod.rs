@@ -44,18 +44,35 @@ impl FromStr for KeyboardCallback {
 
 impl KeyboardCallback {
 	pub async fn handle_self(self, bot: Bot, query: CallbackQuery, database: Arc<DatabaseInterface>) -> KeyboardCallbackResult {
+		log::debug!("Handling keyboard callback...");
+
+		log::trace!(
+			"Handling {:?} in {:?} with {:?}...",
+			self,
+			&query.message.as_ref().map(|q| q.chat.id),
+			&query.id,
+		);
+
 		match self {
-			KeyboardCallback::Matchmaking(matchmaking_id, callback) => matchmaking::handler(&bot, query, matchmaking_id, &callback, &database).await
+			Self::Matchmaking(matchmaking_id, callback) => {
+				matchmaking::handler(&bot, query, matchmaking_id, callback, &database).await?
+			}
 		}
+
+		log::trace!("Successfully handled keyboard callback!");
+		Ok(())
 	}
 
 	pub async fn handle_unknown(bot: Bot, query: CallbackQuery) -> KeyboardCallbackResult {
+		log::warn!("Received an unknown keyboard callback: {:#?}", &query.data);
+
 		bot
 			.answer_callback_query(query.id)
 			.show_alert(true)
-			.text(format!("⚠️ Tasto non riconosciuto: {:?}", &query.data))
+			.text("⚠️ Il tasto che hai premuto non è più valido.")
 			.await?;
 
+		log::trace!("Successfully handled unknown keyboard callback!");
 		Ok(())
 	}
 }

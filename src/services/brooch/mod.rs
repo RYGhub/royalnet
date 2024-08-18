@@ -7,7 +7,7 @@ use reqwest::Url;
 use teloxide::prelude::*;
 use tokio::time::sleep;
 use crate::interfaces::database;
-use crate::interfaces::database::models::{BroochMatch};
+use crate::interfaces::database::models::brooch_match::BroochMatch;
 use crate::services::RoyalnetService;
 use crate::utils::result::AnyResult;
 use crate::interfaces::stratz::{Byte, guild_matches, Long, Short};
@@ -425,7 +425,7 @@ impl BroochService {
 		use diesel::prelude::*;
 		use diesel::{ExpressionMethods, QueryDsl};
 		use crate::interfaces::database::schema::{steam, users, telegram};
-		use crate::interfaces::database::models::TelegramUser;
+		use crate::interfaces::database::models::telegram::TelegramUser;
 
 		log::trace!("Getting player's Steam name...");
 
@@ -719,7 +719,7 @@ impl BroochService {
 	fn flag_match_id(&self, database: &mut PgConnection, match_id: Long) -> AnyResult<BroochMatch> {
 		use diesel::prelude::*;
 		use crate::interfaces::database::schema::brooch_match::dsl::*;
-		use crate::interfaces::database::models::{BroochMatch};
+		use crate::interfaces::database::models::{};
 
 		log::debug!("Flagging as parsed match id: {match_id}");
 

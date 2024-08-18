@@ -2,13 +2,14 @@
 // https://github.com/teloxide/teloxide/blob/master/crates/teloxide/examples/dispatching_features.rs
 
 use std::sync::Arc;
-use anyhow::{Context, Error, Result};
+use anyhow::{Context, Error};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::Message;
 use teloxide::utils::command::BotCommands;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
+use crate::utils::result::AnyResult;
 
 pub mod start;
 pub mod fortune;
@@ -22,6 +23,9 @@ pub mod cat;
 pub mod roll;
 pub mod diario;
 pub mod matchmaking;
+
+
+type CommandResult = AnyResult<()>;
 
 #[derive(Debug, Clone, PartialEq, Eq, BotCommands)]
 #[command(rename_rule = "lowercase")]
@@ -53,27 +57,32 @@ pub enum Command {
 }
 
 impl Command {
-	pub async fn set_commands(bot: &mut Bot) -> Result<()> {
+	/// Update the [commands menu](https://core.telegram.org/bots/features#commands) of the bot.
+	pub async fn set_commands(bot: &mut Bot) -> AnyResult<()> {
+		log::debug!("Setting bot commands...");
+
 		log::trace!("Determining bot commands...");
 		let commands = Self::bot_commands();
 
-		// This always returns true, for whatever reason
 		log::trace!("Setting commands: {commands:#?}");
-		let _ = bot.set_my_commands(commands).await
-			.context("Impossibile aggiornare l'elenco comandi del bot.")?;
+		bot.set_my_commands(commands).await
+			.context("Non è stato possibile aggiornare la lista comandi del bot.")?;
 
 		log::trace!("Setting commands successful!");
 		Ok(())
 	}
 
 	pub async fn handle_self(self, bot: Bot, message: Message, database: Arc<DatabaseInterface>) -> CommandResult {
+		log::debug!("Handling command...");
+
 		log::trace!(
-			"Handling command in {:?} with id {:?} and contents {:?}",
+			"Handling {:?} in {:?} with {:?}...",
+			self,
 			&message.chat.id,
 			&message.id,
-			self
 		);
 
+		log::trace!("Delegating command handling to handler...");
 		let result1 = match self {
 			Command::Start => start::handler(&bot, &message).await,
 			Command::Help(ref target) => match target.as_str() {
@@ -92,30 +101,49 @@ impl Command {
 			Command::Matchmaking(ref args) => matchmaking::handler(&bot, &message, args, &database).await,
 		};
 
+		log::trace!(
+			"Handling error in {:?} in {:?} with {:?}...",
+			self,
+			&message.chat.id,
+			&message.id,
+		);
+
+		log::trace!("Delegating error handling to error handler...");
 		let result2 = match result1.as_ref() {
 			Ok(_) => return Ok(()),
 			Err(e1) => self.handle_error(&bot, &message, e1).await
 		};
 
+		log::trace!(
+			"Handling fatal error in {:?} in {:?} with {:?}...",
+			self,
+			&message.chat.id,
+			&message.id,
+		);
+
 		let e1 = result1.unwrap_err();
 
+		log::trace!("Delegating fatal error handling to fatal error handler...");
 		match result2 {
 			Ok(_) => return Ok(()),
 			Err(e2) => self.handle_fatal(&bot, &message, &e1, &e2).await
 		}?;
 
+		log::trace!("Successfully handled command!");
 		Ok(())
 	}
 
 	pub async fn handle_unknown(bot: Bot, message: Message) -> CommandResult {
-		log::debug!("Received an unknown command or an invalid syntax.");
-
+		log::debug!("Received an unknown command or an invalid syntax: {:?}", message.text());
+		
+		log::trace!("Sending error message...");
 		let _reply = bot
 			.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
 			.reply_to_message_id(message.id)
 			.await
 			.context("Non è stato possibile inviare la risposta.")?;
 
+		log::trace!("Successfully handled unknown command!");
 		Ok(())
 	}
 
@@ -127,13 +155,15 @@ impl Command {
 			self,
 			error,
 		);
-
+		
+		log::trace!("Sending error message...");
 		let _reply = bot
 			.send_message(message.chat.id, format!("⚠️ {error}"))
 			.reply_to_message_id(message.id)
 			.await
 			.context("Non è stato possibile inviare la risposta.")?;
 
+		log::trace!("Successfully handled errored command!");
 		Ok(())
 	}
 
@@ -150,5 +180,3 @@ impl Command {
 		Ok(())
 	}
 }
-
-type CommandResult = Result<()>;

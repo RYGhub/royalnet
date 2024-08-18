@@ -3,7 +3,7 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message, ParseMode};
-use crate::interfaces::database::models::RoyalnetUser;
+use crate::interfaces::database::models::users::RoyalnetUser;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::utils::escape::TelegramEscape;
 use super::CommandResult;
@@ -19,7 +19,7 @@ pub async fn handler(bot: &Bot, message: &Message, database: &DatabaseInterface)
 		use diesel::{ExpressionMethods, QueryDsl};
 		use crate::interfaces::database::schema::telegram::dsl::*;
 		use crate::interfaces::database::schema::users::dsl::*;
-		use crate::interfaces::database::models::RoyalnetUser;
+		use crate::interfaces::database::models::users::RoyalnetUser;
 
 		telegram
 			.filter(telegram_id.eq::<i64>(

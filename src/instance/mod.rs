@@ -7,8 +7,14 @@ pub struct RoyalnetInstance {
 	#[cfg(feature = "service_telegram")]
 	service_telegram: crate::services::telegram::TelegramService,
 
+	#[cfg(not(feature = "service_telegram"))]
+	service_telegram: (),
+
 	#[cfg(feature = "service_brooch")]
 	service_brooch: crate::services::brooch::BroochService,
+
+	#[cfg(not(feature = "service_brooch"))]
+	service_brooch: (),
 }
 
 impl RoyalnetInstance {
@@ -88,7 +94,7 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_telegram"))]
-	fn get_telegram_future(service: &mut crate::services::telegram::TelegramService) -> impl Future<Output = ()> + '_ {
+	fn get_telegram_future(_service: &mut ()) -> impl Future<Output = ()> + '_ {
 		async {}
 	}
 
@@ -121,7 +127,7 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_brooch"))]
-	fn get_brooch_future(service: &mut crate::services::brooch::BroochService) -> impl Future<Output = ()> + '_ {
+	fn get_brooch_future(_service: &mut ()) -> impl Future<Output = ()> + '_ {
 		async {}
 	}
 }

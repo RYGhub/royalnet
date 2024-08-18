@@ -155,6 +155,7 @@ impl TelegramService {
 					database
 				]
 			)
+			.error_handler(LoggingErrorHandler::with_custom_text("Unhandled error"))
 			.build()
 	}
 
