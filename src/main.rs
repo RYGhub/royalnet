@@ -14,6 +14,7 @@ async fn main() {
     // Create instance
     let instance = RoyalnetInstance::new().await;
 
+    log::trace!("Starting {instance:?}!");
     instance.run().await;
 
     log::error!("No services configured.");

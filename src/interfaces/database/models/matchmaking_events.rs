@@ -20,13 +20,11 @@ impl MatchmakingEvent {
 	pub fn create(database: &mut PgConnection, text: &str, starts_at: &chrono::DateTime<chrono::Local>) -> AnyResult<Self> {
 		use crate::interfaces::database::query_prelude::*;
 
-		let addition = MatchmakingEventAddition {
-			text: text.to_string(),
-			starts_at: starts_at.naive_local(),
-		};
-
 		insert_into(matchmaking_events::table)
-			.values(&addition)
+			.values(&(
+				matchmaking_events::text.eq(text),
+				matchmaking_events::starts_at.eq(starts_at),
+			))
 			.get_result::<Self>(database)
 			.context("Non è stato possibile aggiungere il matchmaking al database RYG.")
 	}
