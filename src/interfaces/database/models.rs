@@ -97,7 +97,7 @@ pub struct MatchmakingEvent {
 	pub starts_at: chrono::NaiveDateTime,
 }
 
-#[derive(Debug, Clone, PartialEq, FromSqlRow, AsExpression)]
+#[derive(Debug, Clone, Copy, PartialEq, FromSqlRow, AsExpression)]
 #[diesel(sql_type = sql_types::MatchmakingChoice)]
 pub enum MatchmakingChoice {
 	Yes,

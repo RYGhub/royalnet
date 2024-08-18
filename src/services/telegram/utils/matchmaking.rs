@@ -1,14 +1,18 @@
 use std::cmp::Ordering;
 use std::fmt::{Error, Write};
+use std::ops::Add;
 use std::str::FromStr;
 use anyhow::Context;
-use diesel::PgConnection;
+use diesel::dsl::insert_into;
+use diesel::{PgConnection};
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
+use teloxide::payloads::EditMessageTextSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{ChatId, InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup, Message, MessageId, ParseMode};
 use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingEvent, MatchmakingMessageTelegram, MatchmakingReply, RoyalnetUser, TelegramUser};
 use crate::utils::escape::TelegramEscape;
+use crate::utils::result::AnyResult;
 use crate::utils::write::TelegramWrite;
 
 impl MatchmakingEvent {
@@ -62,7 +66,7 @@ impl TelegramWrite for (&MatchmakingEvent, &Vec<(MatchmakingReply, RoyalnetUser,
 }
 
 impl MatchmakingReply {
-	pub fn get_all_telegram(database: &mut PgConnection, matchmaking_id: i32) -> anyhow::Result<Vec<(MatchmakingReply, RoyalnetUser, TelegramUser)>> {
+	pub fn get_all_telegram(database: &mut PgConnection, matchmaking_id: i32) -> anyhow::Result<Vec<(Self, RoyalnetUser, TelegramUser)>> {
 		use diesel::prelude::*;
 		use crate::interfaces::database::schema::{matchmaking_replies, users, telegram};
 
@@ -70,8 +74,52 @@ impl MatchmakingReply {
 			.filter(matchmaking_replies::matchmaking_id.eq(matchmaking_id))
 			.inner_join(users::table.on(matchmaking_replies::user_id.eq(users::id)))
 			.inner_join(telegram::table.on(users::id.eq(telegram::user_id)))
-			.get_results::<(MatchmakingReply, RoyalnetUser, TelegramUser)>(database)
+			.get_results::<(Self, RoyalnetUser, TelegramUser)>(database)
 			.context("Non è stato possibile recuperare le risposte al matchmaking dal database RYG.")
+	}
+
+	pub fn put(database: &mut PgConnection, matchmaking_id: i32, user_id: i32, choice: MatchmakingChoice) -> AnyResult<Self> {
+		use diesel::prelude::*;
+		use diesel::upsert::*;
+		use crate::interfaces::database::schema::matchmaking_replies;
+
+		insert_into(matchmaking_replies::table)
+			.values(&Self {
+				matchmaking_id,
+				user_id,
+				choice,
+				late_mins: 0,
+			})
+			.on_conflict(on_constraint("matchmaking_replies_pkey"))
+			.do_update()
+			.set((
+				matchmaking_replies::choice.eq(choice),
+				matchmaking_replies::late_mins.eq(0i32),
+			))
+			.get_result::<Self>(database)
+			.context("Non è stato possibile inserire la risposta al matchmaking nel database RYG.")
+	}
+
+	pub fn put_delay(database: &mut PgConnection, matchmaking_id: i32, user_id: i32, late_mins: i32) -> AnyResult<Self> {
+		use diesel::prelude::*;
+		use diesel::upsert::*;
+		use crate::interfaces::database::schema::matchmaking_replies;
+
+		insert_into(matchmaking_replies::table)
+			.values(&Self {
+				matchmaking_id,
+				user_id,
+				choice: MatchmakingChoice::Late,
+				late_mins,
+			})
+			.on_conflict(on_constraint("matchmaking_replies_pkey"))
+			.do_update()
+			.set((
+				matchmaking_replies::choice.eq(MatchmakingChoice::Late),
+				matchmaking_replies::late_mins.eq(matchmaking_replies::late_mins.add(late_mins)),
+			))
+			.get_result::<Self>(database)
+			.context("Non è stato possibile aumentare il ritardo nella risposta nel database RYG.")
 	}
 }
 
@@ -118,7 +166,7 @@ impl TelegramWrite for (MatchmakingReply, RoyalnetUser, TelegramUser) {
 }
 
 impl MatchmakingMessageTelegram {
-	pub fn get_all(database: &mut PgConnection, matchmaking_id: i32) -> anyhow::Result<Vec<Self>> {
+	pub fn get_all(database: &mut PgConnection, matchmaking_id: i32) -> AnyResult<Vec<Self>> {
 		use diesel::prelude::*;
 		use crate::interfaces::database::schema::matchmaking_messages_telegram;
 
@@ -165,12 +213,18 @@ impl MatchmakingMessageTelegram {
 		])
 	}
 
-	pub async fn create(database: &mut PgConnection, matchmaking_id: i32, bot: &Bot, chat_id: ChatId, reply_to: Option<MessageId>) -> anyhow::Result<Self> {
+	fn make_text_telegram(database: &mut PgConnection, matchmaking_id: i32) -> AnyResult<String> {
 		let event = MatchmakingEvent::get(database, matchmaking_id)?;
 		let replies = MatchmakingReply::get_all_telegram(database, matchmaking_id)?;
 		let data = (&event, &replies);
 
-		let mut reply = bot.send_message(chat_id, data.to_string_telegram());
+		Ok(data.to_string_telegram())
+	}
+
+	pub async fn create(database: &mut PgConnection, matchmaking_id: i32, bot: &Bot, chat_id: ChatId, reply_to: Option<MessageId>) -> AnyResult<Self> {
+		let text = Self::make_text_telegram(database, matchmaking_id)?;
+
+		let mut reply = bot.send_message(chat_id, text);
 		reply = reply.parse_mode(ParseMode::Html);
 		reply = reply.reply_markup(Self::make_reply_markup_telegram(matchmaking_id));
 
@@ -198,7 +252,30 @@ impl MatchmakingMessageTelegram {
 		Ok(mmt)
 	}
 
-	pub async fn delete(self, database: &mut PgConnection, bot: &Bot) -> anyhow::Result<()> {
+	pub async fn update(&self, database: &mut PgConnection, bot: &Bot) -> AnyResult<()> {
+		let text = Self::make_text_telegram(database, self.matchmaking_id)?;
+
+		bot
+			.edit_message_text(ChatId(self.telegram_chat_id), MessageId(self.telegram_message_id), text)
+			.parse_mode(ParseMode::Html)
+			.reply_markup(Self::make_reply_markup_telegram(self.matchmaking_id))
+			.await
+			.context("Non è stato possibile aggiornare il messaggio Telegram rappresentante il matchmaking.")?;
+
+		Ok(())
+	}
+
+	pub async fn update_all(database: &mut PgConnection, matchmaking_id: i32, bot: &Bot) -> AnyResult<()> {
+		let messages = Self::get_all(database, matchmaking_id)?;
+
+		for message in messages {
+			message.update(database, bot).await?;
+		}
+
+		Ok(())
+	}
+
+	pub async fn delete(self, database: &mut PgConnection, bot: &Bot) -> AnyResult<()> {
 		{
 			use diesel::prelude::*;
 			use diesel::dsl::*;
@@ -231,6 +308,10 @@ pub enum MatchmakingTelegramKeyboardCallback {
 	DontWait,
 	Cant,
 	Wont,
+}
+
+impl MatchmakingTelegramKeyboardCallback {
+
 }
 
 impl FromStr for MatchmakingTelegramKeyboardCallback {
