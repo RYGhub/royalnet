@@ -82,54 +82,46 @@ impl Command {
 			&message.id,
 		);
 
-		log::trace!("Delegating command handling to handler...");
-		let result1 = match self {
-			Command::Start => start::handler(&bot, &message).await,
-			Command::Help(ref target) => match target.as_str() {
-				"" => help::handler_all(&bot, &message).await,
-				_ => help::handler_specific(&bot, &message, target).await,
-			},
-			Command::Fortune => fortune::handler(&bot, &message).await,
-			Command::Echo(ref text) => echo::handler(&bot, &message, text).await,
-			Command::WhoAmI => whoami::handler(&bot, &message, &database).await,
-			Command::Answer(_) => answer::handler(&bot, &message).await,
-			Command::Reminder(ref args) => reminder::handler(&bot, &message, args).await,
-			Command::Dog => dog::handler(&bot, &message).await,
-			Command::Cat => cat::handler(&bot, &message).await,
-      		Command::Roll(ref roll) => roll::handler(&bot, &message, roll).await,
-			Command::Diario(ref args) => diario::handler(&bot, &message, args, &database).await,
-			Command::Matchmaking(ref args) => matchmaking::handler(&bot, &message, args, &database).await,
-		};
+		// FIXME: Quick hack to fix single thread
+		log::trace!("Spawning task for future...");
+		let _task = tokio::spawn(async move {
+			log::trace!("Delegating command handling to handler...");
+			let result1 = match self {
+				Command::Start => start::handler(&bot, &message).await,
+				Command::Help(ref target) => match target.as_str() {
+					"" => help::handler_all(&bot, &message).await,
+					_ => help::handler_specific(&bot, &message, target).await,
+				},
+				Command::Fortune => fortune::handler(&bot, &message).await,
+				Command::Echo(ref text) => echo::handler(&bot, &message, text).await,
+				Command::WhoAmI => whoami::handler(&bot, &message, &database).await,
+				Command::Answer(_) => answer::handler(&bot, &message).await,
+				Command::Reminder(ref args) => reminder::handler(&bot, &message, args).await,
+				Command::Dog => dog::handler(&bot, &message).await,
+				Command::Cat => cat::handler(&bot, &message).await,
+				Command::Roll(ref roll) => roll::handler(&bot, &message, roll).await,
+				Command::Diario(ref args) => diario::handler(&bot, &message, args, &database).await,
+				Command::Matchmaking(ref args) => matchmaking::handler(&bot, &message, args, &database).await,
+			};
 
-		log::trace!(
-			"Handling error in {:?} in {:?} with {:?}...",
-			self,
-			&message.chat.id,
-			&message.id,
-		);
+			log::trace!("Delegating error handling to error handler...");
+			let result2 = match result1.as_ref() {
+				Ok(_) => return,
+				Err(e1) => self.handle_error(&bot, &message, e1).await
+			};
 
-		log::trace!("Delegating error handling to error handler...");
-		let result2 = match result1.as_ref() {
-			Ok(_) => return Ok(()),
-			Err(e1) => self.handle_error(&bot, &message, e1).await
-		};
+			let e1 = result1.unwrap_err();
 
-		log::trace!(
-			"Handling fatal error in {:?} in {:?} with {:?}...",
-			self,
-			&message.chat.id,
-			&message.id,
-		);
+			log::trace!("Delegating fatal error handling to fatal error handler...");
+			let _result3 = match result2 {
+				Ok(_) => return,
+				Err(e2) => self.handle_fatal(&bot, &message, &e1, &e2).await
+			};
 
-		let e1 = result1.unwrap_err();
+			log::trace!("Successfully handled command!");
+		});
 
-		log::trace!("Delegating fatal error handling to fatal error handler...");
-		match result2 {
-			Ok(_) => return Ok(()),
-			Err(e2) => self.handle_fatal(&bot, &message, &e1, &e2).await
-		}?;
-
-		log::trace!("Successfully handled command!");
+		log::trace!("Successfully spawned task!");
 		Ok(())
 	}
 

@@ -155,7 +155,9 @@ impl TelegramService {
 					database
 				]
 			)
-			.error_handler(LoggingErrorHandler::with_custom_text("Unhandled error"))
+			.default_handler(|upd| async move {
+				log::trace!("Unhandled update: {:?}", upd);
+			})
 			.build()
 	}
 
