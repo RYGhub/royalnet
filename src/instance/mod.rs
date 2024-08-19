@@ -95,6 +95,7 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_telegram"))]
+	#[allow(clippy::manual_async_fn)]
 	fn get_telegram_future(_service: &mut ()) -> impl Future<Output = ()> + '_ {
 		async {}
 	}
@@ -126,6 +127,7 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_brooch"))]
+	#[allow(clippy::manual_async_fn)]
 	fn get_brooch_future(_service: &mut ()) -> impl Future<Output = ()> + '_ {
 		async {}
 	}
