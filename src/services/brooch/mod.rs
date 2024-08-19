@@ -711,11 +711,6 @@ impl BroochService {
 			lines.push("".to_string());
 		}
 		
-		lines.push(format!(
-			"Partita <code>{}</code>",
-			match_id,
-		));
-		
 		Ok((match_id, Some(lines.join("\n"))))
 	}
 	
@@ -728,8 +723,8 @@ impl BroochService {
 			.link_preview_options(LinkPreviewOptions {
 				is_disabled: false,
 				url: Some(format!("https://stratz.com/matches/{}", match_id)),
-				prefer_small_media: true,
-				prefer_large_media: false,
+				prefer_small_media: false,
+				prefer_large_media: true,
 				show_above_text: false,
 			})
 			.await
