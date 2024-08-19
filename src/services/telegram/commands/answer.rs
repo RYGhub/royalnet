@@ -1,11 +1,12 @@
-use anyhow::{Context};
+use anyhow::Context;
 use rand::SeedableRng;
 use rand::seq::SliceRandom;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
 use teloxide::types::ReplyParameters;
-use crate::services::telegram::commands::{CommandResult};
+
+use crate::services::telegram::commands::CommandResult;
 
 // Cerchiamo di tenere bilanciate le tre colonne, o almeno le prime due.
 // Se avete un'idea ma metterebbe troppe opzioni in un'unica categoria, mettetela sotto commento.

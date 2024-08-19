@@ -1,21 +1,25 @@
+use std::sync::Arc;
+
+use anyhow::Context;
+use regex::Regex;
+use teloxide::dispatching::DefaultKey;
+use teloxide::dptree::entry;
+use teloxide::prelude::*;
+use teloxide::types::{Me, ParseMode};
+
+use commands::Command;
+use dependencies::interface_database::DatabaseInterface;
+use keyboard_callbacks::KeyboardCallback;
+
+use crate::utils::anyhow_result::{AnyError, AnyResult};
+use crate::utils::telegram_string::TelegramEscape;
+
+use super::RoyalnetService;
+
 mod commands;
 mod dependencies;
 mod keyboard_callbacks;
 mod utils;
-
-use std::sync::Arc;
-use anyhow::Context;
-use teloxide::prelude::*;
-use teloxide::types::{Me, ParseMode};
-use regex::Regex;
-use teloxide::dispatching::DefaultKey;
-use teloxide::dptree::entry;
-use commands::Command;
-use dependencies::interface_database::DatabaseInterface;
-use keyboard_callbacks::KeyboardCallback;
-use crate::utils::anyhow_result::{AnyError, AnyResult};
-use crate::utils::telegram_string::TelegramEscape;
-use super::RoyalnetService;
 
 #[derive(Debug, Clone)]
 pub struct TelegramService {

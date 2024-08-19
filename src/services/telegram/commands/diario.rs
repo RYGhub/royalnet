@@ -1,5 +1,6 @@
 use std::fmt::{Error, Write};
 use std::str::FromStr;
+
 use anyhow::Context;
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -7,6 +8,7 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::Requester;
 use teloxide::types::{Message, ParseMode, ReplyParameters};
+
 use crate::interfaces::database::models::Diario;
 use crate::interfaces::database::models::RoyalnetUser;
 use crate::services::telegram::commands::CommandResult;
@@ -122,7 +124,6 @@ pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: 
 	};
 
 	let entry = {
-		use crate::interfaces::database::query_prelude::*;
 		use schema::diario;
 
 		insert_into(diario::table)

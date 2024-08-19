@@ -3,8 +3,10 @@ use diesel::{AsExpression, FromSqlRow, Identifiable, Insertable, PgConnection, Q
 use diesel::deserialize::FromSql;
 use diesel::pg::{Pg, PgValue};
 use diesel::serialize::ToSql;
+
 use crate::newtype_sql;
 use crate::utils::anyhow_result::AnyResult;
+
 use super::super::schema::brooch_match;
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]

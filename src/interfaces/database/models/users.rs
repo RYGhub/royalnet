@@ -2,7 +2,9 @@ use diesel::{Identifiable, Insertable, Queryable, Selectable};
 use diesel::deserialize::FromSql;
 use diesel::pg::Pg;
 use diesel::serialize::ToSql;
+
 use crate::newtype_sql;
+
 use super::super::schema::users;
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]

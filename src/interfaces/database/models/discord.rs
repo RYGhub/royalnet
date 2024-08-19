@@ -1,6 +1,8 @@
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 use diesel::pg::Pg;
+
 use crate::newtype_sql;
+
 use super::super::schema::discord;
 use super::users::{RoyalnetUser, RoyalnetUserId};
 

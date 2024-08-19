@@ -3,9 +3,11 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message, ParseMode, ReplyParameters};
+
 use crate::interfaces::database::models::RoyalnetUser;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::utils::telegram_string::TelegramEscape;
+
 use super::CommandResult;
 
 pub async fn handler(bot: &Bot, message: &Message, database: &DatabaseInterface) -> CommandResult {

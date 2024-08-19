@@ -1,6 +1,7 @@
 use anyhow::Context;
 use diesel::PgConnection;
 use teloxide::types::UserId;
+
 use crate::interfaces::database::models::RoyalnetUser;
 use crate::utils::anyhow_result::AnyResult;
 

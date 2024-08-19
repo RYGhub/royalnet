@@ -4,7 +4,8 @@ use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{BotCommand, Message, ParseMode, ReplyParameters};
 use teloxide::utils::command::BotCommands;
-use super::{CommandResult};
+
+use super::CommandResult;
 
 pub async fn handler_all(bot: &Bot, message: &Message) -> CommandResult {
 	let descriptions = super::Command::descriptions().to_string();

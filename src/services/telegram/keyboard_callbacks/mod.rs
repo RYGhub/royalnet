@@ -1,14 +1,16 @@
-mod matchmaking;
-
 use std::str::FromStr;
 use std::sync::Arc;
+
 use anyhow::Context;
 use teloxide::Bot;
 use teloxide::payloads::AnswerCallbackQuerySetters;
 use teloxide::prelude::CallbackQuery;
 use teloxide::requests::Requester;
+
 use crate::interfaces::database::models::{MatchmakingId, MatchmakingTelegramKeyboardCallback};
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
+
+mod matchmaking;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum KeyboardCallback {

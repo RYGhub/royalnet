@@ -1,12 +1,12 @@
 use anyhow::Context;
 use reqwest::Url;
+use serde::Deserialize;
 use teloxide::Bot;
 use teloxide::payloads::SendPhotoSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{InputFile, Message, ReplyParameters};
-use serde::Deserialize;
-use super::{CommandResult};
 
+use super::CommandResult;
 
 const DOG_API_URL: &str = "https://dog.ceo/api/breeds/image/random";
 

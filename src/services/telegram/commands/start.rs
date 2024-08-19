@@ -3,8 +3,8 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message, ReplyParameters};
-use super::{CommandResult};
 
+use super::CommandResult;
 
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 	let author = message.from.as_ref()

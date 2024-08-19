@@ -1,9 +1,12 @@
 use std::ops::Add;
+
 use anyhow::Context;
 use diesel::{Associations, Identifiable, Insertable, PgConnection, Queryable, Selectable};
 use diesel::pg::Pg;
+
 use crate::interfaces::database::models::{MatchmakingId, RoyalnetUserId, TelegramUser};
 use crate::utils::anyhow_result::AnyResult;
+
 use super::matchmaking_choice::MatchmakingChoice;
 use super::matchmaking_events::MatchmakingEvent;
 use super::super::schema::matchmaking_replies;
@@ -24,8 +27,7 @@ pub struct MatchmakingReply {
 
 impl MatchmakingReply {
 	pub fn get_all_telegram(database: &mut PgConnection, matchmaking_id: MatchmakingId) -> AnyResult<Vec<(Self, RoyalnetUser, TelegramUser)>> {
-		use crate::interfaces::database::query_prelude::*;
-		use schema::{matchmaking_replies, users, telegram};
+		use schema::{matchmaking_replies, telegram, users};
 
 		matchmaking_replies::table
 			.filter(matchmaking_replies::matchmaking_id.eq(matchmaking_id))
@@ -36,7 +38,6 @@ impl MatchmakingReply {
 	}
 
 	pub fn set(database: &mut PgConnection, matchmaking_id: MatchmakingId, user_id: RoyalnetUserId, choice: MatchmakingChoice) -> AnyResult<Self> {
-		use crate::interfaces::database::query_prelude::*;
 		use schema::matchmaking_replies;
 
 		insert_into(matchmaking_replies::table)
@@ -57,7 +58,6 @@ impl MatchmakingReply {
 	}
 
 	pub fn add_late_minutes(database: &mut PgConnection, matchmaking_id: MatchmakingId, user_id: RoyalnetUserId, increase_by: i32) -> AnyResult<Self> {
-		use crate::interfaces::database::query_prelude::*;
 		use schema::matchmaking_replies;
 
 		insert_into(matchmaking_replies::table)

@@ -1,11 +1,12 @@
-use anyhow::{Context};
+use anyhow::Context;
 use rand::{Rng, SeedableRng};
+use regex::Regex;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
-use crate::services::telegram::commands::{CommandResult};
-use regex::Regex;
 use teloxide::types::ReplyParameters;
+
+use crate::services::telegram::commands::CommandResult;
 
 pub async fn handler(bot: &Bot, message: &Message, roll: &str) -> CommandResult {
     let mut rng = rand::rngs::SmallRng::from_entropy();

@@ -1,5 +1,6 @@
 use std::hash::{Hash, Hasher};
-use anyhow::{Context};
+
+use anyhow::Context;
 use chrono::Datelike;
 use rand::SeedableRng;
 use rand::seq::SliceRandom;
@@ -7,7 +8,8 @@ use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::{Message, Requester};
 use teloxide::types::ReplyParameters;
-use crate::services::telegram::commands::{CommandResult};
+
+use crate::services::telegram::commands::CommandResult;
 
 // Tutte le fortune devono essere positive, o almeno neutrali, per poter essere aggiunte.
 const FORTUNES: [&str; 164] = [

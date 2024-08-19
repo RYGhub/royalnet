@@ -1,20 +1,22 @@
 use std::cmp::PartialEq;
 use std::time::Duration;
+
 use anyhow::Context;
 use chrono::{DateTime, Local, TimeDelta, TimeZone};
-use diesel::{PgConnection};
+use diesel::PgConnection;
 use reqwest::Url;
 use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{ChatId, LinkPreviewOptions, Message};
 use tokio::time::sleep;
+
 use crate::interfaces::database;
 use crate::interfaces::database::models::{BroochMatch, DotaMatchId, TelegramUserId};
-use crate::services::RoyalnetService;
-use crate::utils::anyhow_result::AnyResult;
 use crate::interfaces::stratz::{Byte, guild_matches, Short};
 use crate::interfaces::stratz::guild_matches::{GameMode, Lane, LobbyType, Match, Player, Role, Steam};
+use crate::services::RoyalnetService;
+use crate::utils::anyhow_result::AnyResult;
 use crate::utils::telegram_string::TelegramEscape;
 
 #[derive(Debug, Clone)]
@@ -434,7 +436,7 @@ impl BroochService {
 	fn get_player_telegram_id(&self, database: &mut PgConnection, player_steam: Steam) -> AnyResult<Option<TelegramUserId>> {
 		use diesel::prelude::*;
 		use diesel::{ExpressionMethods, QueryDsl};
-		use crate::interfaces::database::schema::{steam, users, telegram};
+		use crate::interfaces::database::schema::{steam, telegram, users};
 		use crate::interfaces::database::models::TelegramUser;
 
 		log::trace!("Getting player's Steam name...");

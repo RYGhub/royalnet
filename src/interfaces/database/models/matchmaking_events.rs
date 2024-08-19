@@ -3,8 +3,10 @@ use diesel::{AsExpression, FromSqlRow, Identifiable, Insertable, PgConnection, Q
 use diesel::deserialize::FromSql;
 use diesel::pg::{Pg, PgValue};
 use diesel::serialize::ToSql;
+
 use crate::newtype_sql;
 use crate::utils::anyhow_result::AnyResult;
+
 use super::super::schema::matchmaking_events;
 
 #[derive(Debug, Clone, PartialEq, Identifiable, Queryable, Selectable, Insertable)]
@@ -19,8 +21,6 @@ pub struct MatchmakingEvent {
 impl MatchmakingEvent {
 	/// Create a new [MatchmakingEvent].
 	pub fn create(database: &mut PgConnection, text: &str, starts_at: &chrono::DateTime<chrono::Local>) -> AnyResult<Self> {
-		use crate::interfaces::database::query_prelude::*;
-
 		insert_into(matchmaking_events::table)
 			.values(&(
 				matchmaking_events::text.eq(text),
@@ -32,8 +32,6 @@ impl MatchmakingEvent {
 
 	/// Retrieve a [MatchmakingEvent] from the database, given its [MatchmakingId].
 	pub fn get(database: &mut PgConnection, matchmaking_id: MatchmakingId) -> AnyResult<Self> {
-		use crate::interfaces::database::query_prelude::*;
-
 		matchmaking_events::table
 			.filter(matchmaking_events::id.eq(matchmaking_id.0))
 			.get_result::<Self>(database)

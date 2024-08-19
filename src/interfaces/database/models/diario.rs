@@ -1,7 +1,9 @@
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 use diesel::pg::Pg;
+
 use crate::interfaces::database::models::users::RoyalnetUserId;
 use crate::newtype_sql;
+
 use super::super::schema::diario;
 
 #[derive(Debug, Clone, PartialEq, Insertable)]

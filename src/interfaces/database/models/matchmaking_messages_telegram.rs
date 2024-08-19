@@ -1,7 +1,9 @@
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 use diesel::pg::Pg;
+
 use crate::interfaces::database::models::MatchmakingId;
 use crate::interfaces::database::models::telegram::{TelegramChatId, TelegramMessageId};
+
 use super::matchmaking_events::MatchmakingEvent;
 use super::super::schema::matchmaking_messages_telegram;
 
@@ -20,19 +22,23 @@ pub struct MatchmakingMessageTelegram {
 pub(crate) mod telegram_ext {
 	use std::cmp::Ordering;
 	use std::str::FromStr;
+
 	use anyhow::Context;
 	use chrono::DateTime;
 	use chrono::Local;
-	use matchmaking_messages_telegram::star;
-	use super::*;
 	use diesel::PgConnection;
-	use teloxide::payloads::SendMessageSetters;
 	use teloxide::payloads::EditMessageTextSetters;
+	use teloxide::payloads::SendMessageSetters;
 	use teloxide::requests::Requester;
 	use teloxide::types::ParseMode;
+
+	use matchmaking_messages_telegram::star;
+
 	use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingId, MatchmakingReply, RoyalnetUser, TelegramUser};
 	use crate::utils::anyhow_result::AnyResult;
 	use crate::utils::telegram_string::TelegramEscape;
+
+	use super::*;
 
 	#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 	pub enum MatchmakingTelegramKeyboardCallback {
