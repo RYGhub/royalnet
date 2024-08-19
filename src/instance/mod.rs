@@ -71,7 +71,6 @@ impl RoyalnetInstance {
 	#[cfg(not(feature = "interface_database"))]
 	fn run_pending_migrations() {
 		log::warn!("Database automigration is not compiled in.");
-		return
 	}
 
 	#[cfg(feature = "service_telegram")]
