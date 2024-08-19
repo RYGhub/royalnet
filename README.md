@@ -8,6 +8,17 @@ Fun software suite for the RYG community
 
 </div>
 
+## Branches and tags
+
+The `main` branch represents the current state of the bot.
+
+New features are developed on `feature/*` branches for the development of specific features; these are to be squashed as a single commit onto the `main` branch.
+
+Pushing a `v*` tag will automatically trigger the build of a new Docker image for the tagged commit.  
+Please use annotated tags (`git tag -a`) if possible!
+
+Old Royalnet versions are available for reference on the `historic/*/*` orphan branches.
+
 ## Quotes
 
 > I can't believe I'm doing this again.
