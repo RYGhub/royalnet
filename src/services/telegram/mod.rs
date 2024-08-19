@@ -11,7 +11,7 @@ use commands::Command;
 use dependencies::interface_database::DatabaseInterface;
 use keyboard_callbacks::KeyboardCallback;
 
-use crate::utils::anyhow_result::{AnyError, AnyResult};
+use crate::utils::anyhow_result::AnyResult;
 use crate::utils::telegram_string::TelegramEscape;
 
 use super::RoyalnetService;
@@ -102,7 +102,7 @@ impl TelegramService {
 			.context("Aggiornamento dei comandi del bot non riuscito.")
 	}
 	
-	fn dispatcher(&mut self) -> Dispatcher<Bot, AnyError, DefaultKey> {
+	fn dispatcher(&mut self) -> Dispatcher<Bot, anyhow::Error, DefaultKey> {
 		log::debug!("Building dispatcher...");
 		
 		let bot_name = self.me.user.username.as_ref().unwrap();
