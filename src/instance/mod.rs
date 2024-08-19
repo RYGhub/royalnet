@@ -1,4 +1,6 @@
 use std::future::Future;
+
+#[allow(unused_imports)]
 use crate::services::RoyalnetService;
 
 pub(self) mod config;
