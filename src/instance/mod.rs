@@ -86,10 +86,8 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_telegram"))]
-	async fn setup_telegram_service() -> () {
+	async fn setup_telegram_service() {
 		log::warn!("Telegram service is not compiled in.");
-
-		()
 	}
 
 	#[cfg(feature = "service_telegram")]
@@ -119,10 +117,8 @@ impl RoyalnetInstance {
 	}
 
 	#[cfg(not(feature = "service_brooch"))]
-	async fn setup_brooch_service() -> () {
+	async fn setup_brooch_service() {
 		log::warn!("Brooch service is not compiled in.");
-
-		()
 	}
 
 	#[cfg(feature = "service_brooch")]
