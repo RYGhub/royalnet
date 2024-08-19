@@ -19,7 +19,6 @@ pub struct BroochMatch {
 impl BroochMatch {
 	pub fn is_flagged(database: &mut PgConnection, match_id: DotaMatchId) -> AnyResult<bool> {
 		use crate::interfaces::database::query_prelude::*;
-		use schema::brooch_match;
 		
 		log::trace!("Checking if {match_id:?} is flagged...");
 		
@@ -35,7 +34,6 @@ impl BroochMatch {
 	
 	pub fn flag(database: &mut PgConnection, match_id: DotaMatchId) -> AnyResult<Self> {
 		use crate::interfaces::database::query_prelude::*;
-		use schema::brooch_match;
 		
 		log::debug!("Flagging {match_id:?} as parsed...");
 		

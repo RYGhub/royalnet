@@ -8,7 +8,6 @@ use crate::utils::anyhow_result::AnyResult;
 impl RoyalnetUser {
 	pub fn from_telegram_userid(database: &mut PgConnection, user_id: UserId) -> AnyResult<Self> {
 		use crate::interfaces::database::query_prelude::*;
-		use schema::{telegram, users};
 		
 		log::trace!("Retrieving RoyalnetUser with {user_id:?}");
 		

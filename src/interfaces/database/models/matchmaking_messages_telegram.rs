@@ -20,26 +20,22 @@ pub struct MatchmakingMessageTelegram {
 
 #[cfg(feature = "service_telegram")]
 pub(crate) mod telegram_ext {
-	use std::cmp::Ordering;
 	use std::str::FromStr;
-
+	
 	use anyhow::Context;
-	use chrono::DateTime;
 	use chrono::Local;
 	use diesel::PgConnection;
 	use teloxide::payloads::EditMessageTextSetters;
 	use teloxide::payloads::SendMessageSetters;
 	use teloxide::requests::Requester;
 	use teloxide::types::ParseMode;
-
-	use matchmaking_messages_telegram::star;
-
+	
 	use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingId, MatchmakingReply, RoyalnetUser, TelegramUser};
 	use crate::utils::anyhow_result::AnyResult;
 	use crate::utils::telegram_string::TelegramEscape;
-
+	
 	use super::*;
-
+	
 	#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 	pub enum MatchmakingTelegramKeyboardCallback {
 		Yes,
@@ -106,8 +102,7 @@ pub(crate) mod telegram_ext {
 	impl MatchmakingMessageTelegram {
 		/// Get all the [MatchmakingMessageTelegram] for a specific [MatchmakingId].
 		pub fn get_all(database: &mut PgConnection, matchmaking_id: MatchmakingId) -> AnyResult<Vec<Self>> {
-			use diesel::prelude::*;
-			use crate::interfaces::database::schema::matchmaking_messages_telegram;
+			use crate::interfaces::database::query_prelude::*;
 			
 			matchmaking_messages_telegram::table
 				.filter(matchmaking_messages_telegram::matchmaking_id.eq(matchmaking_id.0))

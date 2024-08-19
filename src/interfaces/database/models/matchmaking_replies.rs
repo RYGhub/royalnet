@@ -27,7 +27,7 @@ pub struct MatchmakingReply {
 
 impl MatchmakingReply {
 	pub fn get_all_telegram(database: &mut PgConnection, matchmaking_id: MatchmakingId) -> AnyResult<Vec<(Self, RoyalnetUser, TelegramUser)>> {
-		use schema::{matchmaking_replies, telegram, users};
+		use crate::interfaces::database::query_prelude::*;
 		
 		matchmaking_replies::table
 			.filter(matchmaking_replies::matchmaking_id.eq(matchmaking_id))
@@ -38,7 +38,7 @@ impl MatchmakingReply {
 	}
 	
 	pub fn set(database: &mut PgConnection, matchmaking_id: MatchmakingId, user_id: RoyalnetUserId, choice: MatchmakingChoice) -> AnyResult<Self> {
-		use schema::matchmaking_replies;
+		use crate::interfaces::database::query_prelude::*;
 		
 		insert_into(matchmaking_replies::table)
 			.values(&Self {
@@ -58,7 +58,7 @@ impl MatchmakingReply {
 	}
 	
 	pub fn add_late_minutes(database: &mut PgConnection, matchmaking_id: MatchmakingId, user_id: RoyalnetUserId, increase_by: i32) -> AnyResult<Self> {
-		use schema::matchmaking_replies;
+		use crate::interfaces::database::query_prelude::*;
 		
 		insert_into(matchmaking_replies::table)
 			.values(&Self {

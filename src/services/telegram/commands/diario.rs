@@ -125,7 +125,7 @@ pub async fn handler(bot: &Bot, message: &Message, args: &DiarioArgs, database: 
 	};
 	
 	let entry = {
-		use schema::diario;
+		use crate::interfaces::database::query_prelude::*;
 		
 		insert_into(diario::table)
 			.values(&(
