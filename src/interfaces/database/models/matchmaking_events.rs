@@ -29,7 +29,7 @@ impl MatchmakingEvent {
 			.get_result::<Self>(database)
 			.context("Non è stato possibile aggiungere il matchmaking al database RYG.")
 	}
-
+	
 	/// Retrieve a [MatchmakingEvent] from the database, given its [MatchmakingId].
 	pub fn get(database: &mut PgConnection, matchmaking_id: MatchmakingId) -> AnyResult<Self> {
 		matchmaking_events::table
@@ -37,7 +37,7 @@ impl MatchmakingEvent {
 			.get_result::<Self>(database)
 			.context("Non è stato possibile recuperare il matchmaking dal database RYG.")
 	}
-
+	
 	pub fn has_started(&self) -> bool {
 		self.starts_at.lt(&chrono::Local::now().naive_utc())
 	}

@@ -1,37 +1,37 @@
 query Query($guild_id: Int!) {
-  guild(id: $guild_id) {
-    id
-    matches(take: 10) {
-      id
-      lobbyType
-      gameMode
-      durationSeconds
-      endDateTime
-      players(steamAccountId: null) {
-        isRadiant
-        isVictory
-        imp
-        kills
-        deaths
-        assists
-        lane
-        role
-        hero {
-          displayName
-        }
-        steamAccount {
-          id
-          name
-        }
-        stats {
-          matchPlayerBuffEvent {
-            time
-            itemId
-            abilityId
-            stackCount
-          }
-        }
-      }
-    }
-  }
+	guild(id: $guild_id) {
+		id
+		matches(take: 10) {
+			id
+			lobbyType
+			gameMode
+			durationSeconds
+			endDateTime
+			players(steamAccountId: null) {
+				isRadiant
+				isVictory
+				imp
+				kills
+				deaths
+				assists
+				lane
+				role
+				hero {
+					displayName
+				}
+				steamAccount {
+					id
+					name
+				}
+				stats {
+					matchPlayerBuffEvent {
+						time
+						itemId
+						abilityId
+						stackCount
+					}
+				}
+			}
+		}
+	}
 }

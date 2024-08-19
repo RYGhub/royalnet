@@ -28,7 +28,7 @@ pub struct MatchmakingReply {
 impl MatchmakingReply {
 	pub fn get_all_telegram(database: &mut PgConnection, matchmaking_id: MatchmakingId) -> AnyResult<Vec<(Self, RoyalnetUser, TelegramUser)>> {
 		use schema::{matchmaking_replies, telegram, users};
-
+		
 		matchmaking_replies::table
 			.filter(matchmaking_replies::matchmaking_id.eq(matchmaking_id))
 			.inner_join(users::table.on(matchmaking_replies::user_id.eq(users::id)))
@@ -36,10 +36,10 @@ impl MatchmakingReply {
 			.get_results::<(Self, RoyalnetUser, TelegramUser)>(database)
 			.context("Non è stato possibile recuperare le risposte al matchmaking dal database RYG.")
 	}
-
+	
 	pub fn set(database: &mut PgConnection, matchmaking_id: MatchmakingId, user_id: RoyalnetUserId, choice: MatchmakingChoice) -> AnyResult<Self> {
 		use schema::matchmaking_replies;
-
+		
 		insert_into(matchmaking_replies::table)
 			.values(&Self {
 				matchmaking_id,
@@ -56,10 +56,10 @@ impl MatchmakingReply {
 			.get_result::<Self>(database)
 			.context("Non è stato possibile inserire la risposta al matchmaking nel database RYG.")
 	}
-
+	
 	pub fn add_late_minutes(database: &mut PgConnection, matchmaking_id: MatchmakingId, user_id: RoyalnetUserId, increase_by: i32) -> AnyResult<Self> {
 		use schema::matchmaking_replies;
-
+		
 		insert_into(matchmaking_replies::table)
 			.values(&Self {
 				matchmaking_id,

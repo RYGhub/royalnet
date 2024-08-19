@@ -34,13 +34,13 @@ pub async fn query(client: &reqwest::Client, url: Url, guild_id: i64) -> QueryRe
 	log::debug!("Querying guild_matches of guild {guild_id}...");
 	log::trace!("Using client: {client:?}");
 	log::trace!("Using API at: {url:?}");
-
+	
 	log::trace!("Configuring query variables...");
 	let vars = query::Variables { guild_id };
-
+	
 	log::trace!("Building query...");
 	let body = Query::build_query(vars);
-
+	
 	log::trace!("Making request...");
 	let response = client.post(url)
 		.json(&body)
@@ -50,6 +50,6 @@ pub async fn query(client: &reqwest::Client, url: Url, guild_id: i64) -> QueryRe
 		.json::<QueryResponse>()
 		.await
 		.map_err(|_| Error::Parsing)?;
-
+	
 	Ok(response)
 }

@@ -4,7 +4,7 @@
 #[cfg(feature = "interface_database")]
 pub mod interface_database {
 	use micronfig::config;
-
+	
 	config! {
 		DATABASE_AUTOMIGRATE: String > bool,
 		DATABASE_URL: String,
@@ -14,7 +14,7 @@ pub mod interface_database {
 #[cfg(feature = "service_telegram")]
 pub mod service_telegram {
 	use micronfig::config;
-
+	
 	config! {
 		TELEGRAM_DATABASE_URL: String,
 		TELEGRAM_BOT_TOKEN: String,
@@ -25,7 +25,7 @@ pub mod service_telegram {
 #[cfg(feature = "service_brooch")]
 pub mod brooch {
 	use micronfig::config;
-
+	
 	#[allow(unused_qualifications)]
 	config! {
 		BROOCH_DATABASE_URL: String,
@@ -66,7 +66,7 @@ impl From<i64> for TimeDeltaConversionHack {
 
 impl TryFrom<TimeDeltaConversionHack> for chrono::TimeDelta {
 	type Error = ();
-
+	
 	fn try_from(value: TimeDeltaConversionHack) -> Result<Self, Self::Error> {
 		Self::new(value.0, 0).ok_or(())
 	}

@@ -174,21 +174,21 @@ const FORTUNES: [&str; 164] = [
 	"🍻 Oggi una birra ti ridarà una vita!",
 	"🎶 Oggi Hatsune Miku si nasconderà nella tua Wi-Fi!",
 	"🚽 Oggi delle telecamere combatteranno contro dei gabinetti!",
-  	"🌟 Oggi verrà scoperta una galassia grande quanto qualcuno della tua famiglia!",
-  	"🎶 Oggi Rick non rinuncerà mai a te!",
-  	"🏚 Oggi ristrutturerai una villa completando dei minigiochi match-3!",
+	"🌟 Oggi verrà scoperta una galassia grande quanto qualcuno della tua famiglia!",
+	"🎶 Oggi Rick non rinuncerà mai a te!",
+	"🏚 Oggi ristrutturerai una villa completando dei minigiochi match-3!",
 ];
 
 struct FortuneKey {
 	today: chrono::NaiveDate,
-	author_id: teloxide::types::UserId
+	author_id: teloxide::types::UserId,
 }
 
 impl Hash for FortuneKey {
 	fn hash<H: Hasher>(&self, state: &mut H) {
 		let days: i32 = self.today.num_days_from_ce();
 		let id: u64 = self.author_id.0;
-
+		
 		state.write_i32(days);
 		state.write_u64(id);
 	}
@@ -196,13 +196,13 @@ impl Hash for FortuneKey {
 
 pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 	let today = chrono::Local::now().date_naive();
-
+	
 	let author = message.from.as_ref()
 		.context("Non è stato possibile determinare chi ha inviato questo comando.")?;
 	let author_id = author.id;
-
-	let key = FortuneKey {today, author_id};
-
+	
+	let key = FortuneKey { today, author_id };
+	
 	let mut hasher = std::hash::DefaultHasher::new();
 	key.hash(&mut hasher);
 	let hash = hasher.finish()
@@ -216,17 +216,17 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 		anyhow::bail!("Non è stato possibile determinare il tuo oroscopo.");
 	}
 	let hash = hash.unwrap();
-
+	
 	let mut rng = rand::rngs::SmallRng::from_seed(hash);
-
+	
 	let fortune = FORTUNES.choose(&mut rng)
 		.context("Non è stato possibile selezionare il tuo oroscopo.")?;
-
+	
 	let _reply = bot
 		.send_message(message.chat.id, fortune.to_string())
 		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare la risposta.")?;
-
+	
 	Ok(())
 }

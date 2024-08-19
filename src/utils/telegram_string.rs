@@ -2,8 +2,9 @@ use std::fmt::{Error, Write};
 
 pub trait TelegramWrite {
 	fn write_telegram<T>(&self, f: &mut T) -> Result<(), Error>
-		where T: Write;
-
+	where
+		T: Write;
+	
 	fn to_string_telegram(&self) -> String {
 		let mut result = String::new();
 		self.write_telegram(&mut result).unwrap();
@@ -16,7 +17,8 @@ pub trait TelegramEscape {
 }
 
 impl<T> TelegramEscape for T
-where String: From<T>
+where
+	String: From<T>,
 {
 	fn escape_telegram_html(self) -> String {
 		String::from(self)

@@ -9,9 +9,9 @@ impl RoyalnetUser {
 	pub fn from_telegram_userid(database: &mut PgConnection, user_id: UserId) -> AnyResult<Self> {
 		use crate::interfaces::database::query_prelude::*;
 		use schema::{telegram, users};
-
+		
 		log::trace!("Retrieving RoyalnetUser with {user_id:?}");
-
+		
 		telegram::table
 			.filter(telegram::telegram_id.eq::<i64>(
 				user_id.0.try_into()

@@ -34,7 +34,9 @@ type CommandResult = AnyResult<()>;
 pub enum Command {
 	#[command(description = "Invia messaggio di introduzione.")]
 	Start,
-	#[command(description = "Visualizza l'elenco dei comandi disponibili, o mostra informazioni su uno specifico comando.")]
+	#[command(
+		description = "Visualizza l'elenco dei comandi disponibili, o mostra informazioni su uno specifico comando."
+	)]
 	Help(String),
 	#[command(description = "Mostra il tuo oroscopo di oggi.")]
 	Fortune,
@@ -62,28 +64,28 @@ impl Command {
 	/// Update the [commands menu](https://core.telegram.org/bots/features#commands) of the bot.
 	pub async fn set_commands(bot: &mut Bot) -> AnyResult<()> {
 		log::debug!("Setting bot commands...");
-
+		
 		log::trace!("Determining bot commands...");
 		let commands = Self::bot_commands();
-
+		
 		log::trace!("Setting commands: {commands:#?}");
 		bot.set_my_commands(commands).await
 			.context("Non è stato possibile aggiornare la lista comandi del bot.")?;
-
+		
 		log::trace!("Setting commands successful!");
 		Ok(())
 	}
-
+	
 	pub async fn handle_self(self, bot: Bot, message: Message, database: Arc<DatabaseInterface>) -> CommandResult {
 		log::debug!("Handling command...");
-
+		
 		log::trace!(
 			"Handling {:?} in {:?} with {:?}...",
 			self,
 			&message.chat.id,
 			&message.id,
 		);
-
+		
 		// FIXME: Quick hack to fix single thread
 		log::trace!("Spawning task for future...");
 		let _task = tokio::spawn(async move {
@@ -105,28 +107,28 @@ impl Command {
 				Command::Diario(ref args) => diario::handler(&bot, &message, args, &database).await,
 				Command::Matchmaking(ref args) => matchmaking::handler(&bot, &message, args, &database).await,
 			};
-
+			
 			log::trace!("Delegating error handling to error handler...");
 			let result2 = match result1.as_ref() {
 				Ok(_) => return,
 				Err(e1) => self.handle_error(&bot, &message, e1).await
 			};
-
+			
 			let e1 = result1.unwrap_err();
-
+			
 			log::trace!("Delegating fatal error handling to fatal error handler...");
 			let _result3 = match result2 {
 				Ok(_) => return,
 				Err(e2) => self.handle_fatal(&bot, &message, &e1, &e2).await
 			};
-
+			
 			log::trace!("Successfully handled command!");
 		});
-
+		
 		log::trace!("Successfully spawned task!");
 		Ok(())
 	}
-
+	
 	pub async fn handle_unknown(bot: Bot, message: Message) -> CommandResult {
 		log::debug!("Received an unknown command or an invalid syntax: {:?}", message.text());
 		
@@ -136,11 +138,11 @@ impl Command {
 			.reply_parameters(ReplyParameters::new(message.id))
 			.await
 			.context("Non è stato possibile inviare il messaggio di errore.")?;
-
+		
 		log::trace!("Successfully handled unknown command!");
 		Ok(())
 	}
-
+	
 	async fn handle_error(&self, bot: &Bot, message: &Message, error: &Error) -> CommandResult {
 		log::debug!(
 			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`",
@@ -156,11 +158,11 @@ impl Command {
 			.reply_parameters(ReplyParameters::new(message.id))
 			.await
 			.context("Non è stato possibile inviare il messaggio di errore.")?;
-
+		
 		log::trace!("Successfully handled errored command!");
 		Ok(())
 	}
-
+	
 	async fn handle_fatal(&self, _bot: &Bot, message: &Message, error1: &Error, error2: &Error) -> CommandResult {
 		log::error!(
 			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`, and it was impossible to handle the error because of `{:?}`",
@@ -170,7 +172,7 @@ impl Command {
 			error1,
 			error2,
 		);
-
+		
 		Ok(())
 	}
 }

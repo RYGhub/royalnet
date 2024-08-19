@@ -29,33 +29,33 @@ mod telegram_ext {
 			Self(value.0)
 		}
 	}
-
+	
 	impl From<TelegramChatId> for teloxide::types::ChatId {
 		fn from(value: TelegramChatId) -> Self {
 			Self(value.0)
 		}
 	}
-
+	
 	impl From<teloxide::types::UserId> for TelegramUserId {
 		fn from(value: teloxide::types::UserId) -> Self {
 			// FIXME: this surely seems like a great idea
 			Self(value.0 as i64)
 		}
 	}
-
+	
 	impl From<TelegramUserId> for teloxide::types::UserId {
 		fn from(value: TelegramUserId) -> Self {
 			// FIXME: this surely seems like a great idea
 			Self(value.0 as u64)
 		}
 	}
-
+	
 	impl From<teloxide::types::MessageId> for TelegramMessageId {
 		fn from(value: teloxide::types::MessageId) -> Self {
 			Self(value.0)
 		}
 	}
-
+	
 	impl From<TelegramMessageId> for teloxide::types::MessageId {
 		fn from(value: TelegramMessageId) -> Self {
 			Self(value.0)

@@ -26,17 +26,17 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 		.context("Il gatto ricevuto in risposta dall'API è indecifrabile, quindi non è stato possibile riceverlo.")?
 		.pop()
 		.context("Il gatto ricevuto in risposta dall'API non esiste, quindi non è stato possibile riceverlo.")?;
-
+	
 	let url: Url = response.url.parse()
 		.context("L'URL del gatto ricevuto in risposta dall'API è malformato, quindi non è stato possibile riceverlo.")?;
-
+	
 	let input = InputFile::url(url);
-
+	
 	let _reply = bot
 		.send_photo(message.chat.id, input)
 		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare un gatto in risposta a questo messaggio.")?;
-
+	
 	Ok(())
 }

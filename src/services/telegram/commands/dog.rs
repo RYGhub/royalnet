@@ -22,17 +22,17 @@ pub async fn handler(bot: &Bot, message: &Message) -> CommandResult {
 		.context("Non è stato possibile richiedere un cane all'API.")?
 		.json::<DogQueryResponse>().await
 		.context("Il cane ricevuto in risposta dall'API è indecifrabile, quindi non è stato possibile riceverlo.")?;
-
+	
 	let url: Url = response.message.parse()
 		.context("L'URL del cane ricevuto in risposta dall'API è malformato, quindi non è stato possibile riceverlo.")?;
-
+	
 	let input = InputFile::url(url);
-
+	
 	let _reply = bot
 		.send_photo(message.chat.id, input)
 		.reply_parameters(ReplyParameters::new(message.id))
 		.await
 		.context("Non è stato possibile inviare un cane in risposta a questo messaggio.")?;
-
+	
 	Ok(())
 }
