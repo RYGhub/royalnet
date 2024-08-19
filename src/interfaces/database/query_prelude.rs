@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 pub use diesel::dsl::*;
 pub use diesel::ExpressionMethods;
 pub use diesel::OptionalExtension;
