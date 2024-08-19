@@ -142,8 +142,12 @@ pub(crate) mod telegram_ext {
 			let text = event.text.as_str().escape_telegram_html();
 			writeln!(result, "{emoji} <b>{text}</b>").unwrap();
 
-			let start: DateTime<Local> = event.starts_at.and_utc().into();
-			let start = start.format("%c").to_string().escape_telegram_html();
+			let start = event.starts_at
+				.and_utc()
+				.with_timezone(&Local)
+				.format("%c")
+				.to_string()
+				.escape_telegram_html();
 			writeln!(result, "<i>{start}</i>").unwrap();
 
 			writeln!(result).unwrap();
