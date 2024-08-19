@@ -210,10 +210,13 @@ pub(crate) mod telegram_ext {
 			let text = Self::text(&event, &replies);
 
 			let mut request = bot.send_message(chat_id, text)
-				.parse_mode(ParseMode::Html)
-				.reply_markup(
+				.parse_mode(ParseMode::Html);
+
+			if !event.has_started() {
+				request = request.reply_markup(
 					Self::reply_markup(matchmaking_id)
-				);
+				)
+			}
 
 			if let Some(reply_to) = reply_to {
 				request = request.reply_parameters(
