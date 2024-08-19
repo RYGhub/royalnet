@@ -121,6 +121,7 @@ service_telegram = [
 service_brooch = [
     "interface_database",
     "interface_stratz",
+	"teloxide",
     "graphql_client"
 ]
 

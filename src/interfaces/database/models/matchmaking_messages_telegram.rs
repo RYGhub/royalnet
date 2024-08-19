@@ -20,8 +20,6 @@ pub struct MatchmakingMessageTelegram {
 
 #[cfg(feature = "service_telegram")]
 pub(crate) mod telegram_ext {
-	use std::str::FromStr;
-	
 	use anyhow::Context;
 	use chrono::Local;
 	use diesel::PgConnection;
@@ -36,69 +34,6 @@ pub(crate) mod telegram_ext {
 	
 	use super::*;
 	
-	#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-	pub enum MatchmakingTelegramKeyboardCallback {
-		Yes,
-		Plus5Min,
-		Plus15Min,
-		Plus60Min,
-		Maybe,
-		DontWait,
-		Cant,
-		Wont,
-	}
-	
-	impl MatchmakingTelegramKeyboardCallback {
-		/// Create callback data representing the [MatchmakingTelegramKeyboardCallback] in the given [MatchmakingId].
-		pub fn callback_data(self, matchmaking_id: MatchmakingId) -> String {
-			matchmaking_id.callback_data(self.into())
-		}
-		
-		pub fn inline_button(self, matchmaking_id: MatchmakingId, text: &str) -> teloxide::types::InlineKeyboardButton {
-			teloxide::types::InlineKeyboardButton::new(
-				text,
-				teloxide::types::InlineKeyboardButtonKind::CallbackData(
-					self.callback_data(matchmaking_id)
-				),
-			)
-		}
-	}
-	
-	impl FromStr for MatchmakingTelegramKeyboardCallback {
-		type Err = anyhow::Error;
-		
-		fn from_str(s: &str) -> Result<Self, Self::Err> {
-			Ok(
-				match s {
-					"yes" => Self::Yes,
-					"5min" => Self::Plus5Min,
-					"15min" => Self::Plus15Min,
-					"60min" => Self::Plus60Min,
-					"maybe" => Self::Maybe,
-					"dontw" => Self::DontWait,
-					"cant" => Self::Cant,
-					"wont" => Self::Wont,
-					x => anyhow::bail!("Unknown keyboard callback: {x:?}"),
-				}
-			)
-		}
-	}
-	
-	impl From<MatchmakingTelegramKeyboardCallback> for &'static str {
-		fn from(value: MatchmakingTelegramKeyboardCallback) -> Self {
-			match value {
-				MatchmakingTelegramKeyboardCallback::Yes => "yes",
-				MatchmakingTelegramKeyboardCallback::Plus5Min => "5min",
-				MatchmakingTelegramKeyboardCallback::Plus15Min => "15min",
-				MatchmakingTelegramKeyboardCallback::Plus60Min => "60min",
-				MatchmakingTelegramKeyboardCallback::Maybe => "maybe",
-				MatchmakingTelegramKeyboardCallback::DontWait => "dontw",
-				MatchmakingTelegramKeyboardCallback::Cant => "cant",
-				MatchmakingTelegramKeyboardCallback::Wont => "wont",
-			}
-		}
-	}
-	
 	impl MatchmakingMessageTelegram {
 		/// Get all the [MatchmakingMessageTelegram] for a specific [MatchmakingId].
 		pub fn get_all(database: &mut PgConnection, matchmaking_id: MatchmakingId) -> AnyResult<Vec<Self>> {
@@ -111,7 +46,7 @@ pub(crate) mod telegram_ext {
 		}
 		
 		fn reply_markup(matchmaking_id: MatchmakingId) -> teloxide::types::InlineKeyboardMarkup {
-			use MatchmakingTelegramKeyboardCallback::*;
+			use crate::services::telegram::utils::matchmaking::MatchmakingTelegramKeyboardCallback::*;
 			
 			let button_yes = Yes.inline_button(matchmaking_id, "🔵 Ci sarò!");
 			let button_5min = Plus5Min.inline_button(matchmaking_id, "🕐 +5 min");

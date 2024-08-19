@@ -19,7 +19,7 @@ use super::RoyalnetService;
 mod commands;
 mod dependencies;
 mod keyboard_callbacks;
-mod utils;
+pub(crate) mod utils;
 
 #[derive(Debug, Clone)]
 pub struct TelegramService {

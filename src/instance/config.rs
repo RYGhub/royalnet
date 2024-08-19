@@ -39,17 +39,17 @@ pub mod brooch {
 	}
 }
 
-#[cfg(feature = "service_telegram")]
+#[cfg(any(feature = "service_telegram", feature = "service_brooch"))]
 pub struct ChatIdConversionHack(i64);
 
-#[cfg(feature = "service_telegram")]
+#[cfg(any(feature = "service_telegram", feature = "service_brooch"))]
 impl From<i64> for ChatIdConversionHack {
 	fn from(value: i64) -> Self {
 		Self(value)
 	}
 }
 
-#[cfg(feature = "service_telegram")]
+#[cfg(any(feature = "service_telegram", feature = "service_brooch"))]
 impl From<ChatIdConversionHack> for teloxide::types::ChatId {
 	fn from(value: ChatIdConversionHack) -> Self {
 		Self(value.0)

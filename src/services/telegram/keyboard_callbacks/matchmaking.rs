@@ -4,12 +4,13 @@ use teloxide::payloads::AnswerCallbackQuerySetters;
 use teloxide::requests::Requester;
 use teloxide::types::CallbackQuery;
 
-use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingId, MatchmakingMessageTelegram, MatchmakingReply, MatchmakingTelegramKeyboardCallback, RoyalnetUser};
+use crate::interfaces::database::models::{MatchmakingChoice, MatchmakingId, MatchmakingMessageTelegram, MatchmakingReply, RoyalnetUser};
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::services::telegram::keyboard_callbacks::KeyboardCallbackResult;
+use crate::services::telegram::utils::matchmaking::MatchmakingTelegramKeyboardCallback;
 
 pub async fn handler(bot: &Bot, query: CallbackQuery, matchmaking_id: MatchmakingId, callback: MatchmakingTelegramKeyboardCallback, database: &DatabaseInterface) -> KeyboardCallbackResult {
-	use MatchmakingTelegramKeyboardCallback::*;
+	use crate::services::telegram::utils::matchmaking::MatchmakingTelegramKeyboardCallback::*;
 	
 	let mut database = database.connect()
 		.context("Non è stato possibile connettersi al database RYG.")?;

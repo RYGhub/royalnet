@@ -7,8 +7,9 @@ use teloxide::payloads::AnswerCallbackQuerySetters;
 use teloxide::prelude::CallbackQuery;
 use teloxide::requests::Requester;
 
-use crate::interfaces::database::models::{MatchmakingId, MatchmakingTelegramKeyboardCallback};
+use crate::interfaces::database::models::MatchmakingId;
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
+use crate::services::telegram::utils::matchmaking::MatchmakingTelegramKeyboardCallback;
 
 mod matchmaking;
 

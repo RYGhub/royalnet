@@ -6,14 +6,12 @@ use diesel::deserialize::FromSql;
 use diesel::serialize::ToSql;
 
 pub use brooch_match::{BroochMatch, DotaMatchId};
-pub use diario::{Diario, DiarioId};
-pub use discord::DiscordUserId;
+pub use diario::Diario;
 pub use matchmaking_choice::MatchmakingChoice;
 pub use matchmaking_events::{MatchmakingEvent, MatchmakingId};
-pub use matchmaking_messages_telegram::{MatchmakingMessageTelegram, telegram_ext::MatchmakingTelegramKeyboardCallback};
+pub use matchmaking_messages_telegram::MatchmakingMessageTelegram;
 pub use matchmaking_replies::MatchmakingReply;
-pub use steam::SteamId64;
-pub use telegram::{TelegramChatId, TelegramMessageId, TelegramUser, TelegramUserId};
+pub use telegram::{TelegramUser, TelegramUserId};
 pub use users::{RoyalnetUser, RoyalnetUserId};
 
 mod users;
