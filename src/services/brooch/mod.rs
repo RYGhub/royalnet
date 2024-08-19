@@ -723,8 +723,8 @@ impl BroochService {
 			.link_preview_options(LinkPreviewOptions {
 				is_disabled: false,
 				url: Some(format!("https://stratz.com/matches/{}", match_id)),
-				prefer_small_media: false,
-				prefer_large_media: true,
+				prefer_small_media: true,
+				prefer_large_media: false,
 				show_above_text: false,
 			})
 			.await
