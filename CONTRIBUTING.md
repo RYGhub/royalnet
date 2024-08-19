@@ -115,24 +115,13 @@ The following features are currently available:
 - `default`
   - includes all features
 
-[conditional compilation]: https://doc.rust-lang.org/reference/conditional-compilation.html
-[Cargo features]: https://doc.rust-lang.org/cargo/reference/features.html
-
-#### On RustRover
-
-If you're editing the project with RustRover, you can graphically toggle features on and off:
-
-1. Open `Cargo.toml`.
-2. Scroll to the `[features]` section
-3. Tick or untick the features you want to use.
-   - `default` is ignored if you use the provided run configurations.
-
-#### Elsewhere
-
 To toggle features on other editors, remember to pass the `--no-default-features` and `--features` option to Cargo when running commands:
 ```shell
 cargo --no-default-features --features="interface_database,interface_stratz,service_telegram,service_brooch" run
 ```
+
+[conditional compilation]: https://doc.rust-lang.org/reference/conditional-compilation.html
+[Cargo features]: https://doc.rust-lang.org/cargo/reference/features.html
 
 ### Configuring PostgreSQL
 

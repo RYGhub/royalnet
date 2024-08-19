@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Doc" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="doc --package royalnet --bin royalnet --no-default-features --document-private-items --open" />
+  <configuration default="false" name="Doc (all)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" folderName="Doc">
+    <option name="command" value="doc --package royalnet --bin royalnet --document-private-items --open" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <envs />
     <option name="emulateTerminal" value="true" />

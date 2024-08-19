@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="run --package royalnet --bin royalnet --no-default-features" />
+  <configuration default="false" name="Run (telegram)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" folderName="Run">
+    <option name="command" value="run --package royalnet --bin royalnet --no-default-features --features interface_database,service_telegram" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <envs>
       <env name="RUST_LOG" value="royalnet" />
