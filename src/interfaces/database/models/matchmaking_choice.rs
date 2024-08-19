@@ -7,7 +7,7 @@ use diesel::serialize::{IsNull, ToSql};
 
 use super::super::schema::sql_types;
 
-#[derive(Debug, Clone, Copy, PartialEq, FromSqlRow, AsExpression)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, FromSqlRow, AsExpression)]
 #[diesel(sql_type = sql_types::MatchmakingChoice)]
 pub enum MatchmakingChoice {
 	Yes,

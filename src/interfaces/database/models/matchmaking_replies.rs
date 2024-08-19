@@ -33,6 +33,7 @@ impl MatchmakingReply {
 			.filter(matchmaking_replies::matchmaking_id.eq(matchmaking_id))
 			.inner_join(users::table.on(matchmaking_replies::user_id.eq(users::id)))
 			.inner_join(telegram::table.on(users::id.eq(telegram::user_id)))
+			.order_by(matchmaking_replies::choice)
 			.get_results::<(Self, RoyalnetUser, TelegramUser)>(database)
 			.context("Non è stato possibile recuperare le risposte al matchmaking dal database RYG.")
 	}
