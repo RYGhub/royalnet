@@ -21,6 +21,9 @@ pub(crate) mod telegram_ext {
 	use std::cmp::Ordering;
 	use std::str::FromStr;
 	use anyhow::Context;
+	use chrono::DateTime;
+	use chrono::Local;
+	use matchmaking_messages_telegram::star;
 	use super::*;
 	use diesel::PgConnection;
 	use teloxide::payloads::SendMessageSetters;
@@ -139,7 +142,12 @@ pub(crate) mod telegram_ext {
 			let text = event.text.as_str().escape_telegram_html();
 			writeln!(result, "{emoji} <b>{text}</b>").unwrap();
 
-			let start = event.starts_at.format("%c").to_string().escape_telegram_html();
+			let start = event.starts_at
+				.and_utc()
+				.with_timezone(&Local)
+				.format("%c")
+				.to_string()
+				.escape_telegram_html();
 			writeln!(result, "<i>{start}</i>").unwrap();
 
 			writeln!(result).unwrap();
