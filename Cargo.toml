@@ -65,7 +65,7 @@ version = "1.0.204"
 features = ["derive"]
 
 [dependencies.diesel]
-version = "2.2.1"
+version = "2.2.3"
 default-features = false
 features = ["postgres", "chrono", "with-deprecated"]
 optional = true
