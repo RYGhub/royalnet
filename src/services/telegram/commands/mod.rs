@@ -4,11 +4,11 @@
 use std::sync::Arc;
 
 use anyhow::{Context, Error};
-use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message, ReplyParameters};
 use teloxide::utils::command::BotCommands;
+use teloxide::Bot;
 
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::utils::anyhow_result::AnyResult;
@@ -117,10 +117,14 @@ impl Command {
 			let e1 = result1.unwrap_err();
 			
 			log::trace!("Delegating fatal error handling to fatal error handler...");
-			let _result3 = match result2 {
+			let result3 = match result2 {
 				Ok(_) => return,
 				Err(e2) => self.handle_fatal(&bot, &message, &e1, &e2).await
 			};
+			
+			// Propagate `result3` upwards, since we aren't handling it ourselves
+			// It still doesn't get handled anywhere, though.
+			result3?;
 			
 			log::trace!("Successfully handled command!");
 		});
