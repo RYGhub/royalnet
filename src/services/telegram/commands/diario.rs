@@ -4,10 +4,10 @@ use std::str::FromStr;
 use anyhow::Context;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::prelude::Requester;
 use teloxide::types::{Message, ParseMode, ReplyParameters};
+use teloxide::Bot;
 
 use crate::interfaces::database::models::Diario;
 use crate::interfaces::database::models::RoyalnetUser;
@@ -50,6 +50,8 @@ impl FromStr for DiarioArgs {
 				DiarioArgs { warning, quote, quoted, context }
 			}
 			None => {
+				anyhow::ensure!(!s.is_empty(), "La citazione specificata non deve essere vuota.");
+				
 				let warning = None;
 				let quote = s.to_string();
 				let quoted = None;
