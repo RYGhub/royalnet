@@ -4,14 +4,15 @@
 use std::sync::Arc;
 
 use anyhow::{Context, Error};
-use teloxide::Bot;
 use teloxide::payloads::SendMessageSetters;
 use teloxide::requests::Requester;
 use teloxide::types::{Message, ReplyParameters};
 use teloxide::utils::command::BotCommands;
+use teloxide::Bot;
 
 use crate::services::telegram::dependencies::interface_database::DatabaseInterface;
 use crate::utils::anyhow_result::AnyResult;
+use crate::utils::italian::countable_noun_suffix;
 
 pub mod start;
 pub mod fortune;
@@ -111,7 +112,7 @@ impl Command {
 			log::trace!("Delegating error handling to error handler...");
 			let result2 = match result1.as_ref() {
 				Ok(_) => return,
-				Err(e1) => self.handle_error(&bot, &message, e1).await
+				Err(e1) => self.handle_error_command(&bot, &message, e1).await
 			};
 			
 			let e1 = result1.unwrap_err();
@@ -129,12 +130,49 @@ impl Command {
 		Ok(())
 	}
 	
-	pub async fn handle_unknown(bot: Bot, message: Message) -> CommandResult {
-		log::debug!("Received an unknown command or an invalid syntax: {:?}", message.text());
+	pub async fn handle_malformed_simple(bot: Bot, message: Message, expected: usize, found: usize) -> CommandResult {
+		log::debug!("Received a malformed command: {:?}", message.text());
 		
 		log::trace!("Sending error message...");
+		let text = format!(
+			"⚠️ Il comando si aspetta {} argoment{}, ma ne ha ricevut{} solo {}.",
+			expected,
+			countable_noun_suffix(expected, "o", "i"),
+			countable_noun_suffix(found, "o", "i"),
+			found,
+		);
 		let _reply = bot
-			.send_message(message.chat.id, "⚠️ Comando sconosciuto o sintassi non valida.")
+			.send_message(message.chat.id, text)
+			.reply_parameters(ReplyParameters::new(message.id))
+			.await
+			.context("Non è stato possibile inviare il messaggio di errore.")?;
+		
+		log::trace!("Successfully handled malformed command!");
+		Ok(())
+	}
+	
+	pub async fn handle_malformed_complex(bot: Bot, message: Message) -> CommandResult {
+		log::debug!("Received a malformed command: {:?}", message.text());
+		
+		log::trace!("Sending error message...");
+		let text = "⚠️ Il comando si aspetta una sintassi diversa da quella che ha ricevuto.";
+		let _reply = bot
+			.send_message(message.chat.id, text)
+			.reply_parameters(ReplyParameters::new(message.id))
+			.await
+			.context("Non è stato possibile inviare il messaggio di errore.")?;
+		
+		log::trace!("Successfully handled malformed command!");
+		Ok(())
+	}
+	
+	pub async fn handle_unknown(bot: Bot, message: Message) -> CommandResult {
+		log::debug!("Received an unknown command: {:?}", message.text());
+		
+		log::trace!("Sending error message...");
+		let text = "⚠️ Il comando specificato non esiste.";
+		let _reply = bot
+			.send_message(message.chat.id, text)
 			.reply_parameters(ReplyParameters::new(message.id))
 			.await
 			.context("Non è stato possibile inviare il messaggio di errore.")?;
@@ -143,7 +181,22 @@ impl Command {
 		Ok(())
 	}
 	
-	async fn handle_error(&self, bot: &Bot, message: &Message, error: &Error) -> CommandResult {
+	pub async fn handle_error_parse(bot: &Bot, message: &Message, error: &Error) -> CommandResult {
+		log::debug!("Encountered a parsing error while parsing: {:?}", message.text());
+		
+		log::trace!("Sending error message...");
+		let text = format!("⚠️ {error}");
+		let _reply = bot
+			.send_message(message.chat.id, text)
+			.reply_parameters(ReplyParameters::new(message.id))
+			.await
+			.context("Non è stato possibile inviare il messaggio di errore.")?;
+		
+		log::trace!("Successfully handled malparsed command!");
+		Ok(())
+	}
+	
+	pub async fn handle_error_command(&self, bot: &Bot, message: &Message, error: &Error) -> CommandResult {
 		log::debug!(
 			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`",
 			&message.chat.id,
@@ -153,8 +206,9 @@ impl Command {
 		);
 		
 		log::trace!("Sending error message...");
+		let text = format!("⚠️ {error}");
 		let _reply = bot
-			.send_message(message.chat.id, format!("⚠️ {error}"))
+			.send_message(message.chat.id, text)
 			.reply_parameters(ReplyParameters::new(message.id))
 			.await
 			.context("Non è stato possibile inviare il messaggio di errore.")?;
@@ -163,7 +217,7 @@ impl Command {
 		Ok(())
 	}
 	
-	async fn handle_fatal(&self, _bot: &Bot, message: &Message, error1: &Error, error2: &Error) -> CommandResult {
+	pub async fn handle_fatal(&self, _bot: &Bot, message: &Message, error1: &Error, error2: &Error) -> CommandResult {
 		log::error!(
 			"Command message in {:?} with id {:?} and contents {:?} errored out with `{:?}`, and it was impossible to handle the error because of `{:?}`",
 			&message.chat.id,
