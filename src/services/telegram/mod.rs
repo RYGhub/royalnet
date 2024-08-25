@@ -1,15 +1,14 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use regex::Regex;
+use commands::Command;
+use dependencies::interface_database::DatabaseInterface;
+use keyboard_callbacks::KeyboardCallback;
 use teloxide::dispatching::DefaultKey;
 use teloxide::dptree::entry;
 use teloxide::prelude::*;
 use teloxide::types::{Me, ParseMode};
-
-use commands::Command;
-use dependencies::interface_database::DatabaseInterface;
-use keyboard_callbacks::KeyboardCallback;
+use teloxide::utils::command::{BotCommands, ParseError};
 
 use crate::utils::anyhow_result::AnyResult;
 use crate::utils::telegram_string::TelegramEscape;
@@ -102,15 +101,73 @@ impl TelegramService {
 			.context("Aggiornamento dei comandi del bot non riuscito.")
 	}
 	
+	async fn handle_message(bot: Bot, me: Me, message: Message, database: Arc<DatabaseInterface>) -> AnyResult<()> {
+		log::debug!("Handling message: {message:#?}");
+		
+		log::trace!("Accessing message text...");
+		let text = match message.text() {
+			None => {
+				log::trace!("Message has no text; skipping it.");
+				return Ok(())
+			}
+			Some(text) => {
+				log::trace!("Message has text: {text:?}");
+				text
+			}
+		};
+		
+		log::trace!("Retrieving bot's username...");
+		let username = me.username();
+		
+		log::trace!("Parsing message text {text:?} as {username:?}...");
+		let command = match Command::parse(text, username) {
+			Ok(command) => {
+				log::trace!("Message text parsed successfully as: {command:?}");
+				command
+			}
+			Err(ParseError::WrongBotName(receiver)) => {
+				log::debug!("Message is meant to be sent to {receiver:?}, while I'm running as {username:?}; skipping it.");
+				return Ok(());
+			}
+			Err(ParseError::TooFewArguments { expected, found, .. }) |
+			Err(ParseError::TooManyArguments { expected, found, .. }) => {
+				log::debug!("Message text is a command with {found} arguments, but the command expected {expected}; handling as a malformed command.");
+				Command::handle_malformed_simple(bot, message, expected, found).await
+					.context("Impossibile gestire comando malformato semplice.")?;
+				return Ok(());
+			}
+			Err(ParseError::IncorrectFormat(e)) => {
+				log::debug!("Message text is a command with a custom format, but the parser returned the error {e:?}; handling as a malformed command.");
+				Command::handle_malformed_complex(bot, message).await
+					.context("Impossibile gestire comando malformato complesso.")?;
+				return Ok(());
+			}
+			Err(ParseError::UnknownCommand(command)) => {
+				log::debug!("Message text is command not present in the commands list {command:?}; handling it as an unknown command.");
+				Command::handle_unknown(bot, message).await
+					.context("Impossibile gestire comando sconosciuto.")?;
+				return Ok(());
+			}
+			Err(ParseError::Custom(e)) => {
+				log::debug!("Message text is a command, but the parser raised custom error {e:?}; handling it as a custom error.");
+				let error = anyhow::format_err!(e);
+				Command::handle_error_parse(&bot, &message, &error).await
+					.context("Impossibile gestire comando con errore di parsing.")?;
+				return Ok(());
+			}
+		};
+		
+		command.handle_self(bot, message, database).await
+			.context("Impossibile gestire errore restituito dal comando.")?;
+		
+		Ok(())
+	}
+	
 	fn dispatcher(&mut self) -> Dispatcher<Bot, anyhow::Error, DefaultKey> {
 		log::debug!("Building dispatcher...");
 		
 		let bot_name = self.me.user.username.as_ref().unwrap();
 		log::trace!("Bot username is: @{bot_name:?}");
-		
-		log::trace!("Determining pseudo-command regex...");
-		let regex = Regex::new(&format!(r"^/[a-z0-9_]+(?:@{bot_name})?(?:\s+.*)?$")).unwrap();
-		log::trace!("Pseudo-command regex is: {regex:?}");
 		
 		let database = Arc::new(DatabaseInterface::new(self.database_url.clone()));
 		
@@ -121,24 +178,8 @@ impl TelegramService {
 			entry()
 				// Messages
 				.branch(Update::filter_message()
-					// Pseudo-commands
-					.branch(entry()
-						// Only process commands matching the pseudo-command regex
-						.filter(move |message: Message| -> bool {
-							message
-								.text()
-								.is_some_and(|text| regex.is_match(text))
-						})
-						// Commands
-						.branch(entry()
-							// Only process commands matching a valid command, and parse their arguments
-							.filter_command::<Command>()
-							// Delegate handling
-							.endpoint(Command::handle_self)
-						)
-						// No valid command was found
-						.endpoint(Command::handle_unknown)
-					)
+					// Handle incoming messages
+					.endpoint(Self::handle_message)
 				)
 				// Inline keyboard
 				.branch(Update::filter_callback_query()
