@@ -27,7 +27,7 @@ impl FromStr for DiarioArgs {
 	type Err = anyhow::Error;
 	
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		static REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#" *(?:\[(?<warning>.+)])? *"(?<quote>.+)"[, ]*(?:[-–—]+(?<quoted>\w+)(?:, *(?<context>.+))?)?"#).unwrap());
+		static REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#" *(?:\[(?<warning>.+)])? *"(?<quote>.+)"[, ]*(?:[-–—]+(?<quoted>[^\n,]+)(?:, *(?<context>.+))?)?"#).unwrap());
 		
 		let captures = REGEX.captures(s);
 		
