@@ -19,6 +19,8 @@ pub mod service_telegram {
 		TELEGRAM_DATABASE_URL: String,
 		TELEGRAM_BOT_TOKEN: String,
 		TELEGRAM_NOTIFICATION_CHATID?: String > i64 -> crate::instance::config::ChatIdConversionHack -> teloxide::types::ChatId,
+		// TODO: Unimplemented
+		TELEGRAM_MATCHMAKING_CHATID?: String > i64 -> crate::instance::config::ChatIdConversionHack -> teloxide::types::ChatId,
 	}
 }
 
