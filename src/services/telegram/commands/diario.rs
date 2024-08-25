@@ -50,7 +50,7 @@ impl FromStr for DiarioArgs {
 				DiarioArgs { warning, quote, quoted, context }
 			}
 			None => {
-				anyhow::ensure!(!s.is_empty(), "La citazione specificata non deve essere vuota.");
+				anyhow::ensure!(!s.is_empty(), "la citazione non deve essere vuota.");
 				
 				let warning = None;
 				let quote = s.to_string();

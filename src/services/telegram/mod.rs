@@ -138,7 +138,8 @@ impl TelegramService {
 			}
 			Err(ParseError::IncorrectFormat(e)) => {
 				log::debug!("Message text is a command with a custom format, but the parser returned the error {e:?}; handling as a malformed command.");
-				Command::handle_malformed_complex(bot, message).await
+				let error = anyhow::format_err!(e);
+				Command::handle_malformed_complex(&bot, &message, &error).await
 					.context("Impossibile gestire comando malformato complesso.")?;
 				return Ok(());
 			}

@@ -151,11 +151,11 @@ impl Command {
 		Ok(())
 	}
 	
-	pub async fn handle_malformed_complex(bot: Bot, message: Message) -> CommandResult {
+	pub async fn handle_malformed_complex(bot: &Bot, message: &Message, error: &Error) -> CommandResult {
 		log::debug!("Received a malformed command: {:?}", message.text());
 		
 		log::trace!("Sending error message...");
-		let text = "⚠️ Il comando si aspetta una sintassi diversa da quella che ha ricevuto.";
+		let text = format!("⚠️ Sintassi del comando errata: {error}");
 		let _reply = bot
 			.send_message(message.chat.id, text)
 			.reply_parameters(ReplyParameters::new(message.id))
