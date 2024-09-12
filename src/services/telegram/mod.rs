@@ -116,6 +116,12 @@ impl TelegramService {
 			}
 		};
 		
+		log::trace!("Checking if message is actually a command...");
+		if !text.starts_with("/") {
+			log::trace!("Message is not a command.");
+			return Ok(())
+		}
+		
 		log::trace!("Retrieving bot's username...");
 		let username = me.username();
 		
